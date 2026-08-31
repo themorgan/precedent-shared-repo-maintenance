@@ -1,0 +1,38 @@
+---
+slug:        doc-recipe
+title:       A recipe holds a file's standing rules, with reasons -- never its history
+tier:        on-demand
+severity:    default
+applies_to:  ["**"]
+occasion:    "a standing constraint on one file gets stated a second time"
+index_clause: "present-tense rules for one file, in doc-recipes/<name>.recipe.md"
+checked_by:  null
+defines:     []
+status:      active
+supersedes:  []
+overrides:   null
+added:       2026-08-31
+approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session"
+---
+## Rule
+A recipe is the spec for one file: what the next pass should produce, or how a document is always to be written. It is present tense and rewritable -- the rules in force now, not a record of how they got that way. History belongs where history already lives: `git log`, and a repo's own decision records.
+
+## Detail
+Placement and name: recipes live in a `doc-recipes/` subdirectory beside the documents they govern, and each keeps a `.recipe.md` infix (`book/CHAPTER1.md` is governed by `book/doc-recipes/CHAPTER1.recipe.md`) -- the subdirectory so a recipe doesn't double every listing in the directory a reader actually browses, the infix because editor tabs and search results show bare basenames.
+
+Format: a file-header, a title, a `Source:` line when there is one, and a flat list of rules, one per line. A reason rides on the line as an em-dash clause, only where a reader might otherwise delete the rule as arbitrary; where the reason won't compress to a clause, cite the originating commit's short SHA in parentheses instead of retelling it.
+
+`Source:` present means the file is derived (see the derived-file practice) and the recipe says what a regeneration pass should produce; absent means standing constraints on a document written directly, and nothing replaces it -- the rules simply always apply.
+
+When a recipe is created: for a derived file, at the same moment as the file, with no judgment call involved. For a document written directly, never at creation -- a recipe starts the second time the same constraint is restated about that file.
+
+When a recipe is updated: on two triggers -- the output was corrected, or a constraint already stated once was stated again. Adding a line means rereading the whole recipe, pruning contradictions and near-duplicates while it's still short enough to make that cheap; any line a repo-wide convention now covers gets deleted rather than kept as harmless. A rule appearing in a second recipe was never per-file -- promote it to the repo's own conventions and delete it from both. Editing a recipe never triggers a regeneration.
+
+## Why
+A running log of "we added X, then softened it, then changed to Y" only grows, is never pruned, and by its tenth entry costs more to read than the document it governs.
+
+## Story
+
+
+## Install
+
