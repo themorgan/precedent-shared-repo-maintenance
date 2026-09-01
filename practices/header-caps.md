@@ -1,12 +1,12 @@
 ---
 slug:        header-caps
-title:       Header capitalization: pick one consistent schema, NY Times headline style by default
+title:       "Header capitalization: pick one consistent schema, NY Times headline style by default"
 tier:        on-demand
 severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "writing or reviewing a document's headers"
 index_clause: "one capitalization schema per document; default to headline style"
-checked_by:  null
+checked_by:  tools/checks/check_header_caps.py
 defines:     []
 status:      active
 supersedes:  []
@@ -27,4 +27,9 @@ A repo is free to choose a different scheme and document that choice inline, the
 
 
 ## Install
+Checked mechanically, but only half of it: [`tools/checks/check_header_caps.py`](../tools/checks/check_header_caps.py), scope `tree`, over tracked markdown files, verifies the rule's first, unambiguous sentence -- headers at the same rank in one document never mix capitalization styles. It does this without needing a minor-word dictionary: if the same word (excluding each header's own first/last word) shows up capitalized one way in one same-rank header and differently in another, that word itself is direct evidence of a mixed scheme.
+
+What it doesn't check: that the default scheme, absent a documented reason otherwise, is specifically NY Times headline style. Telling "principal word" from "minor word" for that judgment has enough real edge cases (a short verb doing the sentence's main work, a preposition used adjectivally) that a check built on a fixed word list would misclassify often enough to not actually be enforcing the rule -- exactly the kind of check phase 4 found silently broken elsewhere. That half stays a judgment call for review.
+
+Two-direction tested in [`tools/checks/tests/test_header_caps.sh`](../tools/checks/tests/test_header_caps.sh).
 

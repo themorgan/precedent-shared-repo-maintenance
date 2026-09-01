@@ -27,4 +27,5 @@ No audit checks a sentence like "twenty-nine numbered sections" against the actu
 
 
 ## Install
+No mechanical check: distinguishing a count "genuinely maintained alongside the thing it counts" (explicitly fine, per the Detail section -- a version number, a date) from one that "will drift" (the violation) requires knowing the writer's intent behind the number, not just its presence. A digit-plus-noun pattern would flag exactly the counts this rule exempts as often as the ones it targets.
 

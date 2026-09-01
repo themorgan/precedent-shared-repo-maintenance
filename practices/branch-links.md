@@ -27,4 +27,5 @@ A doc-references-are-links convention covers files at the repo's current tree; i
 
 
 ## Install
+No mechanical check: it governs free-form prose (chat replies, status updates, any document) naming a branch, which has no reliable syntactic signature distinguishing "a git branch was named here" from any other backticked or plain-text token (a filename, a variable, a package name). A static scan would either miss real mentions or misfire constantly on lookalikes.
 

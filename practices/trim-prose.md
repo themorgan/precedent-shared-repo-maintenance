@@ -27,4 +27,5 @@ Both triggers fire at a checkpoint that already exists -- making an edit, declar
 
 
 ## Install
+No mechanical check: whether a paragraph has "grown noticeably longer than the point it's making warrants" is a judgment about proportion between content and substance -- word or sentence count alone can't distinguish a legitimately long, dense point from one padded by iterative edits, so a length-based trigger would flag exactly the paragraphs this rule doesn't target as often as the ones it does.
 

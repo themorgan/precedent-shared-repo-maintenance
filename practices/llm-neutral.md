@@ -27,4 +27,5 @@ That keeps swapping providers, or dropping in whichever token happens to be on h
 
 
 ## Install
+No mechanical check: "provider-neutral" is a property of a whole integration's design (is the model name, key, and base URL actually swappable configuration, or hard-wired), not something a grep for a vendor's name can classify -- a comment or a config default mentioning a provider isn't itself a violation, and a real violation (a response schema parsed assuming one vendor's shape) has no fixed textual signature.
 

@@ -27,4 +27,5 @@ A stray instruction left in only one file is exactly the kind of drift a capture
 
 
 ## Install
+No mechanical check: deciding whether a given addition to a README or other key file is "the operational kind... not general project description" is the judgment the rule's own Rule text names explicitly. A check could flag any `AGENTS.md`/README divergence at all, but that would fire constantly on content that correctly belongs in only one place, which the rule's own Detail section says is normal.
 

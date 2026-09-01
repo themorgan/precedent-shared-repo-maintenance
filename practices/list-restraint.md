@@ -27,4 +27,5 @@ A paragraph that could have been a list costs the reader little; a list that era
 
 
 ## Install
+No mechanical check: telling "connected reasoning reformatted as bullet fragments" apart from "a genuine enumeration a reader will scan individually" is precisely the semantic call the rule's own Detail section describes -- reading the bullets back as plain sentences and judging whether the connective logic survives. No syntax-level property of a markdown list captures that.
 

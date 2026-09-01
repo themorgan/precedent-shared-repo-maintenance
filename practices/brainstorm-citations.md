@@ -27,4 +27,5 @@ Citing a specific brainstorm entry as a claim's own support borrows a credibilit
 
 
 ## Install
+No mechanical check: catching a violation requires classifying a document as "formal" versus "brainstorm" and telling a citation used as substantive support apart from a provenance note or a link to the brainstorm document as a whole -- both genuinely allowed by the rule's own Detail section. Nothing in a link's syntax carries that distinction; it's a judgment about what the link is doing in context.
 

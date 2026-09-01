@@ -27,4 +27,5 @@ Any code written or set up here anticipates its own common failure modes rather 
 
 
 ## Install
+No mechanical check: whether code "anticipates its own common failure modes" and degrades in a way the caller can act on is a judgment about error-handling adequacy across arbitrary code in any language, not a fixed syntactic pattern -- a bare `except:` is sometimes exactly wrong and sometimes a deliberate, documented catch-all. A static rule broad enough to catch real violations without flooding on legitimate code isn't achievable at this scope (`applies_to: ["**"]`, no language or shape specified).
 
