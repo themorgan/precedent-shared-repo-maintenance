@@ -27,4 +27,5 @@ A reader skimming a long reply or PR body has no "first mention" to scroll back 
 
 
 ## Install
+No mechanical check: the surfaces this rule governs -- a chat reply, a PR description, an issue, a commit message -- aren't content this repo's own tree contains, so there's nothing here to scan. The practice's own Detail section names the one place this is worth enforcing mechanically: a harness's blocking turn-end hook reading the closing reply, which is a property of the harness, not of this repo.
 

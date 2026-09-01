@@ -27,4 +27,5 @@ This is the mechanism proportional emphasis governs the amount of: that rule say
 
 
 ## Install
+No mechanical check: whether a phrase is "key" and whether the bolded share of a document matches its own two rough tests (a skimmer gets the argument; bold still reads as highlighting, not the normal typeface) is a judgment about that document's own content and audience. A count of bold spans can't tell correct restraint from under- or over-bolding without knowing what the document is actually arguing.
 

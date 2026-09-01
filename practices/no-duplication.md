@@ -27,4 +27,5 @@ Precedence already lets a team rule override a universal one by slug; there is n
 
 
 ## Install
+No mechanical check: telling "only repeats something universal, same substance, no actual change in outcome" apart from a legitimate override or a genuinely additional rule requires comparing this set's rules against the universal catalogue's own semantics -- the universal catalogue lives in the public Precedent repo, not vendored here, and even with it in reach, substance-equivalence between two rules is a reading judgment, not a text match.
 

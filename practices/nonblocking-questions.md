@@ -29,4 +29,5 @@ The point is that the answer can arrive while work is still in flight, so a ques
 
 
 ## Install
+No mechanical check: this is a rule about how a session paces its own work against an open question -- whether it kept moving on independent work instead of going idle. That's a property of session conduct across a conversation, not of any file this repo's tree holds.
 

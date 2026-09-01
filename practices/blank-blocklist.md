@@ -27,4 +27,5 @@ If the feature is ever wanted, someone will say so; a session asking for it unpr
 
 
 ## Install
+No mechanical check: the rule governs a moment in a *target* repo's install procedure -- what an installing session does or doesn't ask for -- not a property this repo's own tree ever holds (this repo isn't itself being installed into anywhere, and has no check-in-upstream blocklist of its own to have left blank or populated).
 

@@ -27,4 +27,5 @@ A minor caveat that grows to three paragraphs and bold text reads, to anyone but
 
 
 ## Install
+No mechanical check: whether a point's space "matches how much a reader who doesn't already know the material would need it weighted" requires judging the material's own substance, which is exactly what the rule's own test asks a person (or a session) to do -- there's no structural proxy (paragraph count, bold density) that reliably stands in for actual importance.
 

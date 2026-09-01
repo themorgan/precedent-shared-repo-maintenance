@@ -6,7 +6,7 @@ severity:    default
 applies_to:  ["**"]
 occasion:    "setting up a new repo, or installing into an existing one"
 index_clause: "check or set the default branch to main, once, at install"
-checked_by:  null
+checked_by:  tools/checks/check_default_branch.py
 defines:     []
 status:      active
 supersedes:  []
@@ -27,4 +27,5 @@ A host only defaults a freshly-created repo to `main` on its own; plenty of repo
 
 
 ## Install
+Checked mechanically by [`tools/checks/check_default_branch.py`](../tools/checks/check_default_branch.py), scope `tree`, via the one cheap remote query this file's own Install text already names: `git ls-remote --symref origin HEAD` asks the remote which branch it actually points at, no clone required. If the remote can't be reached at all (no network, no credential), the check reports SKIPPED rather than a silent pass -- a check that can't observe the property says so, per the NotApplicable convention. Two-direction tested in [`tools/checks/tests/test_default_branch.sh`](../tools/checks/tests/test_default_branch.sh) against a local bare repo standing in for a misconfigured remote.
 

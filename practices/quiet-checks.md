@@ -27,4 +27,5 @@ The runbook already moves on to checking branch state and committing regardless 
 
 
 ## Install
+No mechanical check: it governs how a session narrates a check's outcome in its own reply across turns of a conversation -- whether the same static-backlog disclaimer got repeated -- which isn't content this repo's tree, or any single commit, holds a record of.
 

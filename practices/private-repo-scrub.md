@@ -6,7 +6,7 @@ severity:    blocking
 applies_to:  ["**"]
 occasion:    "writing content that will vendor or ship into another repo"
 index_clause: "name a private repo only in general terms in anything that ships elsewhere"
-checked_by:  null
+checked_by:  tools/checks/check_private_repo_scrub.py
 defines:     []
 status:      active
 supersedes:  []
@@ -26,5 +26,8 @@ Marked blocking for the same reason as scrubbing sensitive characterizations: it
 ## Story
 Found the hard way when a team's own rule text, written to be vendored elsewhere, named one of its private repos directly and linked to it in text that shipped on every future install.
 
+Writing this practice's own `checked_by` found the exact same thing again, in this repo: the install practice's own text named a sibling private set directly, as a worked example. Fixed in the same commit that added the check.
+
 ## Install
+Checked mechanically by [`tools/checks/check_private_repo_scrub.py`](../tools/checks/check_private_repo_scrub.py), scope `tree`, over `practices/*.md` specifically -- per `practices/install.md`'s own Rule, that directory is exactly the content a consuming repo vendors verbatim, which is what this rule protects. It scans for a fixed list of this account's two known private repo names/URLs; it isn't a general "looks like it might be a private repo" heuristic, since nothing distinguishes that reliably, the same reason a real blocklist is specific terms rather than a pattern. It does not check README.md, commit messages, or any future decision record -- those stay local and are explicitly where the Detail section says the full, unscrubbed story belongs. Two-direction tested in [`tools/checks/tests/test_private_repo_scrub.sh`](../tools/checks/tests/test_private_repo_scrub.sh).
 

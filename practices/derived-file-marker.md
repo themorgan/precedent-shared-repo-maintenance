@@ -6,7 +6,7 @@ severity:    default
 applies_to:  ["**"]
 occasion:    "creating a file a later regeneration will overwrite"
 index_clause: "a regenerated file's header names its source, recipe, and command"
-checked_by:  null
+checked_by:  tools/checks/check_derived_file_marker.py
 defines:     []
 status:      active
 supersedes:  []
@@ -35,4 +35,5 @@ An earlier form of this rule used a filename suffix and a "DO NOT EDIT BY HAND" 
 
 
 ## Install
+Checked mechanically by [`tools/checks/check_derived_file_marker.py`](../tools/checks/check_derived_file_marker.py), scope `tree`. There's no filename convention to key off (per this file's own Detail section, that's deliberate), so the check keys off the same thing a reader would: any tracked file whose opening lines contain `DERIVED from ... @ <sha>` is making the claim, and from there must also carry the `Recipe:` line, the `Regenerate with:` line, and the routing sentence. It doesn't check that the `@ <sha>` is actually current, or that the recipe path exists -- only that the header is complete once a file makes the claim. Two-direction tested in [`tools/checks/tests/test_derived_file_marker.sh`](../tools/checks/tests/test_derived_file_marker.sh).
 

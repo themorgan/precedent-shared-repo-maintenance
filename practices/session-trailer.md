@@ -6,7 +6,7 @@ severity:    default
 applies_to:  ["**"]
 occasion:    "committing anything"
 index_clause: "a Session: <url> trailer on every commit"
-checked_by:  null
+checked_by:  tools/checks/check_session_trailer.py
 defines:     []
 status:      active
 supersedes:  []
@@ -27,4 +27,5 @@ So a reviewer can tell "considered and skipped" from "forgotten" at a glance, an
 
 
 ## Install
+Checked mechanically by [`tools/checks/check_session_trailer.py`](../tools/checks/check_session_trailer.py), scope `tree`: every commit reachable from HEAD in this repo must carry a `Session:` trailer line, either a URL or the explicit `none available (<tool>)` form. It doesn't verify the URL actually resolves to a real session -- only that the trailer, in one of its two valid shapes, is present, which is the "considered and skipped" vs. "forgotten" distinction this practice's own Why section names. Two-direction tested in [`tools/checks/tests/test_session_trailer.sh`](../tools/checks/tests/test_session_trailer.sh).
 
