@@ -27,4 +27,5 @@ Related rules sitting together and everyday rules coming before rare ones is rea
 
 
 ## Install
+No mechanical check, and the practice says so itself: its own Detail section states "nothing mechanically checks that a new rule actually landed in the right group, or that every mirror picked it up -- that gap is exactly what the deep check's review exists to catch." A slug/anchor uniqueness check and a stray-positional-reference check are the parts it names as checkable in principle, but neither is what this rule is actually about.
 

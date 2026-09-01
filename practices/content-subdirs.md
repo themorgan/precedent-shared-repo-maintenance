@@ -27,4 +27,5 @@ Left alone, both kinds of root-level file pile up together, and enough deliverab
 
 
 ## Install
+No mechanical check, and the practice says so itself: its own Detail section states it's "not mechanically enforced... raise it as a judgment call when a session actually notices," since telling deliverable content apart from navigation-layer files (and deciding whether root genuinely reads as cluttered) is exactly that kind of call.
 

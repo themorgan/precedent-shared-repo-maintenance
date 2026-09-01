@@ -27,4 +27,5 @@ Left unwatched, the list ends up looking like it ranks items by how recently som
 
 
 ## Install
+No mechanical check: "roughly comparable length" is deliberately not a fixed ratio (the rule's own Detail section calls it "a strong preference, not a hard rule"), and whether one item's extra length reflects genuinely greater weight or just drafting mood is a judgment about the content, not something a length comparison alone can settle without flagging plenty of legitimately uneven lists.
 

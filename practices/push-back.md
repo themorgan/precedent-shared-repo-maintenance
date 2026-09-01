@@ -1,6 +1,6 @@
 ---
 slug:        push-back
-title:       Push-back mode: argue, don't just comply, on writing-and-thinking work
+title:       "Push-back mode: argue, don't just comply, on writing-and-thinking work"
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
@@ -29,4 +29,5 @@ Nothing here can distinguish, from the outside, a session that stayed quiet out 
 
 
 ## Install
+No mechanical check, and the practice says so itself: its own Why section states this "leans entirely on honest judgment about whether a given disagreement is real," since nothing external can distinguish correctly finding no real problem from staying quiet out of excessive deference.
 

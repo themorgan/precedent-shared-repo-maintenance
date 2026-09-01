@@ -27,4 +27,5 @@ Most calls in day-to-day work (a wording choice, which of two valid layouts to u
 
 
 ## Install
+No mechanical check: a commit either has a "Judgment calls made:" heading or doesn't, and that presence alone is trivially greppable -- but the actual rule is about which calls were correctly sized as small enough to just make versus which should have stopped and asked, and that sizing (hard/costly to undo, touches production, a real two-reasonable-people toss-up) is the judgment itself, not observable after the fact from the commit alone.
 

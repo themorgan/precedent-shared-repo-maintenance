@@ -27,4 +27,5 @@ A backlog document drifting out of sync with what was actually decided is common
 
 
 ## Install
+No mechanical check: reconciling the backlog document against "the thread's discussion" requires comparing a file to a conversation this repo's tree never records -- a check could confirm a `TODO.md` exists and was touched in the same commit, but that's a weak proxy that would pass on an unrelated edit to the file and fail on a push that genuinely needed no reconciliation.
 

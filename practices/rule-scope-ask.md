@@ -29,4 +29,5 @@ The ask is nearly free while the rule is still in front of the person proposing 
 
 
 ## Install
+No mechanical check: this is a live judgment call made while a rule is being proposed -- whether its scope is genuinely ambiguous by the rule's own test ("would the rule's own text still make sense applied to a different document?"). Nothing in committed content records whether that ask happened, or should have.
 

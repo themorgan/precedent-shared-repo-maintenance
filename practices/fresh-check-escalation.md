@@ -27,4 +27,5 @@ An environment with a standing credential gap fails the same way, every single s
 
 
 ## Install
+No mechanical check: the freshness-check mechanism this rule refines doesn't exist as code in this repo (it runs in a consuming repo, against a private source), and the actual distinction it requires -- printing "could not verify" instead of staying silent on a standing credential gap -- is behavior of that mechanism's own error handling, not a property this repo's tree can be scanned for.
 
