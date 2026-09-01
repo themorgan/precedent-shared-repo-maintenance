@@ -27,4 +27,5 @@ A private source needs its own credential precisely because it is private -- a p
 
 
 ## Install
+No mechanical check, same reason as its sibling `bestpractice-sync`: the workflow this rule requires runs in a repo that vendors this team's set, comparing against this team's own private source with its own credential. This repo is that private source, not a consumer of it -- there is no such workflow here to check.
 

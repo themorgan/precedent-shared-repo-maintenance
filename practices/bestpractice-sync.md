@@ -27,4 +27,5 @@ Nothing is fetched from a remote when a working session starts -- the vendored c
 
 
 ## Install
+No mechanical check: the workflow this practice requires runs in a *consuming* repo that vendors a universal or team set, comparing its recorded source commit against the source's actual head. This repo is a source, not a consumer of one -- there is no vendored copy and no such workflow to check here.
 

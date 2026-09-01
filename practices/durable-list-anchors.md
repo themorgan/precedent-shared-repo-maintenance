@@ -27,4 +27,5 @@ Position-only numbering makes every future insertion a choice between distorting
 
 
 ## Install
+No mechanical check: whether a given numbered list holds "durable content likely to be cited by position" versus a short, disposable set of options is exactly the judgment the rule turns on, and the Detail section's own carve-outs (a short bullet list; a list vendored byte-identical from upstream) need the same judgment to apply correctly. A check that flagged every unanchored numbered list would misfire on most of them.
 

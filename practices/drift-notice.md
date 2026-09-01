@@ -27,4 +27,5 @@ A purely printed notice competes for a session's attention against whatever conc
 
 
 ## Install
+No mechanical check: this is a rule about when a session raises drift (immediately at session start, not saved for later) -- a property of session conduct and turn ordering, not of any file this repo's own tree holds. There is no artifact left behind that distinguishes a notice raised early from one raised late.
 

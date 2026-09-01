@@ -35,4 +35,5 @@ A running log of "we added X, then softened it, then changed to Y" only grows, i
 
 
 ## Install
+No mechanical check: recognizing that "a standing constraint on one file gets stated a second time" -- the trigger for creating a recipe at all -- requires comparing two pieces of prose for semantic restatement, not syntactic match. Whether an existing recipe's own format (file-header, title, optional `Source:` line, flat rule list) is well-formed is checkable in principle, but the actual judgment this practice turns on -- was this really restated, does a line still belong, has a per-file rule become a repo-wide one -- isn't.
 

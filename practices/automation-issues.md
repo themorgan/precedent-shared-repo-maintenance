@@ -27,4 +27,5 @@ A CI annotation lives inside one workflow run; nobody sees it unless they alread
 
 
 ## Install
+No mechanical check: this repo runs no unattended scheduled job itself, so there is no run history here to check the idempotent-issue-per-blocker behavior against. A repo that adds such automation could check it directly (does a recurrence comment on the existing open issue rather than opening a duplicate) but that's a property of that automation's own run history, not of this repo's tree.
 

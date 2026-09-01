@@ -6,7 +6,7 @@ severity:    default
 applies_to:  ["**"]
 occasion:    "leaving a placeholder or fill-in-later note mid-draft"
 index_clause: "wrap a draft placeholder in \u27a1\ufe0f TEXT \u2b05\ufe0f, bold and all caps"
-checked_by:  null
+checked_by:  tools/checks/check_draft_marker.py
 defines:     []
 status:      active
 supersedes:  []
@@ -27,4 +27,5 @@ Plain caps alone isn't enough: an all-caps placeholder still reads as ordinary b
 
 
 ## Install
+Checked mechanically by [`tools/checks/check_draft_marker.py`](../tools/checks/check_draft_marker.py), scope `tree`, over tracked markdown files. It implements the Detail section's own described check -- a text search for the marker -- rather than a new invention: any `**➡️ ... ⬅️**` sitting in real document prose (not inside backtick code, which is how this practice's own Rule text illustrates the format) is a marker that should have been caught and cleared before the content was committed. Two-direction tested in [`tools/checks/tests/test_draft_marker.sh`](../tools/checks/tests/test_draft_marker.sh), which also confirms the check doesn't misfire on this file's own illustration of the format.
 

@@ -1,6 +1,6 @@
 ---
 slug:        deep-check
-title:       The deep check: every audit, plus an open-ended coherence review
+title:       "The deep check: every audit, plus an open-ended coherence review"
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
@@ -31,4 +31,5 @@ It is deliberately not a per-commit gate: the review half costs a careful read o
 
 
 ## Install
+No new mechanical check of its own: the mechanical half of a deep check is exactly "every audit script the repo maintains, run together" -- already exactly what [`tools/checks/tests/run_all.sh`](../tools/checks/tests/run_all.sh) does. The review half -- reading the repo's own rules against each other for contradiction, drift, or disproportion -- is explicitly the part no audit can catch (per this file's own Rule: "the audits catch broken links and bad syntax; they can't catch a rule that now contradicts another rule"); that's a judgment call by design, not a gap to close.
 

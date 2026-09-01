@@ -31,4 +31,5 @@ A reply that says "fixed in the header rule, see the backlog item" is exactly as
 
 
 ## Install
+No mechanical check: it's the general case of `branch-links` and `file-mention-links`, one level broader (any file, rule, branch, commit, PR, issue, tool, or spec named in a document or a reply), and inherits the same limit -- recognizing that something was "mentioned" in free-form prose, as opposed to a coincidentally similar word, has no reliable syntactic signature to key a check off.
 
