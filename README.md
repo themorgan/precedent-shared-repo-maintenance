@@ -1,4 +1,4 @@
-<!-- Last updated: 2026-08-31 20:00:00 (Buenos Aires) by Morgan F, to version 1 -->
+<!-- Last updated: 2026-09-02 (Buenos Aires) by a private-repo reconcile session, to version 2 -->
 
 # precedent-team-maintainers
 
@@ -37,3 +37,15 @@ override by precedence alone.
 `rule-links` and `go-merge` (the latter in `precedent-individual`) each
 carry `overrides:` against a universal practice they specialize
 (`doc-references-are-links`, `merge-authorization-keyword`).
+
+## Approvers
+
+[`approvers.json`](approvers.json) names who may say yes to a change in this
+set (PRACTICE_ENGINE_PLAN.md, "Who the Approvers Are, and How They Get That
+Job") — currently Morgan F ([`themorgan`](https://github.com/themorgan)) and
+Alex ([`alex137`](https://github.com/alex137)), the set's only two members.
+[`CODEOWNERS`](CODEOWNERS) is generated from it with
+[`tools/build_codeowners.py`](tools/build_codeowners.py) — never hand-edited;
+to add or remove an approver, edit `approvers.json` and rerun that script.
+Per the plan, changing the approvers list is itself a change to the set, so
+it needs the current approvers' own approval like any other change here.

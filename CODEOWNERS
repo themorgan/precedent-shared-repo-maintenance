@@ -1,0 +1,10 @@
+# DERIVED from approvers.json @ 0da0c04771941ecc188cc97039140b2bdc0cbeda
+# Recipe: tools/build_codeowners.py
+# Regenerate with: python3 tools/build_codeowners.py
+# edits here are safe to make but not durable -- regeneration replaces
+# this file; to make a change stick, edit the source or the recipe.
+#
+# Every approver reviews every change to this practice set -- there is
+# no per-path split; the whole repo is the thing being approved.
+
+*  @themorgan @alex137
