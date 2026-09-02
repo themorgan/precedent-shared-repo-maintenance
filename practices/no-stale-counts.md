@@ -6,7 +6,7 @@ severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "writing a sentence that cites an exact, changeable count"
 index_clause: "drop a count that will go stale; say \"several\", not the number"
-checked_by:  null
+checked_by:  tools/checks/check_no_stale_counts.py
 defines:     []
 status:      active
 supersedes:  []
@@ -27,5 +27,5 @@ No audit checks a sentence like "twenty-nine numbered sections" against the actu
 
 
 ## Install
-No mechanical check: distinguishing a count "genuinely maintained alongside the thing it counts" (explicitly fine, per the Detail section -- a version number, a date) from one that "will drift" (the violation) requires knowing the writer's intent behind the number, not just its presence. A digit-plus-noun pattern would flag exactly the counts this rule exempts as often as the ones it targets.
+Checked mechanically, but only half of it: [`tools/checks/check_no_stale_counts.py`](../tools/checks/check_no_stale_counts.py), scope `tree`, catches the one shape of violation that needs no writer intent to judge -- a sentence stating "`<N> practices`" is a claim about this repo's own `practices/` directory, and that claim is either currently true or it isn't, independent of intent. It's deliberately narrow: it does not (and, per this file's own Detail section, cannot) tell a "genuinely maintained" count apart from one that merely happens to be accurate today, and it doesn't push toward the Rule's preferred fix of dropping the number outright -- it only catches a count that has already gone stale, which is the concrete harm the Rule names. A general digit-plus-noun scan across arbitrary count types stays a judgment call, for the reason already given. Two-direction tested in [`tools/checks/tests/test_no_stale_counts.sh`](../tools/checks/tests/test_no_stale_counts.sh).
 
