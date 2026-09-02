@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "building or setting up a system that talks to an LLM"
+gates:       []
 index_clause: "build LLM integrations provider-neutral; assume an OpenRouter token"
 checked_by:  null
 defines:     []

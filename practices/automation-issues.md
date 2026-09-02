@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "an unattended scheduled job hits something blocking its normal work"
+gates:       []
 index_clause: "a blocked scheduled job opens or updates an issue, not just a log line"
 checked_by:  null
 defines:     []

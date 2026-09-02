@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "bringing a vendored practice layer into a new or existing repo"
+gates:       []
 index_clause: "vendor the tree, weave conventions into AGENTS.md, wire checks and manifest"
 checked_by:  null
 defines:     []

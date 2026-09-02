@@ -5,6 +5,7 @@ tier:        resident
 severity:    default
 applies_to:  ["**"]
 occasion:    "a question worth asking has come up mid-task"
+gates:       []
 index_clause: "do the independent work first, ask early, keep going"
 checked_by:  null
 defines:     []

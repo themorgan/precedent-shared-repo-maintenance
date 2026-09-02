@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "a session starts in a repo that vendors a universal or team set"
+gates:       []
 index_clause: "check source freshness at session start; raise it right away, not later"
 checked_by:  null
 defines:     []

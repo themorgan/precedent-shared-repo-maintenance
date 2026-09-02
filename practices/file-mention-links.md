@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "mentioning a repo file in a chat reply, PR description, or commit message"
+gates:       ["reply"]
 index_clause: "every file mention in chat or PR/commit text is a live GitHub link"
 checked_by:  null
 defines:     []

@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "writing code that depends on something outside its own control"
+gates:       []
 index_clause: "degrade on a missing config, file, network call, or credential"
 checked_by:  null
 defines:     []

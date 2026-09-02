@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "citing support for a claim in a formal document"
+gates:       []
 index_clause: "cite a formal document for support, never a raw brainstorm entry"
 checked_by:  null
 defines:     []

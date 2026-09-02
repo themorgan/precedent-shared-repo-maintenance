@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "setting up a new repo, or installing into an existing one"
+gates:       []
 index_clause: "check or set the default branch to main, once, at install"
 checked_by:  tools/checks/check_default_branch.py
 defines:     []

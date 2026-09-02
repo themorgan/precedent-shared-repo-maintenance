@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "committing anything"
+gates:       []
 index_clause: "a Session: <url> trailer on every commit"
 checked_by:  tools/checks/check_session_trailer.py
 defines:     []

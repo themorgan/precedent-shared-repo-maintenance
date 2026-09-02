@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "a standing constraint on one file gets stated a second time"
+gates:       []
 index_clause: "present-tense rules for one file, in doc-recipes/<name>.recipe.md"
 checked_by:  null
 defines:     []
