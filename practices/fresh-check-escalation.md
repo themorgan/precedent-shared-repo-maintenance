@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "a session-start freshness check against a private source can't be reached"
+gates:       []
 index_clause: "tell \"could not verify\" apart from \"confirmed fresh\"; verify directly"
 checked_by:  null
 defines:     []

@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "adding or reviewing a team-set rule"
+gates:       []
 index_clause: "a rule that only restates universal gets dropped"
 checked_by:  null
 defines:     []

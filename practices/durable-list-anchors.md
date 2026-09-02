@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "a numbered list's entries are durable content likely to be cited by position"
+gates:       []
 index_clause: "anchor and slug each entry of a durable numbered list, not just its number"
 checked_by:  null
 defines:     []

@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "a new rule is proposed and its scope isn't obvious"
+gates:       []
 index_clause: "unclear if a new rule is repo-wide or one document? ask once"
 checked_by:  null
 defines:     []

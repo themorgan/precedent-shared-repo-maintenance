@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "writing a sentence that cites an exact, changeable count"
+gates:       []
 index_clause: "drop a count that will go stale; say \"several\", not the number"
 checked_by:  tools/checks/check_no_stale_counts.py
 defines:     []

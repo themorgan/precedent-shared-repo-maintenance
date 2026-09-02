@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "writing or reviewing a document's headers"
+gates:       []
 index_clause: "one capitalization schema per document; default to headline style"
 checked_by:  tools/checks/check_header_caps.py
 defines:     []

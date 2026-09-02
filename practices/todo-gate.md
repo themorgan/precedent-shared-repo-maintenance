@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "about to push after a thread of work"
+gates:       ["push"]
 index_clause: "add missed ideas, check off finished ones, before every push"
 checked_by:  null
 defines:     []

@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "a paragraph just got a substantial edit, or the piece is done"
+gates:       []
 index_clause: "trim a paragraph right after editing it, and before calling it done"
 checked_by:  null
 defines:     []
