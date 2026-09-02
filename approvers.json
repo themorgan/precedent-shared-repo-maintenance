@@ -1,0 +1,20 @@
+{
+  "format_version": 1,
+  "_comment": [
+    "Declares this team set's approvers -- PRACTICE_ENGINE_PLAN.md, 'Who the",
+    "Approvers Are, and How They Get That Job': 'Approvers are declared in",
+    "the practice set's own config, not in a host-specific file... GitHub's",
+    "CODEOWNERS is then generated from that list, the same way every other",
+    "view in this system is generated, so there is one source and the",
+    "platform enforcement derives from it rather than competing with it.'",
+    "Edit this file to add or remove an approver, then regenerate CODEOWNERS",
+    "with tools/build_codeowners.py -- never hand-edit CODEOWNERS itself.",
+    "Adding or removing an approver is itself a change to the set, so per",
+    "the plan it needs the current approvers' approval like any other change."
+  ],
+  "team": "precedent-team-maintainers",
+  "approvers": [
+    { "name": "Morgan F", "github": "themorgan" },
+    { "name": "Alex", "github": "alex137" }
+  ]
+}
