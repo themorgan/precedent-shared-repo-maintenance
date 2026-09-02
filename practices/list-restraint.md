@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "about to format connected prose as bullet points"
+gates:       []
 index_clause: "don't reformat connected reasoning as bullet fragments"
 checked_by:  null
 defines:     []

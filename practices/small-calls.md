@@ -5,6 +5,7 @@ tier:        resident
 severity:    default
 applies_to:  ["**"]
 occasion:    "a judgment call is needed to keep work moving"
+gates:       []
 index_clause: "make small calls yourself; note them; stop only for big ones"
 checked_by:  null
 defines:     []

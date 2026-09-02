@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "root has accumulated three or more deliverable-content documents"
+gates:       []
 index_clause: "group deliverable content under a named subdirectory -- a recommendation"
 checked_by:  null
 defines:     []

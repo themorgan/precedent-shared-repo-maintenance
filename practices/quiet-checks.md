@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "reporting a check's outcome that includes a known pre-existing backlog"
+gates:       []
 index_clause: "\"checks passed\" is fine; don't re-explain the same old backlog"
 checked_by:  null
 defines:     []

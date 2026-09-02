@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "reviewing a draft's balance before calling it done"
+gates:       []
 index_clause: "give a point space matching its importance, not its drafting mood"
 checked_by:  null
 defines:     []

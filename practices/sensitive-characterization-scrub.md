@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    blocking
 applies_to:  ["**"]
 occasion:    "about to commit a document that characterizes a real, identifiable person"
+gates:       []
 index_clause: "soften or ask before committing a blunt description of a real person"
 checked_by:  null
 defines:     []

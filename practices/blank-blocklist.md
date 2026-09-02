@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "installing a vendored practice layer that could check in upstream"
+gates:       []
 index_clause: "leave a check-in blocklist blank at install; don't ask, don't remind"
 checked_by:  null
 defines:     []

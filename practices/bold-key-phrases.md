@@ -5,6 +5,7 @@ tier:        resident
 severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "writing any document meant to be read"
+gates:       []
 index_clause: "bold the key phrases by default, without being asked"
 checked_by:  null
 defines:     []

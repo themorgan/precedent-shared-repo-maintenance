@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "naming anything that has a destination, in a document or a reply"
+gates:       []
 index_clause: "link anything mentioned that has a destination, on first use"
 checked_by:  null
 defines:     []

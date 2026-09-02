@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "creating a file a later regeneration will overwrite"
+gates:       []
 index_clause: "a regenerated file's header names its source, recipe, and command"
 checked_by:  tools/checks/check_derived_file_marker.py
 defines:     []
