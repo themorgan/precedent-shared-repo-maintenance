@@ -13,7 +13,7 @@ blocking`) ([PRACTICE_ENGINE_PLAN.md](https://github.com/alex137/BestPractice/bl
 
 `practices/*.md` — one file per practice, in the format
 [spec/PRACTICE_FORMAT.md](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/PRACTICE_FORMAT.md)
-documents: 40 practices, migrated from RepoPersonalPreferences' 46 rules
+documents: practices migrated from RepoPersonalPreferences' 46 rules
 (`PRIVATE_SETS_BRIEF.md`) — everything that wasn't the Morgan-specific
 handful (now in
 [`precedent-individual`](https://github.com/themorgan/precedent-individual),
