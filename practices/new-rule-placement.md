@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "adding a new rule to a maintained rules document"
+gates:       []
 index_clause: "place a new rule by subject, slug it, renumber, mirror, re-check"
 checked_by:  null
 defines:     []

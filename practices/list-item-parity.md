@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**/*.md"]
 occasion:    "drafting or revising a list, or a document with list-like sections"
+gates:       []
 index_clause: "keep list items comparable in length; default to the shorter side"
 checked_by:  null
 defines:     []

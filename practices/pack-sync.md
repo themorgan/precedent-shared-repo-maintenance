@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "a project repo vendors this team's own practice set, and it has moved"
+gates:       []
 index_clause: "the team-set sync is the universal sync's sibling, against a private repo"
 checked_by:  null
 defines:     []

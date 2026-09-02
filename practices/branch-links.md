@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "naming a git branch in a document, reply, or status update"
+gates:       []
 index_clause: "link every git branch mentioned to its tree view"
 checked_by:  null
 defines:     []

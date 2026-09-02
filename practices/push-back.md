@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "drafting or reviewing prose meant to persuade or be judged"
+gates:       []
 index_clause: "argue a real counter-case before building on a stated stance"
 checked_by:  null
 defines:     []

@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "a repo vendors a universal or team practice set as tracked files"
+gates:       []
 index_clause: "a scheduled workflow keeps the vendored universal copy current"
 checked_by:  null
 defines:     []

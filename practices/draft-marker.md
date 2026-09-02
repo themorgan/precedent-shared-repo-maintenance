@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "leaving a placeholder or fill-in-later note mid-draft"
+gates:       []
 index_clause: "wrap a draft placeholder in \u27a1\ufe0f TEXT \u2b05\ufe0f, bold and all caps"
 checked_by:  tools/checks/check_draft_marker.py
 defines:     []
