@@ -6,7 +6,7 @@ severity:    default
 applies_to:  ["**"]
 occasion:    "asked for a \"deep check\" by name, or after drift-inviting work"
 index_clause: "every mechanical audit, plus a full read of the repo against itself"
-checked_by:  null
+checked_by:  tools/checks/check_deep_check.py
 defines:     []
 status:      active
 supersedes:  []
@@ -31,5 +31,5 @@ It is deliberately not a per-commit gate: the review half costs a careful read o
 
 
 ## Install
-No new mechanical check of its own: the mechanical half of a deep check is exactly "every audit script the repo maintains, run together" -- already exactly what [`tools/checks/tests/run_all.sh`](../tools/checks/tests/run_all.sh) does. The review half -- reading the repo's own rules against each other for contradiction, drift, or disproportion -- is explicitly the part no audit can catch (per this file's own Rule: "the audits catch broken links and bad syntax; they can't catch a rule that now contradicts another rule"); that's a judgment call by design, not a gap to close.
+Checked mechanically, but only half of it: [`tools/checks/check_deep_check.py`](../tools/checks/check_deep_check.py), scope `tree`, verifies the mechanical half's own claim is actually true -- that [`tools/checks/tests/run_all.sh`](../tools/checks/tests/run_all.sh) really does run every audit script the repo maintains. It catches a check script added with no matching test (so `run_all.sh`'s `test_*.sh` glob would silently never exercise it) and a stale test left behind after its check script was removed. The review half -- reading the repo's own rules against each other for contradiction, drift, or disproportion -- is explicitly the part no audit can catch (per this file's own Rule: "the audits catch broken links and bad syntax; they can't catch a rule that now contradicts another rule"); that's a judgment call by design, not a gap to close. Two-direction tested in [`tools/checks/tests/test_deep_check.sh`](../tools/checks/tests/test_deep_check.sh).
 
