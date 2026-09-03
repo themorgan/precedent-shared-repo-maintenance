@@ -31,8 +31,8 @@ separate check of whether it was actually team-appropriate. It wasn't:
 unattended, auto-merging automation is a preference about how *one*
 person's own projects behave, not a convention this team's second member
 (Alex) separately agreed his own repos should run. Retired here and moved
-to [`precedent-individual`](https://github.com/themorgan/precedent-individual/blob/main/practices/bestpractice-sync.md)
-on 2026-09-03, following BestPractice's own
+to Morgan's own individual practice set on 2026-09-03, following
+BestPractice's own
 [spec/MOVING_PRACTICES.md](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/MOVING_PRACTICES.md)
 pattern (landed there first, retired here second). Not ruled out for the
 future: if a team genuinely wants this behavior and its approvers agree to
