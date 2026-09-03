@@ -4,7 +4,7 @@ title:       A resolved 'known issue' note is updated in the same commit that re
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "When a commit fixes, closes, or resolves something a document names in prose as a known, open issue"
+occasion:    "a commit fixes, closes, or resolves something a document names in prose as a known, open issue"
 gates:       []
 index_clause: "When a commit fixes a bug, closes a gap, or resolves a limitation that some ..."
 checked_by:  null
