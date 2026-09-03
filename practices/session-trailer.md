@@ -16,7 +16,7 @@ added:       2026-08-31
 approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session"
 ---
 ## Rule
-A `Session: <url>` trailer on every commit -- for Claude Code, `https://claude.ai/code/session_<ID>`. For unattended automation with no chat session behind it, the workflow run's own URL stands in. If a tool has no shareable link at all, the trailer says so explicitly (`Session: none available (<tool>)`) rather than being silently omitted.
+A `Session: <url>` trailer on every commit -- for Claude Code, `https://claude.ai/code/session_<ID>`. `Claude-Session: <url>` is also accepted -- the key Claude Code Remote's own harness actually emits as of 2026-09, functionally the same trailer under a different name. For unattended automation with no chat session behind it, the workflow run's own URL stands in. If a tool has no shareable link at all, the trailer says so explicitly (`Session: none available (<tool>)`) rather than being silently omitted.
 
 ## Detail
 
