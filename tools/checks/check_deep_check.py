@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """check_deep_check.py -- the mechanical check for practices/deep-check.md.
 
+# practice: deep-check
+
 Scope: tree. The practice's own Install text names what its mechanical half
 actually is: "every audit script the repo maintains, run together -- already
 exactly what tools/checks/tests/run_all.sh does." That claim has a real,

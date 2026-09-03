@@ -2,6 +2,8 @@
 """check_derived_file_marker.py -- the mechanical check for
 practices/derived-file-marker.md.
 
+# practice: derived-file-marker
+
 Scope: tree. Any tracked file that opens with a "DERIVED from" line (in
 whatever comment syntax that file uses) is claiming to be a regenerated
 file per this practice, and must carry all four fixed fields, in order,

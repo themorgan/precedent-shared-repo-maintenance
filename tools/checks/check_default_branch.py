@@ -2,6 +2,8 @@
 """check_default_branch.py -- the mechanical check for
 practices/default-branch.md.
 
+# practice: default-branch
+
 Scope: tree, via one cheap remote query -- exactly what the practice's own
 Install section endorses ("via a host API where the session's tools reach
 that far"). `git ls-remote --symref <url> HEAD` asks the remote which

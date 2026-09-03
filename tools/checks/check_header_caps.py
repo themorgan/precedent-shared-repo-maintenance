@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """check_header_caps.py -- the mechanical check for practices/header-caps.md.
 
+# practice: header-caps
+
 Scope: tree, over every tracked `*.md` file (applies_to). This covers one
 half of the rule, the half that's unambiguous regardless of which scheme a
 document picked: "headers and subheaders at the same rank in a document
