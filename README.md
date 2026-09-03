@@ -1,15 +1,23 @@
-<!-- Last updated: 2026-09-02 (Buenos Aires) by a private-repo reconcile session, to version 2 -->
+<!-- Last updated: 2026-09-03 (Buenos Aires) by Morgan F, to version 3 -->
 
 # precedent-team-maintainers
 
 The team practice set for [Precedent](https://github.com/alex137/BestPractice/tree/precedent-beta-v01)
 — one small group's working conventions, vendored into a project repo the
-same way universal practices are, and beating universal by precedence but
-losing to a person's own individual set (unless marked `severity:
-blocking`) ([PRACTICE_ENGINE_PLAN.md](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/PRACTICE_ENGINE_PLAN.md),
-"Precedence, and the One Case Where the Individual Does Not Win").
+same way universal practices are, and (as of the 2026-09-03 precedence
+reorder) the **strongest** of the four sources: team beats repo-local beats
+individual beats universal by default
+([PRACTICE_ENGINE_PLAN.md](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/PRACTICE_ENGINE_PLAN.md),
+"Precedence, and the One Case Precedence Alone Does Not Decide").
 
 ## What's here
+
+**[AGENTS.md](AGENTS.md) is the working index** — its generated loader block
+(resident practices in full, everything else grouped by occasion) is what a
+session actually loads; regenerate it with
+`python3 tools/build_views.py --agents-only` after any practice change. This
+section gives the history and allocation reasoning `AGENTS.md`'s generated
+block doesn't carry.
 
 `practices/*.md` — one file per practice, in the format
 [spec/PRACTICE_FORMAT.md](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/PRACTICE_FORMAT.md)
@@ -31,8 +39,13 @@ team decides each one is ready.
 
 Two practices are marked `severity: blocking`
 (`sensitive-characterization-scrub`, `private-repo-scrub`) — real
-information-leak guards that no individual practice should be able to
-override by precedence alone.
+information-leak guards. This predates the precedence reorder above, from
+when team ranked below individual and `blocking` was the only thing stopping
+a personal override; team now already outranks individual by plain
+precedence, so the marking is redundant rather than load-bearing for these
+two specifically — left in place since it's harmless and still correct
+(nothing above team can override a blocking team practice either way), not
+re-litigated here.
 
 `rule-links` and `go-merge` (the latter in `precedent-individual`) each
 carry `overrides:` against a universal practice they specialize
