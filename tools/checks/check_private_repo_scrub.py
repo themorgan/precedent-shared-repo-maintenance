@@ -2,6 +2,8 @@
 """check_private_repo_scrub.py -- the mechanical check for
 practices/private-repo-scrub.md.
 
+# practice: private-repo-scrub
+
 Scope: tree, over practices/*.md specifically -- that directory is
 exactly the content this repo ships: per practices/install.md's own Rule,
 a consuming repo vendors the whole practices/ tree verbatim. The rule

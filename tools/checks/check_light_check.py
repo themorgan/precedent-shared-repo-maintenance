@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """check_light_check.py -- the mechanical check for practices/light-check.md.
 
+# practice: light-check
+
 Scope: tree. The practice names its own minimum audit: conflict markers,
 invalid JSON/YAML syntax, secret-shaped strings, and broken relative doc
 links. This script IS that audit, run against this repo itself -- the
