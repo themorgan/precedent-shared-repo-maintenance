@@ -2,6 +2,8 @@
 """check_session_trailer.py -- the mechanical check for
 practices/session-trailer.md.
 
+# practice: session-trailer
+
 Scope: tree. Every commit reachable from HEAD in this repo must carry a
 `Session:` trailer line -- either `Session: <url>` or the explicit
 `Session: none available (<tool>)` opt-out. A commit with neither is the

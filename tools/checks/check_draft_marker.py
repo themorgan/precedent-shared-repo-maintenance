@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """check_draft_marker.py -- the mechanical check for practices/draft-marker.md.
 
+# practice: draft-marker
+
 Scope: tree, over markdown files (where a draft placeholder actually
 lives). The practice's own Detail section names the actual mechanical
 moment: "before showing or sharing any document, scan it for the marker
