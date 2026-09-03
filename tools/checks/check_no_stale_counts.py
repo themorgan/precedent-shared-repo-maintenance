@@ -2,6 +2,8 @@
 """check_no_stale_counts.py -- the mechanical check for
 practices/no-stale-counts.md.
 
+# practice: no-stale-counts
+
 Scope: tree. The practice's own Install text is right that the general
 case -- telling a count "genuinely maintained alongside the thing it
 counts" apart from one that "will drift" -- needs the writer's intent,
