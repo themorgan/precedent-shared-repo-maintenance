@@ -1,4 +1,4 @@
-<!-- Last updated: 2026-09-03 (Buenos Aires) by Morgan F, to version 3 -->
+<!-- Last updated: 2026-09-05 (Buenos Aires) by Morgan F, to version 4 -->
 
 # precedent-team-maintainers
 
@@ -50,6 +50,17 @@ re-litigated here.
 `rule-links` and `go-merge` (the latter in `precedent-individual`) each
 carry `overrides:` against a universal practice they specialize
 (`doc-references-are-links`, `merge-authorization-keyword`).
+
+`tools/` beyond `build_codeowners.py` (this repo's own) is Precedent's
+vendored source-repo engine — `build_views.py`, `precedent_gate.py`,
+`precedent_paths.py`, `precedent_show.py`, `split_practices.py`, a trimmed
+`routing_scope.json`, and `precedent_vendor_engine.py` itself. As of
+2026-09-05 this is a real, tracked copy (`tools/ENGINE_MANIFEST.json`
+records the BestPractice commit and a sha256 per file) instead of the
+undocumented, un-refreshable hand-copy it was before — see
+[`spec/BOOTSTRAP_NEW_SOURCES.md`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/BOOTSTRAP_NEW_SOURCES.md#the-vendored-engine)'s
+"The vendored engine". Never hand-edit these; refresh with
+`python3 tools/precedent_vendor_engine.py refresh <bestpractice-clone>`.
 
 ## Approvers
 
