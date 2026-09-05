@@ -39,16 +39,35 @@ Run:
       # BestPractice itself" prose); a team or individual source repo
       # vendoring this same file for its own practices/ catalogue wants
       # the resident-block/occasion-index mechanism, not those two.
+  python3 tools/build_views.py --repo DIR [--agents-only] [--check]
+      # operate on DIR's practices/AGENTS.md/MAP.md/GLOSSARY.md instead of
+      # this repo's own -- --repo defaults to this script's own parent
+      # directory when omitted. The "## The engine" table inside MAP.md
+      # still always lists the tools sitting beside THIS SCRIPT, regardless
+      # of --repo: that table describes the engine's own code inventory,
+      # not the target repo's content, the same "sibling files travel with
+      # the script, not with --repo" rule sibling-module imports follow.
 """
 import collections, json, pathlib, re, sys
 
-ROOT = pathlib.Path(__file__).resolve().parents[1]
+# _ENGINE_DIR (where this file itself lives) is only ever used for the
+# sibling-module import and the MAP.md "## The engine" listing below --
+# both describe the engine's own code, which travels with wherever this
+# script physically is, never with --repo. ROOT is which repo's CONTENT
+# (practices/, AGENTS.md, MAP.md, GLOSSARY.md) to read and (re)generate; it
+# defaults to the engine's own parent directory but is overridable with
+# --repo in main() -- see precedent_show.py for the fuller rationale, and
+# precedent_sync_views.py's own docstring for the trap this avoids
+# (computing ROOT from `__file__` alone breaks the moment this script is
+# relocated or vendored somewhere other than <repo>/tools/whatever.py).
+_ENGINE_DIR = pathlib.Path(__file__).resolve().parent
+ROOT = _ENGINE_DIR.parent  # unchanged default when --repo is omitted
 PRACTICES_DIR = ROOT / 'practices'
 AGENTS_MD = ROOT / 'AGENTS.md'
 MAP_MD = ROOT / 'MAP.md'
 GLOSSARY_MD = ROOT / 'GLOSSARY.md'
 
-sys.path.insert(0, str(ROOT / 'tools'))
+sys.path.insert(0, str(_ENGINE_DIR))
 import split_practices as sp
 
 BEGIN_MARKER = '<!-- BEGIN GENERATED: precedent-loader -->'
@@ -62,9 +81,10 @@ def _approx_tokens(text):
     return int(len(WORD_RE.findall(text)) * 1.3)
 
 
-def load_practices():
+def load_practices(practices_dir=None):
+    practices_dir = practices_dir if practices_dir is not None else PRACTICES_DIR
     out = []
-    for f in sorted(PRACTICES_DIR.glob('*.md')):
+    for f in sorted(practices_dir.glob('*.md')):
         fm, sections = sp._read_practice_file(f)
         out.append((fm, sections, f))
     return out
@@ -148,7 +168,16 @@ def _occasion_clause(rule_text, max_len=90):
     return clause
 
 
-def build_loader_block(practices):
+def build_loader_block(practices, source_levels=None):
+    """practices: (fm, sections, file) triples, exactly as load_practices()
+    returns for this repo's own single-source catalogue. source_levels:
+    optional {slug: level} for a caller resolving MULTIPLE sources (e.g.
+    tools/precedent_materialize.py's output, walked by a consuming repo's
+    own precedent_sync_views.py) -- purely cosmetic, breaking the header's
+    practice count out by level, so the generated block discloses
+    provenance at a glance rather than only in MANIFEST.json. Omitting it
+    (the default) renders byte-identical to before this parameter existed,
+    which is what keeps this repo's own single-source generation unchanged."""
     resident = [(fm, sections) for fm, sections, _f in practices if fm.get('tier') == 'resident']
     resident.sort(key=lambda t: t[0]['slug'])
 
@@ -180,8 +209,21 @@ def build_loader_block(practices):
     lines.append(f"<!-- Regenerate with: python3 tools/build_views.py -- do not hand-edit "
                  f"this block, tools/verify_harness.py's regeneration check fails on drift. -->")
     lines.append('')
+    count_detail = f"{len(resident)} of {len(practices)} practices"
+    if source_levels and resident:
+        # Levels of the RESIDENT set specifically (not all `practices`) --
+        # this sits right after "X of Y practices", so a reader's natural
+        # reading is "the breakdown of X", not of the larger Y. Breaking
+        # down Y instead once rendered "1 of 4 practices (1 individual, 1
+        # repo-local, 1 team, 1 universal)" for a fixture with exactly ONE
+        # resident practice -- readable as four resident practices, one per
+        # level, which was never true.
+        by_level = collections.Counter(source_levels.get(fm['slug'], '?')
+                                        for fm, _s in resident)
+        count_detail += ' (' + ', '.join(f"{by_level[l]} {l}" for l in
+                                          sorted(by_level) if by_level[l]) + ')'
     lines.append(f"### Resident block (~{token_count} of {RESIDENT_BUDGET_TOKENS} token budget, "
-                 f"{len(resident)} of {len(practices)} practices)")
+                 f"{count_detail})")
     lines.append('')
     lines.append(resident_text)
     lines.append('')
@@ -206,11 +248,12 @@ def build_loader_block(practices):
     return '\n'.join(lines), token_count, len(resident)
 
 
-def render_agents_md(practices):
-    original = AGENTS_MD.read_text(encoding='utf-8')
+def render_agents_md(practices, agents_md=None):
+    agents_md = agents_md if agents_md is not None else AGENTS_MD
+    original = agents_md.read_text(encoding='utf-8')
     block, _tokens, _n = build_loader_block(practices)
     if BEGIN_MARKER not in original or END_MARKER not in original:
-        sys.exit("build_views FAIL: AGENTS.md has no "
+        sys.exit(f"build_views FAIL: {agents_md} has no "
                  f"{BEGIN_MARKER} / {END_MARKER} markers to regenerate between.")
     pre = original[:original.index(BEGIN_MARKER)]
     post = original[original.index(END_MARKER) + len(END_MARKER):]
@@ -253,7 +296,7 @@ def render_map_md(practices):
         "| Path | What it is |",
         "|---|---|",
     ]
-    for name in sorted(p.name for p in (ROOT / 'tools').glob('*.py')):
+    for name in sorted(p.name for p in _ENGINE_DIR.glob('*.py')):
         try:
             desc = TOOLS_DESCRIPTIONS[name]
         except KeyError:
@@ -285,11 +328,14 @@ TOOLS_DESCRIPTIONS = {
     'doc_html.py': "The one sortable-table HTML renderer for repo documents",
     'doc_lint.py': "Markdown hygiene checks — strikethrough, links, acronyms",
     'doc_sync.py': "Keeps script-generated blocks inside documents in sync with what the script emits",
+    'full_practice_audit.py': "The full practice audit — on-demand, whole-catalogue sweep across every source",
     'leak_gate.py': "The push-time leak gate — structural rules always, private-term blocklist when configured",
     'model_audit.py': "Runs each computing script's own self-assertions and checks the figures it recites",
     'practice_audit.py': "Audits the practice-export layer for a repo that vendors one (this repo does not)",
+    'practice_simulation.py': "Synthetic scenario generation for routing quality — invented cases, never a replayed benchmark",
     'precedent_check.py': "The ENFORCED loading channel — runs every practice's `checked_by` script",
     'precedent_gate.py': "The GATE-TRIGGERED loading channel — Rules for a named moment (merge, review, push, reply)",
+    'precedent_bootstrap_source.py': "Instantiates a brand-new individual or team practice set from a skeleton, for an adopter who has neither yet",
     'precedent_candidate.py': "Stage 2 (phase 5) — raise, list and expire creation-pipeline candidates",
     'precedent_detect.py': "Stage 1 (phase 5) — the mechanical half of candidate detection",
     'precedent_land.py': "Stage 5 (phase 5) — writes an approved candidate into practices/, enforcing the registered-check invariant",
@@ -299,11 +345,16 @@ TOOLS_DESCRIPTIONS = {
     'precedent_resolve.py': "Resolves the universal, team and individual sources into one set, by precedence",
     'precedent_retire.py': "Stage 6 (phase 5) — the periodic retirement report; proposes, never acts",
     'precedent_show.py': "Loads a practice's Rule/Detail/Why/Story/Install — the one code path that reads a practice file",
+    'precedent_simulate.py': "One command over the reach/mechanical-correctness and synthetic-batch tiers, plus the running trend log",
+    'precedent_sync_views.py': "One command for a consuming repo: precedent_materialize.py + build_views.py --agents-only, glued together",
+    'precedent_vendor_engine.py': "Vendors the minimal source-repo engine (this file, precedent_gate/paths/show.py, split_practices.py, a trimmed routing_scope.json) into an individual or team set, and keeps it refreshable",
     'resplit_sections.py': "The editorial Rule/Detail/Why/Story/Install split, applied from tools/section_split.json",
+    'routing_audit.py': "The routing audit — mechanical coverage check plus a rotating deep-read slice",
     'routing_eval.py': "Measures whether trigger-based loading actually beats carrying the whole catalogue",
     'split_practices.py': "PRACTICES.md ↔ practices/ converter",
     'table_fmt.py': "One formatter per quantity kind — the engine",
     'verify_harness.py': "The verification harness — run before trusting any change here",
+    'very_deep_check.py': "The very deep check — on-demand whole-repo coherence review, distinct from full-practice-audit",
 }
 
 
@@ -340,7 +391,21 @@ def render_glossary_md(practices):
 
 
 def main():
-    check = '--check' in sys.argv
+    argv = sys.argv[1:]
+    repo = None
+    if '--repo' in argv:
+        i = argv.index('--repo')
+        if i + 1 >= len(argv):
+            sys.exit("build_views FAIL: --repo needs a value.")
+        repo = argv[i + 1]
+        argv = argv[:i] + argv[i + 2:]
+    root = pathlib.Path(repo).resolve() if repo else ROOT
+    practices_dir = root / 'practices'
+    agents_md = root / 'AGENTS.md'
+    map_md = root / 'MAP.md'
+    glossary_md = root / 'GLOSSARY.md'
+
+    check = '--check' in argv
     # --agents-only: regenerate just AGENTS.md's loader block (resident
     # block, occasion index, standing instruction), skip MAP.md and
     # GLOSSARY.md. render_map_md()'s TOOLS_DESCRIPTIONS table and "this repo
@@ -351,14 +416,14 @@ def main():
     # just a hand-written README describing the practice list in prose)
     # wants only the loader-block mechanism, not BestPractice's own MAP/
     # GLOSSARY conventions.
-    agents_only = '--agents-only' in sys.argv
-    practices = load_practices()
+    agents_only = '--agents-only' in argv
+    practices = load_practices(practices_dir)
 
-    new_agents = render_agents_md(practices)
-    targets = [(AGENTS_MD, new_agents)]
+    new_agents = render_agents_md(practices, agents_md)
+    targets = [(agents_md, new_agents)]
     if not agents_only:
-        targets.append((MAP_MD, render_map_md(practices)))
-        targets.append((GLOSSARY_MD, render_glossary_md(practices)))
+        targets.append((map_md, render_map_md(practices)))
+        targets.append((glossary_md, render_glossary_md(practices)))
 
     if check:
         drift = []
