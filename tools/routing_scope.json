@@ -9,13 +9,11 @@
   ],
   "gates": {
     "_note": [
-      "The gate vocabulary is closed: a gate name here with no practice",
-      "naming it, or a practice naming a gate not listed here, is a mismatch",
-      "-- see tools/precedent_gate.py --list."
+      "The gate vocabulary is closed: tools/verify_harness.py refuses an unknown gate name, and refuses a gate with no practices. Each gate names a moment with a real invocation point in this repo."
     ],
     "merge": "merging a branch",
     "review": "reviewing work, or a review finding a defect",
-    "push": "before pushing -- the pre-push hook",
-    "reply": "ending a turn and writing the reply -- the stop hook"
+    "push": "before pushing — the pre-push hook",
+    "reply": "ending a turn and writing the reply — the stop hook"
   }
 }
