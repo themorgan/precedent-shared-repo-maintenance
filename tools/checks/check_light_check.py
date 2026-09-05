@@ -16,6 +16,17 @@ of one -- there is no manifest here to check -- so that half doesn't
 apply to this repo's own tree and isn't implemented here; a repo that
 vendors this set would extend the check with that piece itself.
 
+The broken-relative-link check skips process/upstream/ unconditionally
+(always a vendored mirror, wherever found) and practices/ only when THIS
+repo's own MANIFEST.json shows practices/ is itself a materialized copy
+(an installing repo, not this one) -- see _link_check_exempt. Confirmed
+by running this script against precedent-team-maintainers' own tree
+(zero exemption effect: no MANIFEST.json here, so practices/ stays fully
+checked) versus against a repo that installed this set (where materialized
+copies of OTHER sources' practice files carry links written relative to
+THEIR OWN source repo's root, not resolvable here, and not this repo's to
+fix).
+
 Exit 0 and print nothing when clean. Exit 1 and print the practice's own
 Rule text (never a paraphrase) plus the specific finding(s) on a violation.
 """
@@ -94,7 +105,50 @@ def check_yaml_file(rel: str, text: str, findings: list[str]) -> None:
         findings.append(f"{rel}: not valid YAML ({e})")
 
 
+def _practices_are_materialized() -> bool:
+    """True when THIS repo's practices/ is a derived, tools/precedent_materialize.py
+    -produced copy rather than hand-authored source content -- signalled by
+    the MANIFEST.json that tool writes (generated-artifact-provenance).
+    Only an installing/consuming repo has one; this repo's own tree never
+    will, since it's a source, not an installer, of the set (see this
+    file's own module docstring)."""
+    manifest = ROOT / "MANIFEST.json"
+    if not manifest.exists():
+        return False
+    try:
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return False
+    return data.get("generated_by") == "tools/precedent_materialize.py"
+
+
+# Path prefixes whose broken-link findings are never this repo's business
+# to report, because the content isn't this repo's own to fix:
+#  - process/upstream/ is ALWAYS a vendored mirror of another repo (its
+#    own tree, wherever this convention is followed, is never hand-edited
+#    here -- generated-artifact-provenance / the merge-runbook's own
+#    "never hand-merge" rule for it).
+#  - practices/ is a derived materialize() copy ONLY in an installing
+#    repo (see _practices_are_materialized) -- in THIS repo, the source
+#    of the set, practices/ is real, hand-authored content and stays
+#    checked like anything else.
+# Either way: a link written relative to another repo's own root is
+# correct THERE and not always resolvable once copied flat into this
+# tree, and re-running the vendoring sync would restore the identical
+# "broken" link -- reporting it here every run is a permanent,
+# unactionable backlog, not something this check's own gate should hold
+# against a commit it can't fix.
+def _link_check_exempt(rel: str) -> bool:
+    if rel.startswith("process/upstream/"):
+        return True
+    if rel.startswith("practices/") and _practices_are_materialized():
+        return True
+    return False
+
+
 def check_md_links(rel: str, text: str, findings: list[str]) -> None:
+    if _link_check_exempt(rel):
+        return
     base = (ROOT / rel).parent
     for lineno, line in enumerate(text.splitlines(), start=1):
         for target in MD_LINK_RE.findall(line):
