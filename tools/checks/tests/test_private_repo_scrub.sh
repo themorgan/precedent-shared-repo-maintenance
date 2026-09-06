@@ -72,9 +72,21 @@ cat > practices/planted-foreign.md <<'MD'
 ## Rule
 This text names precedent-team-maintainers, which is a private repo.
 MD
-cat > MANIFEST.json <<'JSON'
-{"practices": [{"slug": "planted-foreign", "level": "team", "source": "precedent-team-maintainers"}]}
-JSON
+# APPEND to the manifest, never replace it. Overwriting it strips attribution
+# from every OTHER practice in practices/, so any real materialized practice
+# that happens to name a private repo is then read as this repo's own content
+# and the check fires on it -- a failure in this case that has nothing to do
+# with what this case is testing. 2026-09-06: that is exactly what happened in
+# a consuming repo, where a newly vendored individual practice carrying an
+# owner-qualified URL made this case go red while cases 1 and 2 both passed.
+python3 - <<'PY'
+import json, pathlib
+p = pathlib.Path('MANIFEST.json')
+d = json.loads(p.read_text(encoding='utf-8')) if p.exists() else {}
+d.setdefault('practices', []).append(
+    {'slug': 'planted-foreign', 'level': 'team', 'source': 'precedent-team-maintainers'})
+p.write_text(json.dumps(d, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+PY
 git add practices/planted-foreign.md MANIFEST.json
 git -c user.name="Test" -c user.email="test@example.com" commit -q -m "planted foreign materialized practice"
 
