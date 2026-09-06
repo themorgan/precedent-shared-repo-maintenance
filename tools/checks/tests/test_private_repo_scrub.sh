@@ -11,7 +11,12 @@ trap 'rm -rf "$SCRATCH"' EXIT
 
 git clone -q "$ROOT" "$SCRATCH"
 cd "$SCRATCH"
-printf '\nSee precedent-individual for a worked example.\n' >> practices/install.md
+# The planted string is OWNER-QUALIFIED on purpose. A bare
+# "precedent-individual" is the public convention name every adopter's set
+# carries (Precedent's own `source-naming`), so it identifies nobody and no
+# longer fires -- planting one here would test the check into forbidding a
+# word consuming repos are required to use.
+printf '\nSee themorgan/precedent-individual for a worked example.\n' >> practices/install.md
 git add practices/install.md
 git -c user.name="Test" -c user.email="test@example.com" commit -q -m "planted violation: names a private repo in vendored content"
 
