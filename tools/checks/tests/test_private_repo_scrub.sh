@@ -16,9 +16,33 @@ cd "$SCRATCH"
 # carries (Precedent's own `source-naming`), so it identifies nobody and no
 # longer fires -- planting one here would test the check into forbidding a
 # word consuming repos are required to use.
-printf '\nSee themorgan/precedent-individual for a worked example.\n' >> practices/install.md
-git add practices/install.md
-git -c user.name="Test" -c user.email="test@example.com" commit -q -m "planted violation: names a private repo in vendored content"
+#
+# The plant goes into a NEW practice file rather than an existing one, and
+# declares itself repo-local when a MANIFEST.json is present. Until
+# 2026-09-06 it appended to practices/install.md, which works here and fails
+# in a consuming repo for a reason that is not a bug: there practices/ is
+# materialized output, install.md belongs to this source, and the check
+# rightly skips practices the manifest attributes elsewhere -- so the check
+# stayed silent and the test read that as "did not fire". Planting content
+# the running repo actually OWNS keeps this direction meaningful in both
+# places, instead of skipping it in one of them.
+cat > practices/planted-private-name.md <<'MD'
+## Rule
+See themorgan/precedent-individual for a worked example.
+MD
+if [ -f MANIFEST.json ]; then
+  python3 - <<'PY'
+import json, pathlib
+p = pathlib.Path('MANIFEST.json')
+d = json.loads(p.read_text(encoding='utf-8'))
+d.setdefault('practices', []).append(
+    {'slug': 'planted-private-name', 'level': 'repo-local', 'source': 'local'})
+p.write_text(json.dumps(d, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+PY
+  git add MANIFEST.json
+fi
+git add practices/planted-private-name.md
+git -c user.name="Test" -c user.email="test@example.com" commit -q -m "planted violation: names a private repo in content this repo owns"
 
 if python3 tools/checks/check_private_repo_scrub.py > /dev/null; then
   echo "FAIL: check_private_repo_scrub.py did not fire on a planted private-repo name" >&2
