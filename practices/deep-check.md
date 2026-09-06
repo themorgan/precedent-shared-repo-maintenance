@@ -18,6 +18,8 @@ approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set
 ## Rule
 A deep check has two halves. The mechanical half is every audit script the repo maintains, run together -- the same set the merge runbook already runs on every merge, and all of it must pass before the merge commits. The review half is a read of the repo's own rules and documents against each other -- the audits catch broken links and bad syntax; they can't catch a rule that now contradicts another rule, or a section that stopped making sense a few edits ago.
 
+**Mechanical before human, every time.** Run the mechanical half first and fix what it reports *before* the review reads a line. Judgment spent on something a script already catches is judgment wasted, and a tree already failing its own gates makes every later finding ambiguous -- you cannot tell drift this pass introduced from drift that was already there. A clean mechanical run is the starting line, not the finish.
+
 ## Detail
 What to look for -- a starting point, not a specification: contradictions between rules; stale references (a slug, number, filename, or click-path that points at something moved or gone; a positional number cited as if it were a name; an orphaned name left over from a rename elsewhere); fragments left behind by an earlier edit; needless repetition of the same rule in several places; disproportion (paragraphs on a minor point, a rule buried where it no longer fits); process-cost disproportion (a minor rule that costs a disproportionate amount of tokens, time, or friction each time it applies, especially one re-researched from scratch instead of following a written-down answer); formatting and spacing drift (heading levels and capitalization, missing blank lines, ragged tables, a stale header); self-application (a rule this set asks of every project it's installed into that this set doesn't follow itself); and backlog-document drift (items already done or no longer relevant). Anything else the read turns up is still a finding -- report it, and if it will recur, add a bullet here.
 
@@ -55,6 +57,27 @@ gap, not a safety net, and it is written up for BestPractice separately.
 Restored to exactly what it was -- Rule, Detail, cadence and
 `checked_by` untouched -- rather than rewritten, since what was wrong was
 the decision to retire it, not the practice.
+
+**Reviewed 2026-09-06 against `very-deep-check`'s four-pass restructure**
+(BestPractice's TODO item `roll-out-four-pass-restructure`), and **one thing
+was adopted from it: the mechanical-before-human ordering now in the Rule.**
+That idea is cheap, single-repo, and fixes a real gap here -- this practice
+already said to re-run the mechanical half *after* fixing review findings,
+but never said to run it *first*, which is the half that keeps a finding
+attributable.
+
+**The four passes themselves were deliberately not adopted.** Passes 1, 2
+and 4 are cross-repo and expensive by design -- adopter installs built from
+scratch, an audit of whether every mechanism reports what it claims, a full
+catalogue sweep -- and the universal practice that owns them says outright
+that it is never wired into a commit, push or merge gate. This one is, on
+every merge. Folding them in would erase exactly the line `two-check-levels`
+draws between what gates a merge and what a person asks for by name. Pass 3,
+the coherence read, is the only one that overlaps, and this practice's own
+Detail already covers substantially the same ground.
+
+Nothing was pointed at via `overrides:`, per Morgan's ruling above that the
+two are unrelated rules: there is nothing here to override.
 
 ## Install
 Checked mechanically, but only half of it: [`tools/checks/check_deep_check.py`](../tools/checks/check_deep_check.py), scope `tree`, verifies the mechanical half's own claim is actually true -- that [`tools/checks/tests/run_all.sh`](../tools/checks/tests/run_all.sh) really does run every audit script the repo maintains. It catches a check script added with no matching test (so `run_all.sh`'s `test_*.sh` glob would silently never exercise it) and a stale test left behind after its check script was removed. The review half -- reading the repo's own rules against each other for contradiction, drift, or disproportion -- is explicitly the part no audit can catch (per this file's own Rule: "the audits catch broken links and bad syntax; they can't catch a rule that now contradicts another rule"); that's a judgment call by design, not a gap to close. Two-direction tested in [`tools/checks/tests/test_deep_check.sh`](../tools/checks/tests/test_deep_check.sh).
