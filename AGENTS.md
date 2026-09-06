@@ -9,7 +9,7 @@ here and how the practices in [practices/](practices/) got here.
 
 <!-- Regenerate with: python3 tools/build_views.py -- do not hand-edit this block, tools/verify_harness.py's regeneration check fails on drift. -->
 
-### Resident block (~248 of 2000 token budget, 3 of 41 practices)
+## Resident block (~248 of 2000 token budget, 3 of 39 practices)
 
 **bold-key-phrases.** People don't read; they skim, and bolding makes skimming easy. Bold the key phrases in a document by default, without being asked, scaling with length -- a long paragraph or document is where a skimmer most needs a spine to follow, a short note usually needs little or none.
 
@@ -17,7 +17,7 @@ here and how the practices in [practices/](practices/) got here.
 
 **small-calls.** Default to continuing, not asking. When a judgment call is needed to keep the work moving -- filling in a default, picking between two reasonable implementations, resolving an ambiguity that doesn't change the shape of what gets delivered -- make the call and note it, rather than stopping to ask first. Reserve stopping and asking for calls that are genuinely big: hard or costly to undo, change what gets delivered or to whom, spend real money, touch credentials or production, or are the kind of toss-up where two reasonable people would clearly land in different places.
 
-### Occasion index
+## Occasion index
 
 ```
 When a README or other key file just gained an operational instruction:
@@ -32,8 +32,6 @@ When a paragraph just got a substantial edit, or the piece is done:
   trim-prose — trim a paragraph right after editing it, and before calling it done
 When a project repo vendors this team's own practice set, and it has moved:
   pack-sync — the team-set sync is the universal sync's sibling, against a private repo
-When a repo vendors a universal or team practice set as tracked files:
-  bestpractice-sync — a scheduled workflow keeps the vendored universal copy current
 When a session starts in a repo that vendors a universal or team set:
   drift-notice — check source freshness at session start; raise it right away, not later
 When a session-start freshness check against a private source can't be reached:
@@ -54,8 +52,6 @@ When adding or reviewing a team-set rule:
   no-duplication — a rule that only restates universal gets dropped
 When an unattended scheduled job hits something blocking its normal work:
   automation-issues — a blocked scheduled job opens or updates an issue, not just a log line
-When asked for a "deep check" by name, or after drift-inviting work:
-  deep-check — every mechanical audit, plus a full read of the repo against itself
 When bringing a vendored practice layer into a new or existing repo:
   install — vendor the tree, weave conventions into AGENTS.md, wire checks and manifest
 When building or setting up a system that talks to an LLM:
@@ -98,7 +94,7 @@ When writing or reviewing a document's headers:
   header-caps — one capitalization schema per document; default to headline style
 ```
 
-### Standing instruction
+## Standing instruction
 
 Before starting work of a kind named in the occasion index above, run `python3 tools/precedent_show.py SLUG` for each listed slug to load its Rule. When editing a file, `python3 tools/precedent_paths.py FILE` prints any on-demand practice whose `applies_to` matches it, without needing the index at all. At a named moment — merging, reviewing, pushing, ending a turn — run `python3 tools/precedent_gate.py merge|review|push|reply`: some practices fire at a moment rather than in a file, and no path glob reaches those.
 

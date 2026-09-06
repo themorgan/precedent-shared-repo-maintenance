@@ -53,7 +53,19 @@ def tracked_markdown() -> list[str]:
 
 
 def find_violations() -> list[str]:
-    actual = len(list(PRACTICES_DIR.glob("*.md")))
+    # ACTIVE practices, not files on disk. A retired practice keeps its
+    # file -- so `supersedes:` still points at something real -- while not
+    # being in force, and the generated loader block has always counted
+    # what is in force. Counting files made this check disagree with the
+    # very figure it was auditing the moment a practice was retired:
+    # 2026-09-06, an engine refresh brought a build_views.py that writes
+    # "3 of 39 practices" (39 active of 41 files), and this check called
+    # that correct figure stale. A checker that contradicts the generator
+    # it checks is worse than no checker: it teaches the next session that
+    # the generated number is the unreliable one.
+    actual = sum(1 for f in PRACTICES_DIR.glob("*.md")
+                 if re.search(r"^status:\s+active\s*$",
+                              f.read_text(encoding="utf-8"), re.M))
     findings = []
     for rel in tracked_markdown():
         path = ROOT / rel

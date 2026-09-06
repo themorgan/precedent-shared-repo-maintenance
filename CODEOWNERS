@@ -1,4 +1,4 @@
-# DERIVED from approvers.json @ e5483fc079957bae20a01bad32e4bd22362d05a5
+# DERIVED from approvers.json @ 1c7bc4305ee89a294749e85326403fc8d429183d
 # Recipe: tools/build_codeowners.py
 # Regenerate with: python3 tools/build_codeowners.py
 # edits here are safe to make but not durable -- regeneration replaces this file;
