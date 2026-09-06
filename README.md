@@ -52,6 +52,21 @@ re-litigated here.
 carry `overrides:` against a universal practice they specialize
 (`doc-references-are-links`, `merge-authorization-keyword`).
 
+`.claude/` holds two session hooks and their wiring, added 2026-09-06 from
+BestPractice's Claude Code adapter. `freshness-guard.sh` stops a session
+working on, or writing to, a stale checkout — it fetches and fast-forwards
+where that is provably lossless, and refuses the session's first tool call
+on a checkout it cannot vouch for, measuring staleness against the base
+branch as well as against this branch's own remote.
+`commit-identity.sh` makes a commit's author the person running the
+session rather than the container's own bot account: it resolves whoever
+that is at run time — an explicit override, then their individual source's
+`identity.json`, then the session account, then the authenticated GitHub
+account — so no person is named in any tracked file here, and installs a
+`pre-commit` hook that refuses a bot-authored commit. Both are installed
+into every newly bootstrapped source too, by
+`precedent_bootstrap_source.py`.
+
 `tools/` beyond `tools/checks/` is Precedent's vendored source-repo engine —
 `build_views.py`, `precedent_gate.py`, `precedent_paths.py`,
 `precedent_show.py`, `split_practices.py`, a trimmed `routing_scope.json`,
