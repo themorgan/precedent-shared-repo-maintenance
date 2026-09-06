@@ -52,6 +52,8 @@ When adding or reviewing a team-set rule:
   no-duplication — a rule that only restates universal gets dropped
 When an unattended scheduled job hits something blocking its normal work:
   automation-issues — a blocked scheduled job opens or updates an issue, not just a log line
+When asked for a "deep check" by name, or after drift-inviting work:
+  deep-check — every mechanical audit, plus a full read of the repo against itself
 When bringing a vendored practice layer into a new or existing repo:
   install — vendor the tree, weave conventions into AGENTS.md, wire checks and manifest
 When building or setting up a system that talks to an LLM:
@@ -90,8 +92,6 @@ When writing code that depends on something outside its own control:
   fail-gracefully — degrade on a missing config, file, network call, or credential
 When writing content that will vendor or ship into another repo:
   private-repo-scrub — name a private repo only in general terms in anything that ships elsewhere
-When writing or reviewing a document's headers:
-  header-caps — one capitalization schema per document; default to headline style
 ```
 
 ## Standing instruction
@@ -106,9 +106,10 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   the format [`spec/PRACTICE_FORMAT.md`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/PRACTICE_FORMAT.md)
   documents.
 - **The loader block above is generated** — regenerate with
-  `python3 tools/build_views.py --agents-only`; hand-editing it is pointless,
-  the next regeneration overwrites it. `--agents-only` skips `MAP.md`/
-  `GLOSSARY.md` rendering, which assumes BestPractice's own repo structure
-  and isn't meaningful here.
+  `python3 tools/build_views.py`; hand-editing it is pointless, the next
+  regeneration overwrites it. Run it bare, not `--agents-only`: since
+  2026-09-06 this set renders [`MAP.md`](MAP.md) and
+  [`GLOSSARY.md`](GLOSSARY.md) too, and `--agents-only` would leave both
+  stale after a practice changes.
 - **Changes to this set need an approver's yes** — see
   [`approvers.json`](approvers.json) and the README's "Approvers" section.

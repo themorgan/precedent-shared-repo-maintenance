@@ -16,6 +16,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [brainstorm-citations](practices/brainstorm-citations.md) | on-demand | citing support for a claim in a formal document |
 | [branch-links](practices/branch-links.md) | on-demand | naming a git branch in a document, reply, or status update |
 | [content-subdirs](practices/content-subdirs.md) | on-demand | root has accumulated three or more deliverable-content documents |
+| [deep-check](practices/deep-check.md) | on-demand | asked for a "deep check" by name, or after drift-inviting work |
 | [default-branch](practices/default-branch.md) | on-demand | setting up a new repo, or installing into an existing one |
 | [derived-file-marker](practices/derived-file-marker.md) | on-demand | creating a file a later regeneration will overwrite |
 | [doc-recipe](practices/doc-recipe.md) | on-demand | a standing constraint on one file gets stated a second time |
@@ -25,7 +26,6 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [fail-gracefully](practices/fail-gracefully.md) | on-demand | writing code that depends on something outside its own control |
 | [file-mention-links](practices/file-mention-links.md) | on-demand | mentioning a repo file in a chat reply, PR description, or commit message |
 | [fresh-check-escalation](practices/fresh-check-escalation.md) | on-demand | a session-start freshness check against a private source can't be reached |
-| [header-caps](practices/header-caps.md) | on-demand | writing or reviewing a document's headers |
 | [install](practices/install.md) | on-demand | bringing a vendored practice layer into a new or existing repo |
 | [light-check](practices/light-check.md) | on-demand | about to commit |
 | [list-item-parity](practices/list-item-parity.md) | on-demand | drafting or revising a list, or a document with list-like sections |
