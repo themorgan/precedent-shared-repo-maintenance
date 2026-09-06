@@ -22,6 +22,7 @@ terms, not a heuristic.
 Exit 0 and print nothing when clean. Exit 1 and print the practice's own
 Rule text (never a paraphrase) plus the specific finding(s) on a violation.
 """
+import json
 import pathlib
 import re
 import sys
@@ -59,6 +60,34 @@ PRIVATE_TERMS = [
 ]
 
 
+
+# practices/ is MATERIALIZED output in a consuming repo: precedent_materialize.py
+# rewrites it from every declared source on each sync. A practice that came from
+# the team or individual set is that set's text, not the consuming repo's -- it
+# cannot be fixed there, and the next sync would overwrite the edit anyway. In
+# THIS repo (a source, with no MANIFEST.json) the lookup finds nothing and every
+# practice is checked exactly as before, which is the intended asymmetry.
+#
+# Attribution comes from the COMMITTED MANIFEST.json, never from live source
+# resolution: a bare CI checkout can reach neither a team sibling clone nor a
+# private user-level config, so "did not resolve here" is not "owned here".
+#
+# 2026-09-06: a consuming repo reported this check against practices/deep-check.md
+# -- a team-set practice that names the team repo in its own Install section,
+# entirely correctly, since that text never leaves the private sets.
+def _foreign_practice(path: pathlib.Path) -> bool:
+    manifest = ROOT / "MANIFEST.json"
+    if not manifest.is_file():
+        return False
+    try:
+        entries = json.loads(manifest.read_text(encoding="utf-8")).get("practices", [])
+    except (ValueError, OSError):
+        return False
+    for entry in entries:
+        if entry.get("slug") == path.stem:
+            return entry.get("level") != "repo-local"
+    return False
+
 def rule_text() -> str:
     text = PRACTICE_FILE.read_text(encoding="utf-8")
     m = re.search(r"## Rule\n(.*?)\n## ", text, re.S)
@@ -68,6 +97,8 @@ def rule_text() -> str:
 def find_violations() -> list[str]:
     findings = []
     for path in sorted(PRACTICES_DIR.glob("*.md")):
+        if _foreign_practice(path):
+            continue
         text = path.read_text(encoding="utf-8")
         for lineno, line in enumerate(text.splitlines(), start=1):
             for term in PRIVATE_TERMS:
