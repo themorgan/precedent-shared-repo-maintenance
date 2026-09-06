@@ -30,11 +30,28 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 PRACTICE_FILE = ROOT / "practices" / "private-repo-scrub.md"
 PRACTICES_DIR = ROOT / "practices"
 
-# The private repos this rule protects. Update this list if either is
-# renamed, or if a new private set is added under the same account.
+# The private repos this rule protects, OWNER-QUALIFIED. Update this list
+# if either is renamed, or if a new private set is added under the same
+# account.
+#
+# WHY THE BARE NAMES CAME OFF (2026-09-06). This list used to carry
+# "precedent-individual" and "precedent-team-maintainers" on their own,
+# and that was right when it was written: they were this account's private
+# repo names, and nothing else in the world used those strings. Precedent's
+# `source-naming` practice then made them the FIXED, PUBLIC names every
+# adopter's sets carry -- one `precedent-individual` per person, in that
+# person's own account, by convention rather than by choice. They are now
+# printed in the universal catalogue's own practice text, in the upstream
+# install guide, and in the resolver's own error messages. A bare
+# occurrence identifies nobody, and flagging one told a consumer repo to
+# scrub a word it was required to use.
+#
+# What still identifies is the OWNER. `themorgan/precedent-individual`
+# names a specific person's private set; `precedent-individual` names a
+# convention. So the owner-qualified forms stay, and only those. If a
+# future private set is named something genuinely its own -- not a
+# convention name -- put the bare string back for that one.
 PRIVATE_TERMS = [
-    "precedent-individual",
-    "precedent-team-maintainers",
     "themorgan/precedent-individual",
     "themorgan/precedent-team-maintainers",
     "github.com/themorgan/precedent-individual",
