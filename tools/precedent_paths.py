@@ -25,6 +25,22 @@ Run:
          behavioral_replay.py, which only needs to know what matched)
   python3 tools/precedent_paths.py --repo DIR FILE [FILE...]
       -- match against DIR's practices/ instead of this repo's own
+  python3 tools/precedent_paths.py --seen-file PATH FILE [FILE...]
+      -- print a practice's full Rule the FIRST time this session matches
+         it, and a one-line reminder every time after. PATH is a
+         session-scoped scratch file this tool appends slugs to; a missing
+         or unreadable one just means "nothing seen yet", never an error.
+
+WHY --seen-file EXISTS. Measured on this repo, 2026-09-06: an edit to any
+markdown file matches ten on-demand practices and prints ~1,000 words of
+Rule text. A session that edits thirty markdown files was being handed the
+same ~1,000 words thirty times -- around forty thousand tokens of exact
+duplication, in a mechanism whose entire purpose is to spend context
+carefully. The Rules do not change between the first edit and the
+thirtieth; only the reminder that they apply is worth repeating, and a
+slug plus its one-line clause is that reminder. The full text stays one
+`precedent_show.py SLUG` away, and the reminder names the slug precisely
+so that call is easy to make.
 """
 import json, pathlib, re, sys
 
@@ -42,6 +58,15 @@ PRACTICES_DIR = ROOT / 'practices'
 
 sys.path.insert(0, str(_ENGINE_DIR))
 import split_practices as sp
+# TODO.md item 20 (was 19): this channel read practices/*.md directly,
+# bypassing precedent_show.py's materialized-source reachability note
+# (PR #114). Fixed by importing precedent_show.py's two helpers directly
+# -- same discipline this file already uses for split_practices.py, not a
+# subprocess call (would mean re-parsing precedent_show.py's own stdout
+# format back into structured data here for no reason) and not a
+# copy-pasted second implementation (engine-plus-host-shims).
+import precedent_show as ps
+import build_views as bv
 
 
 # ---------------------------------------------------------------- matching
@@ -193,6 +218,44 @@ def matches_for_paths(paths, practices=None, root_dir=None):
     return hits
 
 
+def _read_seen(seen_file):
+    """Slugs already shown in full this session. A missing, unreadable or
+    malformed file means "nothing yet" -- this is a context optimization,
+    and failing a tool call over its scratch file would be a far worse
+    outcome than showing a Rule twice."""
+    if seen_file is None:
+        return set()
+    try:
+        return {line.strip() for line in
+                seen_file.read_text(encoding='utf-8').splitlines() if line.strip()}
+    except OSError:
+        return set()
+
+
+def _append_seen(seen_file, slugs):
+    if seen_file is None or not slugs:
+        return
+    try:
+        seen_file.parent.mkdir(parents=True, exist_ok=True)
+        with seen_file.open('a', encoding='utf-8') as fh:
+            for slug in slugs:
+                fh.write(slug + '\n')
+    except OSError:
+        pass        # same reasoning as _read_seen: never fail the tool call
+
+
+def _clause_for(practices_dir, slug):
+    """The practice's own one-line `index_clause` -- the same sentence the
+    generated occasion index uses, so the brief reminder and the index
+    agree by construction instead of by a second hand-written summary."""
+    path = practices_dir / f'{slug}.md'
+    try:
+        fm, _sections = sp._read_practice_file(path)
+    except Exception:
+        return 'applies here'
+    return bv._json_str(fm.get('index_clause', '')) or 'applies here'
+
+
 def main():
     args = sys.argv[1:]
     repo = None
@@ -205,6 +268,14 @@ def main():
     root = pathlib.Path(repo).resolve() if repo else ROOT
     practices_dir = root / 'practices'
 
+    seen_file = None
+    if '--seen-file' in args:
+        i = args.index('--seen-file')
+        if i + 1 >= len(args):
+            sys.exit("precedent paths FAIL: --seen-file needs a value.")
+        seen_file = pathlib.Path(args[i + 1])
+        args = args[:i] + args[i + 2:]
+
     matches_only = '--matches-only' in args
     # An unrecognized "--flag" used to be silently dropped and the run
     # continued, so a typo produced a confident answer to a different
@@ -212,7 +283,7 @@ def main():
     unknown = [a for a in args if a.startswith('--') and a != '--matches-only']
     if unknown:
         sys.exit(f"precedent paths FAIL: unknown option(s) {', '.join(unknown)} -- "
-                 f"the only option is --matches-only.")
+                 f"the options are --matches-only, --repo and --seen-file.")
     paths = [a for a in args if not a.startswith('--')]
     if not paths:
         sys.exit(__doc__)
@@ -235,11 +306,38 @@ def main():
             print(f"{slug}: {path}")
         return 0
 
+    manifest = ps._materialize_manifest(root)
     rule_by_slug = {slug: rule for slug, _globs, rule in practices}
-    out = [f"### {slug}\n{rule_by_slug[slug].strip()}" for slug in seen_slugs]
+    already = _read_seen(seen_file)
+    out, brief = [], []
+    for slug in seen_slugs:
+        if slug in already:
+            brief.append(f"{slug} — {_clause_for(practices_dir, slug)}")
+            continue
+        block = f"### {slug}\n{rule_by_slug[slug].strip()}"
+        if manifest is not None:
+            note = ps._source_unreachable_note(manifest, slug)
+            if note:
+                block += f"\n{note}"
+        out.append(block)
+    if brief:
+        out.append("### Already loaded this session — still apply\n"
+                   + '\n'.join(f"- {b}" for b in brief)
+                   + "\n\nRun `python3 tools/precedent_show.py SLUG` for the "
+                     "full Rule of any of these.")
+    _append_seen(seen_file, [s for s in seen_slugs if s not in already])
     print('\n\n'.join(out))
     return 0
 
 
 if __name__ == '__main__':
+    # `--help` is what anyone types first. Before 2026-09-06 the tools here
+    # split three ways on it: a hard "unknown option" FAIL, a silent
+    # fall-through that ran the whole audit as if nothing had been asked, or
+    # the docstring printed with a non-zero exit. All three are wrong, and
+    # documentation/HOW_TO_USE_THIS_TECHNICAL.md points readers straight at
+    # these commands. The module docstring is the usage text.
+    if any(a in ('--help', '-h') for a in sys.argv[1:]):
+        print((__doc__ or '').strip())
+        sys.exit(0)
     sys.exit(main())

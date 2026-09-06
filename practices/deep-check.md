@@ -7,7 +7,7 @@ applies_to:  ["**"]
 occasion:    "asked for a \"deep check\" by name, or after drift-inviting work"
 gates:       ["merge"]
 index_clause: "every mechanical audit, plus a full read of the repo against itself"
-checked_by:  tools/checks/check_deep_check.py
+checked_by:  null
 defines:     []
 status:      retired
 supersedes:  []
@@ -39,6 +39,14 @@ source would otherwise carry two separate practices doing the same audit,
 and nothing this team needs is specific enough to this team to justify that
 duplication. Retired by Morgan F on 2026-09-05; not moved anywhere, since
 the universal version already covers what this one covered.
+
+2026-09-06: `checked_by` cleared and `tools/checks/check_deep_check.py`'s
+own `practice:` citation repointed to `very-deep-check`. A retired practice
+must not claim a check, and `code-cites-practice` forbids a citation naming
+one -- the script itself is unchanged and still earns its place, since what
+it verifies (every check script in this set has a matching, invoking test,
+and `run_all.sh` still globs for them) is the mechanical part of
+`very-deep-check`'s own pass 2.
 
 ## Install
 Checked mechanically, but only half of it: [`tools/checks/check_deep_check.py`](../tools/checks/check_deep_check.py), scope `tree`, verifies the mechanical half's own claim is actually true -- that [`tools/checks/tests/run_all.sh`](../tools/checks/tests/run_all.sh) really does run every audit script the repo maintains. It catches a check script added with no matching test (so `run_all.sh`'s `test_*.sh` glob would silently never exercise it) and a stale test left behind after its check script was removed. The review half -- reading the repo's own rules against each other for contradiction, drift, or disproportion -- is explicitly the part no audit can catch (per this file's own Rule: "the audits catch broken links and bad syntax; they can't catch a rule that now contradicts another rule"); that's a judgment call by design, not a gap to close. Two-direction tested in [`tools/checks/tests/test_deep_check.sh`](../tools/checks/tests/test_deep_check.sh).

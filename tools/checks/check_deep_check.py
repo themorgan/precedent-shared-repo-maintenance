@@ -1,42 +1,48 @@
 #!/usr/bin/env python3
-"""check_deep_check.py -- the mechanical check for practices/deep-check.md.
+"""check_deep_check.py -- the mechanical half of the very deep check's
+pass 2, for this set's own tools/checks/ suite.
 
-# practice: deep-check
+# practice: very-deep-check
 
-Scope: tree. The practice's own Install text names what its mechanical half
-actually is: "every audit script the repo maintains, run together -- already
-exactly what tools/checks/tests/run_all.sh does." That claim has a real,
-objective, always-checkable failure mode that was going unchecked: a check
-script added without a matching test never gets picked up by run_all.sh's
-`test_*.sh` glob, so it silently never runs; a test script left behind after
-its check script is deleted references a file that no longer exists. Either
-way "every audit script, run together" would be false with nothing to catch
-it -- exactly the class of gap this practice set's own catalogue was built
-to close (spec/PRIVATE_ENFORCEMENT_BRIEF.md).
+Repointed 2026-09-06. This script was written for this set's own
+`deep-check` practice, which was retired on 2026-09-05 in favour of
+BestPractice's universal `very-deep-check` -- so the citation above named a
+retired practice, which `code-cites-practice` forbids. The work the script
+does did not change and is not obsolete: `very-deep-check`'s pass 2 ("Every
+mechanical check, gate, and tool, one at a time") is exactly the question
+this answers mechanically, for the one part of it that IS mechanical.
 
-This does not (and cannot) check deep-check's review half -- reading the
-repo's own rules against each other for contradiction or drift -- which the
-practice's own Rule text names as a judgment call by design, not a mechanical
-property.
+Scope: tree. A check script added without a matching test never gets picked
+up by tools/checks/tests/run_all.sh's `test_*.sh` glob, so it silently
+never runs; a test script left behind after its check script is deleted
+references a file that no longer exists. Either way "every audit script,
+run together" is false with nothing to catch it -- exactly the class of gap
+this practice set's own catalogue was built to close
+(spec/PRIVATE_ENFORCEMENT_BRIEF.md), and the class pass 2 exists to hunt.
 
-Exit 0 and print nothing when clean. Exit 1 and print the practice's own
-Rule text (never a paraphrase) plus the specific finding(s) on a violation.
+It does not (and cannot) check the judgment half of any check level --
+reading the repo's own rules against each other for contradiction or drift
+-- which `very-deep-check`'s own Rule names as the session's work by
+design, not a mechanical property.
+
+Exit 0 and print nothing when clean. Exit 1 and print the specific
+finding(s) on a violation, plus a pointer to the practice. Unlike this
+set's other checks it cannot print the practice's own Rule text: the
+practice it now cites is universal, so its file is not in this repository
+-- and the local deep-check.md that IS here is retired, which makes its
+Rule the wrong thing to quote as authority.
 """
 import pathlib
 import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
-PRACTICE_FILE = ROOT / "practices" / "deep-check.md"
+PRACTICE_SLUG = "very-deep-check"
+PRACTICE_URL = ("https://github.com/alex137/BestPractice/blob/"
+                "precedent-beta-v01/practices/very-deep-check.md")
 CHECKS_DIR = ROOT / "tools" / "checks"
 TESTS_DIR = CHECKS_DIR / "tests"
 RUN_ALL = TESTS_DIR / "run_all.sh"
-
-
-def rule_text() -> str:
-    text = PRACTICE_FILE.read_text(encoding="utf-8")
-    m = re.search(r"## Rule\n(.*?)\n## ", text, re.S)
-    return m.group(1).strip() if m else "(no Rule found)"
 
 
 def find_violations() -> list[str]:
@@ -85,10 +91,10 @@ def find_violations() -> list[str]:
 if __name__ == "__main__":
     findings = find_violations()
     if findings:
-        print(f"VIOLATION: {PRACTICE_FILE.stem}")
+        print(f"VIOLATION: {PRACTICE_SLUG}")
         for f in findings:
             print(f"  {f}")
-        print("\nthe rule:")
-        print("  " + rule_text().replace("\n", "\n  "))
+        print(f"\nthe practice: {PRACTICE_SLUG} (universal) -- {PRACTICE_URL}")
+        print("  pass 2: every mechanical check, gate and tool, one at a time.")
         sys.exit(1)
     sys.exit(0)

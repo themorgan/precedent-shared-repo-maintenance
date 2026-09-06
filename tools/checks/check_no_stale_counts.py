@@ -13,6 +13,17 @@ repo's own tracked markdown stating "<N> practices" is a claim about
 THIS repo's own practices/ directory, and that claim is either currently
 true or it isn't -- independent of anyone's intent in writing it.
 
+TWO counts are true of practices/, and a document may legitimately state
+either: how many practice FILES it holds, and how many of those are IN
+FORCE (status != retired). They were the same number until this set
+started retiring practices, and BestPractice's build_views.py -- which
+generates AGENTS.md's own "N of M practices" header -- states the
+in-force one, correctly, as of its 2026-09-06 fix. So a stated count is a
+violation only when it matches NEITHER; flagging the in-force number as
+stale because it is not the file count would be the check misreading a
+true sentence (practice: fail-gracefully -- a check that fires on correct
+work teaches the next session to ignore the gate).
+
 This only catches a count that has ALREADY gone stale (the concrete harm
 the practice names: "goes stale... with nothing to flag it"). It says
 nothing about whether stating the count at all was the right call, or
@@ -52,8 +63,23 @@ def tracked_markdown() -> list[str]:
     return [line for line in result.stdout.splitlines() if line.strip()]
 
 
+def practice_counts() -> tuple[int, int]:
+    """(files, in-force). See the module docstring: both are true claims."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import split_practices as sp
+
+    files = sorted(PRACTICES_DIR.glob("*.md"))
+    in_force = 0
+    for f in files:
+        fm, _sections = sp._read_practice_file(f)
+        if (fm.get("status") or "active").strip().strip('"') != "retired":
+            in_force += 1
+    return len(files), in_force
+
+
 def find_violations() -> list[str]:
-    actual = len(list(PRACTICES_DIR.glob("*.md")))
+    n_files, n_in_force = practice_counts()
+    actual = sorted({n_files, n_in_force})
     findings = []
     for rel in tracked_markdown():
         path = ROOT / rel
@@ -69,11 +95,12 @@ def find_violations() -> list[str]:
                 if before.count("`") % 2 == 1:
                     continue
                 stated = int(m.group(1))
-                if stated != actual:
+                if stated not in actual:
                     findings.append(
                         f"{rel}:{lineno}: states {stated!r} practices, but "
                         f"{PRACTICES_DIR.relative_to(ROOT)} currently holds "
-                        f"{actual}: {line.strip()!r}")
+                        f"{n_files} file(s), {n_in_force} in force: "
+                        f"{line.strip()!r}")
     return findings
 
 
