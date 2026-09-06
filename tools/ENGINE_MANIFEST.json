@@ -3,7 +3,7 @@
   "kind": "source",
   "source_repo": "https://github.com/alex137/BestPractice",
   "source_branch": "precedent-beta-v01",
-  "source_commit": "da0fe84a4b153acf941bbde52a2bc25cbb3cca2a",
+  "source_commit": "ef8b5d093b4a20db1063f58ac1728686abbd9b52",
   "files": [
     "build_views.py",
     "build_codeowners.py",
@@ -15,7 +15,7 @@
     "routing_scope.json"
   ],
   "sha256": {
-    "build_views.py": "7bd017cacec4566a231daf988b53a6e131f0281431df8d05182010d1c998df5f",
+    "build_views.py": "f17dbac1ff378fd815f9437675ca2606b11bddaf3ad31624379afebfab1ac229",
     "build_codeowners.py": "eae39f406dbf489a312b213bbe707bb5b5d2b1f5f77ece2665ba5e490fd0a8e4",
     "precedent_gate.py": "667ac1d93c798bd98e8bfd9e467d18ffdb60de119760193dad6a4492c9a8715c",
     "precedent_paths.py": "6b3b3e7046dec861c5c380a42407b21ab0b8be3fd522efd68eaec2bc37e39a31",
