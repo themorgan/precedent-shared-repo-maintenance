@@ -7,13 +7,13 @@ applies_to:  ["**"]
 occasion:    "asked for a \"deep check\" by name, or after drift-inviting work"
 gates:       ["merge"]
 index_clause: "every mechanical audit, plus a full read of the repo against itself"
-checked_by:  null
+checked_by:  tools/checks/check_deep_check.py
 defines:     []
-status:      retired
+status:      active
 supersedes:  []
 overrides:   null
 added:       2026-08-31
-approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; retired by Morgan F"
+approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; retired 2026-09-05 and un-retired 2026-09-06, both by Morgan F"
 ---
 ## Rule
 A deep check has two halves. The mechanical half is every audit script the repo maintains, run together -- the same set the merge runbook already runs on every merge, and all of it must pass before the merge commits. The review half is a read of the repo's own rules and documents against each other -- the audits catch broken links and bad syntax; they can't catch a rule that now contradicts another rule, or a section that stopped making sense a few edits ago.
@@ -30,23 +30,31 @@ It is deliberately not a per-commit gate: the review half costs a careful read o
 
 ## Story
 Migrated here from RepoPersonalPreferences by the phase-3 private-set
-migration, before BestPractice had a universal equivalent. It has one now:
-[very-deep-check](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/very-deep-check.md),
-built independently on the universal side and, per that practice's own
-Story, "otherwise the same enumeration as here." Retired rather than kept
-alongside it -- a repo consuming both the universal source and this team
-source would otherwise carry two separate practices doing the same audit,
-and nothing this team needs is specific enough to this team to justify that
-duplication. Retired by Morgan F on 2026-09-05; not moved anywhere, since
-the universal version already covers what this one covered.
+migration.
 
-2026-09-06: `checked_by` cleared and `tools/checks/check_deep_check.py`'s
-own `practice:` citation repointed to `very-deep-check`. A retired practice
-must not claim a check, and `code-cites-practice` forbids a citation naming
-one -- the script itself is unchanged and still earns its place, since what
-it verifies (every check script in this set has a matching, invoking test,
-and `run_all.sh` still globs for them) is the mechanical part of
-`very-deep-check`'s own pass 2.
+**Retired 2026-09-05, un-retired 2026-09-06.** The retirement rested on a
+single premise: that BestPractice's universal
+[very-deep-check](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/very-deep-check.md)
+was this practice under another name. That premise came from
+`very-deep-check`'s own Story, which describes this practice as
+"generalized ... but otherwise the same enumeration as here," and it is
+wrong. Morgan settled it on 2026-09-06: **the two are unrelated rules, and
+the deep check keeps happening in sessions when committing, as it always
+did.** They answer different questions at different cadences -- this one is
+the working check a session runs against its own repo as part of landing
+work; the very deep check is a rare, expensive, cross-repo audit of the
+whole Precedent system, "deliberately rare because the judging is
+expensive" by its own Rule, and explicitly "never wired into a commit,
+push, or merge gate." Retiring this one on the strength of that one removed
+a routine check on the authority of an occasional one.
+
+Nothing was lost in the interval, but only by accident: `precedent_gate.py`
+does not read `status`, so the merge gate kept serving this practice in
+full the whole time it was marked retired. That is a bug compensating for a
+gap, not a safety net, and it is written up for BestPractice separately.
+Restored to exactly what it was -- Rule, Detail, cadence and
+`checked_by` untouched -- rather than rewritten, since what was wrong was
+the decision to retire it, not the practice.
 
 ## Install
 Checked mechanically, but only half of it: [`tools/checks/check_deep_check.py`](../tools/checks/check_deep_check.py), scope `tree`, verifies the mechanical half's own claim is actually true -- that [`tools/checks/tests/run_all.sh`](../tools/checks/tests/run_all.sh) really does run every audit script the repo maintains. It catches a check script added with no matching test (so `run_all.sh`'s `test_*.sh` glob would silently never exercise it) and a stale test left behind after its check script was removed. The review half -- reading the repo's own rules against each other for contradiction, drift, or disproportion -- is explicitly the part no audit can catch (per this file's own Rule: "the audits catch broken links and bad syntax; they can't catch a rule that now contradicts another rule"); that's a judgment call by design, not a gap to close. Two-direction tested in [`tools/checks/tests/test_deep_check.sh`](../tools/checks/tests/test_deep_check.sh).

@@ -9,7 +9,7 @@ here and how the practices in [practices/](practices/) got here.
 
 <!-- Regenerate with: python3 tools/build_views.py -- do not hand-edit this block, tools/verify_harness.py's regeneration check fails on drift. -->
 
-## Resident block (~248 of 2000 token budget, 3 of 38 practices)
+## Resident block (~248 of 2000 token budget, 3 of 39 practices)
 
 **bold-key-phrases.** People don't read; they skim, and bolding makes skimming easy. Bold the key phrases in a document by default, without being asked, scaling with length -- a long paragraph or document is where a skimmer most needs a spine to follow, a short note usually needs little or none.
 
@@ -52,6 +52,8 @@ When adding or reviewing a team-set rule:
   no-duplication — a rule that only restates universal gets dropped
 When an unattended scheduled job hits something blocking its normal work:
   automation-issues — a blocked scheduled job opens or updates an issue, not just a log line
+When asked for a "deep check" by name, or after drift-inviting work:
+  deep-check — every mechanical audit, plus a full read of the repo against itself
 When bringing a vendored practice layer into a new or existing repo:
   install — vendor the tree, weave conventions into AGENTS.md, wire checks and manifest
 When building or setting up a system that talks to an LLM:

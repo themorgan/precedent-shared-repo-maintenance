@@ -51,10 +51,13 @@ re-litigated here.
 carry `overrides:` against a universal practice they specialize
 (`doc-references-are-links`, `merge-authorization-keyword`).
 
-`tools/` beyond `build_codeowners.py` (this repo's own) is Precedent's
-vendored source-repo engine — `build_views.py`, `precedent_gate.py`,
-`precedent_paths.py`, `precedent_show.py`, `split_practices.py`, a trimmed
-`routing_scope.json`, and `precedent_vendor_engine.py` itself. As of
+`tools/` beyond `tools/checks/` is Precedent's vendored source-repo engine —
+`build_views.py`, `precedent_gate.py`, `precedent_paths.py`,
+`precedent_show.py`, `split_practices.py`, a trimmed `routing_scope.json`,
+`precedent_vendor_engine.py` itself, and — since 2026-09-06 —
+`build_codeowners.py`, which this repo wrote and owned privately until
+BestPractice promoted it into the engine so that every team set it
+bootstraps can turn a declared approver list into real enforcement. As of
 2026-09-05 this is a real, tracked copy (`tools/ENGINE_MANIFEST.json`
 records the BestPractice commit and a sha256 per file) instead of the
 undocumented, un-refreshable hand-copy it was before — see
