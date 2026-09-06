@@ -40,26 +40,38 @@ step 2 -- the universal practice had already landed, so there was no gap.
 test are removed, since `code-cites-practice` (BestPractice universal)
 forbids a `practice:` citation naming a retired practice.
 
-Two things this practice said are **not** covered by the universal one, and
-are unenforced as of this retirement rather than carried anywhere:
+Where this practice's two other clauses ended up (revised 2026-09-06,
+after BestPractice moved twice the same day -- the first version of this
+note is already wrong and is not preserved, since a Story records what
+happened, not what a session believed at lunchtime):
 
 - **Heading-level consistency** -- "sibling headers at the same rank also
-  share the same heading level." That is a structural rule about document
-  outline, not about capitalization, and the universal practice does not
-  address it at all.
-- **Scope.** This practice applied to `**/*.md`; the universal one applies
-  to `documentation/**/*.md` and says so deliberately ("It is deliberately
-  not every markdown file"). Same-rank capitalization consistency outside
-  `documentation/` -- practice files, specs, AGENTS.md, README.md -- is no
-  longer required or checked. The removed `check_header_caps.py` was the
-  only mechanical check for it; the universal check runs `title_case.py`
-  over the documentation scope only.
+  share the same heading level." Rebuilt at the universal level as
+  [`heading-outline`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/heading-outline.md),
+  scoped to `**/*.md` and mechanically checked, but narrowed to the half
+  that is decidable: no heading is more than one level deeper than the one
+  before it. "Siblings share a rank" was dropped on purpose -- a section
+  can legitimately nest deeper than the one before it, and no tool can tell
+  that from a section demoted by accident. "The first heading is an H1" was
+  measured against a real corpus and rejected. This set is already clean
+  against it: 219 headings across 45 tracked files, zero skips.
+- **Scope.** This practice applied to `**/*.md`. `headline-capitalization`
+  shipped covering `documentation/` only and was rescoped the same day to
+  `**/*.md` stated as an *exclusion* -- everything is outward-facing unless
+  named internal in `title_case.py`'s `INTERNAL_DIRS`/`INTERNAL_FILES`. So
+  the capitalization rule now reaches wider than this practice did for
+  published content, and deliberately does not reach internal working files
+  at all: practice files, specs, briefs, `AGENTS.md`, `TODO.md`. That is
+  Morgan's ruling of 2026-09-06 -- how a heading is styled matters where
+  strangers read it and nowhere else, and sentence case in a spec is
+  correct and is never to be "fixed". This practice's own demand for one
+  consistent schema *everywhere*, internal files included, is therefore not
+  carried forward, and that is a decision rather than a gap.
 
-Also dropped, but deliberately: this practice's "a repo is free to choose a
+Also dropped, deliberately: this practice's "a repo is free to choose a
 different scheme and document that choice inline" escape hatch. The
 universal practice mandates one schema applied by tool and offers no
-per-repo alternative, which is a tightening, not an omission.
-
+per-repo alternative -- a tightening, not an omission.
 
 ## Install
 Nothing to install: this practice is retired. Its rule is carried at the

@@ -10,9 +10,24 @@ with it."
 
 approvers.json is that config; CODEOWNERS is the generated GitHub-specific
 view. Never hand-edit CODEOWNERS -- edit approvers.json and rerun this
-script. CODEOWNERS carries this repo's own derived-file-marker header
-(practices/derived-file-marker.md), since it is exactly the case that
-practice describes: a file a later regeneration overwrites wholesale.
+script. The generated file carries a derived-file header naming its source,
+its recipe and the command that rebuilds it, since it is exactly the case
+that calls for one: a file a later regeneration overwrites wholesale.
+
+WHY THIS IS PART OF THE VENDORED SOURCE-SET ENGINE. It was written inside
+one team set and lived only there, which meant the plan's own approval
+mechanism -- "approvers are declared in the set's own config, and
+CODEOWNERS is generated from that list" -- had exactly one implementation,
+in a private repo, reachable by nobody else. A second team set
+(bootstrapped 2026-09-05 from templates/practice-set-team/) got its
+approvers.json and no way to turn it into enforcement: approvers declared,
+approvals unenforced, and nothing saying so. Promoted here 2026-09-06 so
+every team set the bootstrap tool creates has it from the first commit
+(practice: affordance-is-shared).
+
+An individual set has no approvers.json and needs none -- one person is
+the whole approval mechanism -- so this exits 0 with a note there rather
+than failing.
 
 Run: python3 tools/build_codeowners.py
 """
@@ -70,6 +85,15 @@ def render(approvers: list[dict], sha: str) -> str:
 
 
 def main():
+    if not APPROVERS_FILE.is_file():
+        # An individual set, or a repo that vendors this engine without
+        # being a team set at all. Not an error: there is nothing to
+        # generate, and saying so beats a traceback.
+        print(f"no {APPROVERS_FILE.name} here, so there is no approver list "
+              f"to generate CODEOWNERS from -- nothing to do. (A team set "
+              f"declares its approvers there; an individual set has no "
+              f"approval step to enforce.)")
+        return 0
     approvers = load_approvers()
     sha = _source_sha()
     CODEOWNERS_FILE.write_text(render(approvers, sha), encoding="utf-8")
@@ -78,4 +102,13 @@ def main():
 
 
 if __name__ == "__main__":
+    # `--help` is what anyone types first. Before 2026-09-06 the tools here
+    # split three ways on it: a hard "unknown option" FAIL, a silent
+    # fall-through that ran the whole audit as if nothing had been asked, or
+    # the docstring printed with a non-zero exit. All three are wrong, and
+    # documentation/HOW_TO_USE_THIS_TECHNICAL.md points readers straight at
+    # these commands. The module docstring is the usage text.
+    if any(a in ('--help', '-h') for a in sys.argv[1:]):
+        print((__doc__ or '').strip())
+        sys.exit(0)
     sys.exit(main())
