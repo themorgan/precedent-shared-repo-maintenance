@@ -15,7 +15,8 @@ individual beats universal by default
 **[AGENTS.md](AGENTS.md) is the working index** — its generated loader block
 (resident practices in full, everything else grouped by occasion) is what a
 session actually loads; regenerate it with
-`python3 tools/build_views.py --agents-only` after any practice change. This
+`python3 tools/build_views.py` after any practice change, which rebuilds
+[`MAP.md`](MAP.md) and [`GLOSSARY.md`](GLOSSARY.md) alongside it. This
 section gives the history and allocation reasoning `AGENTS.md`'s generated
 block doesn't carry.
 

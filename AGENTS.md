@@ -106,9 +106,10 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   the format [`spec/PRACTICE_FORMAT.md`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/PRACTICE_FORMAT.md)
   documents.
 - **The loader block above is generated** — regenerate with
-  `python3 tools/build_views.py --agents-only`; hand-editing it is pointless,
-  the next regeneration overwrites it. `--agents-only` skips `MAP.md`/
-  `GLOSSARY.md` rendering, which assumes BestPractice's own repo structure
-  and isn't meaningful here.
+  `python3 tools/build_views.py`; hand-editing it is pointless, the next
+  regeneration overwrites it. Run it bare, not `--agents-only`: since
+  2026-09-06 this set renders [`MAP.md`](MAP.md) and
+  [`GLOSSARY.md`](GLOSSARY.md) too, and `--agents-only` would leave both
+  stale after a practice changes.
 - **Changes to this set need an approver's yes** — see
   [`approvers.json`](approvers.json) and the README's "Approvers" section.
