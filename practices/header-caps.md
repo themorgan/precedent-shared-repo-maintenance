@@ -9,7 +9,8 @@ gates:       []
 index_clause: "one capitalization schema per document; default to headline style"
 checked_by:  null
 defines:     []
-status:      retired
+status:      deduplicated
+in_force_at: headline-capitalization
 supersedes:  []
 overrides:   null
 added:       2026-08-31
