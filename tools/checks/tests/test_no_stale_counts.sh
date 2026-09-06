@@ -28,3 +28,28 @@ if ! python3 tools/checks/check_no_stale_counts.py > /dev/null; then
   exit 1
 fi
 echo "ok: clean on real content"
+
+# 3. the same planted violation, but inside a path this repo mirrors and may
+#    not hand-edit -- require the check to stay SILENT. Added 2026-09-06,
+#    when a consuming repo's run reported dozens of violations that were all
+#    inside its byte-identical vendored copy of upstream's own prose: real
+#    findings, but not actionable where reported, and loud enough to bury
+#    the ones that were. The mirror is declared by process/manifest.json's
+#    own upstream.vendored_at -- nothing here is hardcoded.
+SCRATCH2="$(mktemp -d)"
+trap 'rm -rf "$SCRATCH" "$SCRATCH2"' EXIT
+git clone -q "$ROOT" "$SCRATCH2"
+cd "$SCRATCH2"
+mkdir -p process/upstream
+cat > process/manifest.json <<'JSON'
+{"upstream": {"repo": "https://example.invalid/upstream", "vendored_at": "process/upstream", "commit": "0000000000000000000000000000000000000000"}}
+JSON
+echo "This mirrored copy claims 999 practices, which is not the real count." > process/upstream/MIRRORED.md
+git add process/manifest.json process/upstream/MIRRORED.md
+git -c user.name="Test" -c user.email="test@example.com" commit -q -m "planted violation inside the declared mirror"
+
+if ! python3 tools/checks/check_no_stale_counts.py > /dev/null; then
+  echo "FAIL: check_no_stale_counts.py fired on a violation inside the declared vendored mirror, which this repo may not hand-edit" >&2
+  exit 1
+fi
+echo "ok: silent on a violation inside a declared mirror"
