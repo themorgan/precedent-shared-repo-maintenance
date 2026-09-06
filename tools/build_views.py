@@ -81,12 +81,48 @@ def _approx_tokens(text):
     return int(len(WORD_RE.findall(text)) * 1.3)
 
 
-def load_practices(practices_dir=None):
+# A practice that is not active is still resolvable BY SLUG -- so a
+# `supersedes:` reference points somewhere real -- but it is not in force, and
+# nothing that presents the catalogue as current may show it. Defined here,
+# in the lower-level module, and imported by precedent_resolve as
+# bv.IN_FORCE_STATUS, so the loader and the resolver cannot disagree about
+# what "in force" means. (precedent_resolve imports this module, never the
+# other way round -- putting the constant there would be a cycle.)
+IN_FORCE_STATUS = 'active'
+
+
+def load_practices(practices_dir=None, in_force_only=True):
+    """Every practice file in the directory, minus the ones not in force.
+
+    WHY THE FILTER EXISTS (2026-09-06). This function read every *.md and
+    returned it, and this module never looked at `status:` anywhere -- so a
+    retired practice went on being emitted into the AGENTS.md loader block,
+    MAP.md and GLOSSARY.md exactly like an active one. Retirement was
+    cosmetic for the one channel that decides what a session actually loads.
+
+    Invisible in BestPractice, whose own catalogue has no retired practice.
+    Found 2026-09-06 in a private team set with three of them -- all three
+    were listed in the AGENTS.md its own README calls "what a session
+    actually loads", months after retirement, including one retired that
+    same day. precedent_resolve.py had this right all along and prints
+    `not in force: <slug> ... is status: retired`; the generated views did
+    not, so the two channels disagreed and only the quieter one was read.
+
+    A dropped practice is announced rather than silently skipped -- a
+    retirement that vanishes without a word is the same silence in a
+    smaller place."""
     practices_dir = practices_dir if practices_dir is not None else PRACTICES_DIR
-    out = []
+    out, dropped = [], []
     for f in sorted(practices_dir.glob('*.md')):
         fm, sections = sp._read_practice_file(f)
+        status = _json_str(fm.get('status', IN_FORCE_STATUS)) or IN_FORCE_STATUS
+        if in_force_only and status != IN_FORCE_STATUS:
+            dropped.append((fm.get('slug', f.stem), status))
+            continue
         out.append((fm, sections, f))
+    for slug, status in dropped:
+        print(f"build_views: {slug} is status: {status}, so it is not in "
+              f"force and is left out of the generated views.", file=sys.stderr)
     return out
 
 
@@ -222,18 +258,18 @@ def build_loader_block(practices, source_levels=None):
                                         for fm, _s in resident)
         count_detail += ' (' + ', '.join(f"{by_level[l]} {l}" for l in
                                           sorted(by_level) if by_level[l]) + ')'
-    lines.append(f"### Resident block (~{token_count} of {RESIDENT_BUDGET_TOKENS} token budget, "
+    lines.append(f"## Resident block (~{token_count} of {RESIDENT_BUDGET_TOKENS} token budget, "
                  f"{count_detail})")
     lines.append('')
     lines.append(resident_text)
     lines.append('')
-    lines.append("### Occasion index")
+    lines.append("## Occasion index")
     lines.append('')
     lines.append("```")
     lines.append(index_text)
     lines.append("```")
     lines.append('')
-    lines.append("### Standing instruction")
+    lines.append("## Standing instruction")
     lines.append('')
     lines.append("Before starting work of a kind named in the occasion index above, run "
                  "`python3 tools/precedent_show.py SLUG` for each listed slug to load its "
@@ -248,16 +284,68 @@ def build_loader_block(practices, source_levels=None):
     return '\n'.join(lines), token_count, len(resident)
 
 
-def render_agents_md(practices, agents_md=None):
+def source_levels_from_manifest(root):
+    """{slug: level} read back out of a consuming repo's MANIFEST.json, or
+    None where there is no such file.
+
+    WHY THIS EXISTS. precedent_sync_views.py renders the loader block with
+    `source_levels=` (it has the resolution in hand), and this tool's own
+    main() rendered it WITHOUT -- so the two wrote different header lines
+    for the same catalogue ("6 of 61 practices (6 universal)" vs "6 of 61
+    practices"). In a consuming repo, where both are documented commands,
+    that is a permanent unresolvable flip-flop: session start runs
+    precedent_sync_views.py, then `build_views.py --check` -- which
+    generated-artifact-provenance runs on every precedent_check.py --
+    reports the block as hand-edited or stale, forever, whichever ran
+    last. MANIFEST.json is precedent_materialize.py's own record of which
+    source produced each practice, so reading it here makes the two
+    renderers agree by construction rather than by both remembering to
+    pass the same argument. Absent in a single-source repo (Precedent
+    itself), where there are no levels to break down and the header is
+    unchanged."""
+    manifest = root / 'MANIFEST.json'
+    if not manifest.is_file():
+        return None
+    try:
+        data = json.loads(manifest.read_text(encoding='utf-8'))
+    except (json.JSONDecodeError, OSError):
+        return None
+    levels = {e['slug']: e['level'] for e in data.get('practices', [])
+              if 'slug' in e and 'level' in e}
+    return levels or None
+
+
+def render_agents_md(practices, agents_md=None, source_levels=None):
     agents_md = agents_md if agents_md is not None else AGENTS_MD
     original = agents_md.read_text(encoding='utf-8')
-    block, _tokens, _n = build_loader_block(practices)
+    block, _tokens, _n = build_loader_block(practices, source_levels=source_levels)
     if BEGIN_MARKER not in original or END_MARKER not in original:
         sys.exit(f"build_views FAIL: {agents_md} has no "
                  f"{BEGIN_MARKER} / {END_MARKER} markers to regenerate between.")
     pre = original[:original.index(BEGIN_MARKER)]
     post = original[original.index(END_MARKER) + len(END_MARKER):]
     return pre + block + post
+
+
+
+def _upstream_doc_pointer():
+    """The " see X for the format and Y for the design" tail of MAP.md's
+    catalogue line -- only when those documents actually exist here.
+
+    This ran unconditionally and named two of BestPractice's OWN documents,
+    which no vendoree has. Nothing noticed while only BestPractice generated
+    a MAP.md; the moment an engine refresh brought this generator to three
+    practice sets (2026-09-06), each one generated a map with two broken
+    relative links, and each one's own light check reported them -- findings
+    against a file the repo did not write, naming files it is not supposed
+    to have. A generator shared across repositories cannot assume the
+    generating repo's own prose."""
+    tail = []
+    if (ROOT / 'spec' / 'PRACTICE_FORMAT.md').is_file():
+        tail.append("[spec/PRACTICE_FORMAT.md](spec/PRACTICE_FORMAT.md) for the format")
+    if (ROOT / 'PRACTICE_ENGINE_PLAN.md').is_file():
+        tail.append("[PRACTICE_ENGINE_PLAN.md](PRACTICE_ENGINE_PLAN.md) for the design")
+    return (" See " + " and ".join(tail) + ".") if tail else ""
 
 
 def render_map_md(practices):
@@ -278,8 +366,7 @@ def render_map_md(practices):
         '',
         f"`practices/` holds {len(practices)} practice files "
         f"({by_tier.get('resident', 0)} resident, {by_tier.get('on-demand', 0)} on-demand). "
-        "One file per practice; see [spec/PRACTICE_FORMAT.md](spec/PRACTICE_FORMAT.md) for "
-        "the format and [PRACTICE_ENGINE_PLAN.md](PRACTICE_ENGINE_PLAN.md) for the design.",
+        "One file per practice." + _upstream_doc_pointer(),
         '',
         "| Practice | Tier | Occasion / scope |",
         "|---|---|---|",
@@ -323,9 +410,11 @@ def render_map_md(practices):
 TOOLS_DESCRIPTIONS = {
     'behavioral_replay.py': "Measures the path-triggered loader against this repo's own commit history",
     'build_views.py': "This file, GLOSSARY.md, and AGENTS.md's loader block — generated views",
+    'build_codeowners.py': "A team practice set's CODEOWNERS, generated from its own approvers.json",
     'catalogue_stats.py': "The figures about the catalogue that other documents cite, computed rather than hand-typed",
     'checkin.py': "Drives the periodic check-in (INSTALL.md §4) mechanically",
     'doc_html.py': "The one sortable-table HTML renderer for repo documents",
+    'parse_check.py': "Does every JSON/YAML file in scope still parse — changed files for the deep check, the whole tree for the very deep check",
     'doc_lint.py': "Markdown hygiene checks — strikethrough, links, acronyms",
     'doc_sync.py': "Keeps script-generated blocks inside documents in sync with what the script emits",
     'full_practice_audit.py': "The full practice audit — on-demand, whole-catalogue sweep across every source",
@@ -336,6 +425,7 @@ TOOLS_DESCRIPTIONS = {
     'precedent_check.py': "The ENFORCED loading channel — runs every practice's `checked_by` script",
     'precedent_gate.py': "The GATE-TRIGGERED loading channel — Rules for a named moment (merge, review, push, reply)",
     'precedent_bootstrap_source.py': "Instantiates a brand-new individual or team practice set from a skeleton, for an adopter who has neither yet",
+    'precedent_source_bootstrap.py': "Retry-capable clone-or-pull for a privately-scoped individual source, used by its SessionStart hook and by precedent_resolve.py's own lazy self-heal",
     'precedent_candidate.py': "Stage 2 (phase 5) — raise, list and expire creation-pipeline candidates",
     'precedent_detect.py': "Stage 1 (phase 5) — the mechanical half of candidate detection",
     'precedent_land.py': "Stage 5 (phase 5) — writes an approved candidate into practices/, enforcing the registered-check invariant",
@@ -353,6 +443,7 @@ TOOLS_DESCRIPTIONS = {
     'routing_eval.py': "Measures whether trigger-based loading actually beats carrying the whole catalogue",
     'split_practices.py': "PRACTICES.md ↔ practices/ converter",
     'table_fmt.py': "One formatter per quantity kind — the engine",
+    'title_case.py': "Headline (New York Times) capitalization for markdown headings — --check to gate, --write to fix",
     'verify_harness.py': "The verification harness — run before trusting any change here",
     'very_deep_check.py': "The very deep check — on-demand whole-repo coherence review, distinct from full-practice-audit",
 }
@@ -404,6 +495,17 @@ def main():
     agents_md = root / 'AGENTS.md'
     map_md = root / 'MAP.md'
     glossary_md = root / 'GLOSSARY.md'
+    # Graceful degradation, not a crash: the loader block is written INTO an
+    # existing AGENTS.md, between markers the install step puts there. A
+    # repo that has not instantiated it yet (INSTALL.md sec.0 step 4 /
+    # sec.1 step 2) used to get a bare FileNotFoundError from deep inside
+    # the renderer, which reads as the generator being broken rather than
+    # as one install step not done.
+    if not agents_md.is_file():
+        sys.exit(f"build_views FAIL: {agents_md} does not exist. Instantiate "
+                 f"it from templates/AGENTS.md.loader.template (or "
+                 f"templates/AGENTS.md.template on the classic layout), "
+                 f"keeping its BEGIN/END GENERATED markers, then re-run.")
 
     check = '--check' in argv
     # --agents-only: regenerate just AGENTS.md's loader block (resident
@@ -419,7 +521,8 @@ def main():
     agents_only = '--agents-only' in argv
     practices = load_practices(practices_dir)
 
-    new_agents = render_agents_md(practices, agents_md)
+    levels = source_levels_from_manifest(root)
+    new_agents = render_agents_md(practices, agents_md, source_levels=levels)
     targets = [(agents_md, new_agents)]
     if not agents_only:
         targets.append((map_md, render_map_md(practices)))
@@ -441,7 +544,8 @@ def main():
 
     for path, new_text in targets:
         path.write_text(new_text, encoding='utf-8')
-    _block, tokens, n_resident = build_loader_block(practices)
+    _block, tokens, n_resident = build_loader_block(
+        practices, source_levels=source_levels_from_manifest(root))
     wrote = ', '.join(p.name for p, _t in targets)
     print(f"build_views OK: wrote {wrote} (loader block regenerated, resident "
           f"{n_resident}/{len(practices)} practices, ~{tokens} tokens)")
@@ -449,4 +553,13 @@ def main():
 
 
 if __name__ == '__main__':
+    # `--help` is what anyone types first. Before 2026-09-06 the tools here
+    # split three ways on it: a hard "unknown option" FAIL, a silent
+    # fall-through that ran the whole audit as if nothing had been asked, or
+    # the docstring printed with a non-zero exit. All three are wrong, and
+    # documentation/HOW_TO_USE_THIS_TECHNICAL.md points readers straight at
+    # these commands. The module docstring is the usage text.
+    if any(a in ('--help', '-h') for a in sys.argv[1:]):
+        print((__doc__ or '').strip())
+        sys.exit(0)
     sys.exit(main())
