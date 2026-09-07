@@ -90,8 +90,8 @@ When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
 When writing a sentence that cites an exact, changeable count:
   no-stale-counts — drop a count that will go stale; say "several", not the number
-When writing code that depends on something outside its own control:
-  fail-gracefully — degrade on a missing config, file, network call, or credential
+When writing code that depends on something outside its own control, handling a part that could not run, or deciding how loudly to report one:
+  fail-gracefully — keep going, never look complete — and match the telling to the stake and the reader
 When writing content that will vendor or ship into another repo:
   private-repo-scrub — name a private repo only in general terms in anything that ships elsewhere
 ```

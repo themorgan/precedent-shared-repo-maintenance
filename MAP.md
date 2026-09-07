@@ -24,7 +24,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [draft-marker](practices/draft-marker.md) | on-demand | leaving a placeholder or fill-in-later note mid-draft |
 | [drift-notice](practices/drift-notice.md) | on-demand | a session starts in a repo that vendors a universal or team set |
 | [durable-list-anchors](practices/durable-list-anchors.md) | on-demand | a numbered list's entries are durable content likely to be cited by position |
-| [fail-gracefully](practices/fail-gracefully.md) | on-demand | writing code that depends on something outside its own control |
+| [fail-gracefully](practices/fail-gracefully.md) | on-demand | writing code that depends on something outside its own control, handling a part that could not run, or deciding how loudly to report one |
 | [file-mention-links](practices/file-mention-links.md) | on-demand | mentioning a repo file in a chat reply, PR description, or commit message |
 | [fresh-check-escalation](practices/fresh-check-escalation.md) | on-demand | a session-start freshness check against a private source can't be reached |
 | [install](practices/install.md) | on-demand | bringing a vendored practice layer into a new or existing repo |
