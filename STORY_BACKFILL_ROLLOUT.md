@@ -107,12 +107,19 @@ standing check — [`practices/catalogue-carries-stories.md`](practices/catalogu
 and [`tools/checks/check_catalogue_stories.py`](tools/checks/check_catalogue_stories.py)
 in this set are a working pair to copy and re-point.
 
-**Why a set-local check rather than relying on the universal one.** The
+**Why a set-local check was needed, and why it soon will not be.** The
 universal `cite-the-incident` check does demand a Story, and would have
-caught the landing commit — but it lives in `tools/precedent_check.py`,
-which is in neither `ENGINE_FILES` nor `CONSUMER_ENGINE_FILES`, so it has
-never run inside any practice set. Until that changes upstream, a set that
-wants this enforced has to own the check.
+caught the landing commit — but it lived in `tools/precedent_check.py`,
+which was in `CONSUMER_ENGINE_FILES` but **not** in `ENGINE_FILES`. So a
+*consuming* repo had it all along and a *source set* never did, which is
+exactly backwards from where migrated catalogues land. (Corrected
+2026-09-07: an earlier draft said neither list. Wrong about consumers,
+right about sources, and asserted from reading one list rather than both.)
+
+**Fixed upstream on 2026-09-07** — it is in both lists now, with the four
+optional dependencies a source set lacks guarded so their checks skip by
+name instead of erroring. A set that has refreshed its engine since then
+gets the universal check for free and does not need a local copy.
 
 Two design points worth keeping when you copy it:
 
