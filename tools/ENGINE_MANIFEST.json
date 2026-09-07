@@ -3,7 +3,7 @@
   "kind": "source",
   "source_repo": "https://github.com/alex137/BestPractice",
   "source_branch": "precedent-beta-v01",
-  "source_commit": "d0cbdb4d0b7085d9491ee35ab57aff1525e97ee5",
+  "source_commit": "b2ca5f3a6b2934f271ac87ab62249c1f88266e2f",
   "files": [
     "build_views.py",
     "build_codeowners.py",
@@ -25,7 +25,7 @@
     "split_practices.py": "deca3156115d90af25def0bde23d8191cc5e6f5c8fd1854876810e8c3f7016f6",
     "precedent_migrate_status.py": "715dc47486c5b791b6a99007ebfa5bb78a2bba48de4e1ea908a32be4798311b6",
     "precedent_check.py": "dc7b028cab8035c0e5e2a3b23f2808a31125b442d05ee3a97683c384e08776e0",
-    "precedent_vendor_engine.py": "d6e1cf89c16aad5412b0b222c30e9a1f29768f4257ba72f449f8cb24abe87cad",
+    "precedent_vendor_engine.py": "6af7b575ca848d93fa0da729baba97b73387209d05bb8b5fec0aedf5639be8d4",
     "routing_scope.json": "70275a23f46c832c2540f27bd790a6c2935c8f5f7acedef1a8596d054b774a45"
   },
   "_note": "The vendored Precedent source-repo engine (see tools/precedent_vendor_engine.py's own docstring, and spec/BOOTSTRAP_NEW_SOURCES.md / INSTALL.md). Never hand-edit a file this manifest lists -- run 'python3 tools/precedent_vendor_engine.py refresh <bestpractice-clone>' instead (kind is read back from this manifest -- no --kind flag needed for status/refresh); a hand-edit is detected as drift (sha256 mismatch) and refused without --force."
