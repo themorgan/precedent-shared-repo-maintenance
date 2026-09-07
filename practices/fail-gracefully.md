@@ -22,7 +22,9 @@ Any code written or set up here anticipates its own common failure modes rather 
 
 
 ## Why
+The three sanctioned degradations look like a list of options and are really one property: **the caller can act on the result.** A clear message naming what is missing and how to fix it, a documented fallback, and a clean non-zero exit all pass that test. The three failures named opposite them do not — and the last two fail it worst, because neither announces that anything happened at all.
 
+The rule targets dependencies outside the program's own control specifically, because that is where the assumption is invisible. Code that assumes a file exists reads exactly like code that has checked, right up until the environment differs. Nothing in the source distinguishes them, so the check has to be written on purpose rather than noticed in review.
 
 ## Story
 Migrated here from RepoPersonalPreferences by the phase-3 private-set
