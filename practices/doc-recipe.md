@@ -33,7 +33,32 @@ When a recipe is updated: on two triggers -- the output was corrected, or a cons
 A running log of "we added X, then softened it, then changed to Y" only grows, is never pruned, and by its tenth entry costs more to read than the document it governs.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text, and it rests
+on a drift that repo had already caught and reversed once.
 
+Its own decision records had turned into essays. A running log of "we added
+X, then softened it, then changed to Y" only ever grows, is never pruned,
+and by its tenth entry costs more to read than the document it governs. That
+is the failure this rule is shaped to avoid repeating one level down, which
+is why a recipe is defined as present tense and rewritable -- the rules in
+force now -- with history left where history already lives, in `git log` and
+in decision records.
+
+Two smaller choices have their own reasons. Recipes sit in a `doc-recipes/`
+subdirectory rather than beside the documents they govern, because a recipe
+next to its document doubles every listing in the directory a reader
+actually browses -- a tax on every read, paid to serve a file opened rarely.
+The `.recipe.md` infix is kept even though the directory already implies it,
+because editor tabs, search results and `git log --name-only` all show bare
+basenames, and two files both displaying as the same name is a daily
+confusion. The subdirectory is used from the first recipe onward rather than
+adopted at a threshold, since a threshold buys a little tidiness now in
+exchange for a migration and a batch of stale references later.
+
+`Source:` is what distinguishes a derived file's recipe from a written
+document's, so there is one mechanism rather than two, and a document can
+become derived later by gaining that line with no rename and no migration.
 
 ## Install
 No mechanical check: recognizing that "a standing constraint on one file gets stated a second time" -- the trigger for creating a recipe at all -- requires comparing two pieces of prose for semantic restatement, not syntactic match. Whether an existing recipe's own format (file-header, title, optional `Source:` line, flat rule list) is well-formed is checkable in principle, but the actual judgment this practice turns on -- was this really restated, does a line still belong, has a per-file rule become a repo-wide one -- isn't.

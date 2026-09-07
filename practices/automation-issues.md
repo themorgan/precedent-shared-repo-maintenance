@@ -25,7 +25,25 @@ Idempotent by design: one open issue per blocker, not one per run -- a second oc
 A CI annotation lives inside one workflow run; nobody sees it unless they already know to go check that run. A tracked issue persists in the repo itself and rides the host's own notification system for free.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text, which recorded
+a reason rather than a single incident.
 
+The reason is a property of where an Actions annotation lives: it exists
+inside one workflow run, so nobody sees it unless they already know to go
+open that run. A blocker reported only that way is reported to nobody. A
+tracked issue persists in the repo, appears in the ordinary issues list, and
+rides the host's own notification system for free -- no notification
+infrastructure to build and no new secret to manage, which is what makes the
+stronger channel cheap enough to be the default.
+
+The idempotent-by-label design came from the failure mode the fix would
+otherwise have created: a blocker that fires every week for months would
+open a fresh issue every run and bury the issue list, so a repeat call
+comments on the existing open issue with a recurrence stamp instead. Applied
+first to the scheduled syncs' missing-credential paths, one of which had
+previously been a deliberately silent skip -- the sync still skips, but the
+fact that it is skipping stopped being silent.
 
 ## Install
 No mechanical check: this repo runs no unattended scheduled job itself, so there is no run history here to check the idempotent-issue-per-blocker behavior against. A repo that adds such automation could check it directly (does a recurrence comment on the existing open issue rather than opening a duplicate) but that's a property of that automation's own run history, not of this repo's tree.

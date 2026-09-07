@@ -27,6 +27,15 @@ practice text is actually readable. It is output for a later
 BestPractice-rooted session to act on, and nothing in it has been applied
 upstream.
 
+[`LEAK_SCRUB_FINDINGS.md`](LEAK_SCRUB_FINDINGS.md) — what running the leak
+gate's private vocabulary half against a real tree turned up, a per-file
+scrub plan, and a proposed universal practice with the one correction it
+needs. Also output for a later BestPractice-rooted session.
+
+[`STORY_BACKFILL_ROLLOUT.md`](STORY_BACKFILL_ROLLOUT.md) — how to do the
+`## Story` backfill in another repo that upgraded onto Precedent, including
+how to tell whether it has the problem at all.
+
 `practices/*.md` — one file per practice, in the format
 [spec/PRACTICE_FORMAT.md](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/PRACTICE_FORMAT.md)
 documents: practices migrated from RepoPersonalPreferences' 46 rules

@@ -25,7 +25,23 @@ Don't overdo it -- emphasis is a budget, not a decoration; when a lot is bold, n
 This is the mechanism proportional emphasis governs the amount of: that rule says how much weight a point should carry relative to its importance, this one says bolding is the default way to give a point weight.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. That pack recorded no originating incident for this rule; it is a
+stated preference with its reasoning attached, and this Story says so rather
+than inventing a failure it never had.
 
+The reasoning is an observation about how the documents this rule governs
+are actually consumed: people do not read them, they skim them, and bolding
+is what makes a skim land on the argument instead of on whatever the eye
+happened to catch. The payoff scales with length, which is why the rule is
+about defaulting to bold rather than about a quota.
+
+The counterweight is the part worth keeping: emphasis is a budget. When a
+lot of a page is bold, nothing on it is -- the bolding stops being a signal
+and becomes texture, and the reader is back to reading everything or
+nothing. The two tests in the Rule are both judgment calls by design, since
+any threshold precise enough to check mechanically would be wrong for some
+register.
 
 ## Install
 No mechanical check: whether a phrase is "key" and whether the bolded share of a document matches its own two rough tests (a skimmer gets the argument; bold still reads as highlighting, not the normal typeface) is a judgment about that document's own content and audience. A count of bold spans can't tell correct restraint from under- or over-bolding without knowing what the document is actually arguing.

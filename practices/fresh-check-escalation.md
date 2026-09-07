@@ -25,7 +25,31 @@ A freshness check against a private source is built deliberately silent on a tra
 An environment with a standing credential gap fails the same way, every single session, indefinitely -- without this distinction, real drift stays masked for as long as that environment exists.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text, and it records
+a specific failure found directly rather than reasoned about.
 
+The freshness check against a private source was built deliberately silent
+on failure -- offline, a timeout, a transient blip -- treating it as
+"nothing has moved", because a notice that turned out to mean only "the
+network hiccuped" would be worse than no notice at all. That assumption
+holds for a blip and breaks completely for a standing gap.
+
+On 2026-08-29, in a dependent repo, a session's check against the private
+source returned `fatal: could not read Username for 'https://github.com':
+terminal prompts disabled` -- an environment with no credentials for that
+repo at all, ever. It was a fast, clean failure rather than a hang, and it
+would fail identically every session, so the silent design would have read
+it as "confirmed current" indefinitely and masked real drift for as long as
+that environment existed.
+
+Hence the split the rule turns on: a genuinely unreachable remote stays
+quiet, unchanged, while a fast non-zero error prints a line saying the check
+did not run. The judgment half matters as much as the mechanism -- "could
+not verify" is not "confirmed fresh", so a session seeing that line reaches
+the source another way if the environment offers one, and says plainly that
+it could not verify if none exists. That is exactly how the gap was closed
+the one time it was hit.
 
 ## Install
 No mechanical check: the freshness-check mechanism this rule refines doesn't exist as code in this repo (it runs in a consuming repo, against a private source), and the actual distinction it requires -- printing "could not verify" instead of staying silent on a standing credential gap -- is behavior of that mechanism's own error handling, not a property this repo's tree can be scanned for.

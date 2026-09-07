@@ -25,7 +25,24 @@ Overridable on request: if the user explicitly asks for a point to be emphasized
 A minor caveat that grows to three paragraphs and bold text reads, to anyone but the person who just wrote it, as if it were a central claim -- the document ends up structured by the mood of composition instead of by what the reader needs weighted.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. No dated incident was recorded; the rule names a drift and this
+Story records it as such.
 
+The drift is that a document ends up structured by the order and mood of
+composition rather than by what a reader needs weighted. A minor caveat that
+happened to take three paragraphs and a bold callout to get right reads, to
+anyone but the person who just wrote it, as a central claim. The writer
+cannot see this, because for them the space genuinely does track effort.
+
+It is the same failure `list-item-parity` names for items in a list,
+generalized past lists to prose, sections and emphasis. The test offered is
+deliberately about the reader rather than the writer: does the space this
+point takes up match how much someone who does not already know the material
+would need it weighted, or does it just reflect how long the wording took?
+
+Overridable on request, since a deliberate decision to give a minor point
+outsized emphasis is a legitimate thing to ask for.
 
 ## Install
 No mechanical check: whether a point's space "matches how much a reader who doesn't already know the material would need it weighted" requires judging the material's own substance, which is exactly what the rule's own test asks a person (or a session) to do -- there's no structural proxy (paragraph count, bold density) that reliably stands in for actual importance.
