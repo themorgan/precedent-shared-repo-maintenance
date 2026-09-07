@@ -102,10 +102,19 @@ own blocklist over the result rather than trusting a read-through — this is
 
 ## Close the Gap So It Cannot Reopen
 
-Backfilling alone leaves the same hole open for the next migration. Add the
-standing check — [`practices/catalogue-carries-stories.md`](practices/catalogue-carries-stories.md)
-and [`tools/checks/check_catalogue_stories.py`](tools/checks/check_catalogue_stories.py)
-in this set are a working pair to copy and re-point.
+Backfilling alone leaves the same hole open for the next migration. **In a
+repo whose engine is current, nothing needs building** — the universal
+`catalogue-carries-stories` check ships in `precedent_check.py` and runs
+wherever that practice is in force.
+
+**The one thing a SOURCE set must do is put the practice in force on
+itself.** A source repo consumes no catalogue, so the universal copy never
+reaches it, and `precedent_check.py` gates every check on its practice being
+in force *in that repo*. A source set therefore keeps its own
+`practices/catalogue-carries-stories.md` with `status: active` and
+`checked_by: null` — see [this set's own copy](practices/catalogue-carries-stories.md).
+That file is not a duplicate of the universal rule; it is the switch that
+turns the universal check on.
 
 **Why a set-local check was needed, and why it soon will not be.** The
 universal `cite-the-incident` check does demand a Story, and would have
