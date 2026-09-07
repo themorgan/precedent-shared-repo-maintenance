@@ -4,21 +4,27 @@
 #   B. invalid frontmatter YAML;
 #   C. a secret-shaped string (AWS-style key ID);
 #   D. a broken relative markdown link.
-# Plus two planted NON-violations for the derived-tree link exemption
+# Plus the derived-tree exemption, which is now ONE prefix, not two
 # (real incident: this check had no exemption at all, and its own
 # firing test failed against a real installing repo -- 124 planted-looking
 # but unfixable findings under practices/ and process/upstream/, links
 # written relative to another repo's own root):
-#   E. process/upstream/ is exempt unconditionally, even with no
-#      MANIFEST.json -- it's always a vendored mirror, never this repo's
-#      own content;
-#   F. practices/ is exempt ONLY when this repo's own MANIFEST.json shows
-#      it's a materialized copy (an installing repo) -- in this repo
-#      itself (the source, no MANIFEST.json), practices/ stays checked,
-#      confirmed by case D above still firing on a root-level broken link
-#      and by the "clean on real content" run at the bottom finding this
-#      repo's own practices/ genuinely clean, not silently exempted.
+#   E. process/upstream/ is exempt unconditionally -- always a vendored
+#      mirror, never this repo's own content to fix;
+#   F. a materialized practices/ is NOT exempt any more (2026-09-06).
+#      That exemption was a workaround for an upstream bug -- practice
+#      files were copied into a consuming repo with their links still
+#      written relative to their own source repo. Precedent's
+#      precedent_materialize.py repoints them now, so a broken link there
+#      is a real finding again: a stale sync, or a rewrite that failed.
+#      Case F plants exactly that and requires it to fire.
 # Then: the real, current, unplanted repo must stay clean.
+#
+# NOTE, because it costs an hour every time: run_case does `git clone` of
+# this repo, so it tests the COMMITTED check_light_check.py, not your
+# working tree. An uncommitted change to the check appears to have no
+# effect at all -- the planted case fails, and the reason is invisible.
+# Commit, then run this.
 set -euo pipefail
 cd "$(dirname "$0")/../../.."
 ROOT="$(pwd)"
@@ -101,7 +107,7 @@ echo "[missing](tools/doc_lint.py)" > process/upstream/practices/planted.md
 git add process/upstream/practices/planted.md
 '
 
-run_clean_case "practices/ broken link, exempt once MANIFEST.json shows a materialized install" '
+run_case "broken link in a MATERIALIZED practices/ -- no longer exempt" '
 python3 -c "
 import json, pathlib
 pathlib.Path(\"MANIFEST.json\").write_text(json.dumps({
@@ -109,7 +115,7 @@ pathlib.Path(\"MANIFEST.json\").write_text(json.dumps({
     \"note\": \"DERIVED ARTIFACT -- never hand-edit.\",
 }) + \"\n\")
 "
-echo "[missing](templates/AGENTS.md.template)" > practices/planted-materialized.md
+echo "[missing](../tools/does_not_exist.py)" > practices/planted-materialized.md
 git add MANIFEST.json practices/planted-materialized.md
 '
 
