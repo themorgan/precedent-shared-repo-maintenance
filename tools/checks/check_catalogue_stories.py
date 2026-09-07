@@ -22,6 +22,7 @@ the rule refuses silence, not the absence of drama.
 Exit 0 and print nothing when clean. Exit 1 and print the practice's own
 Rule text (never a paraphrase) plus the specific finding(s) on a violation.
 """
+import json
 import pathlib
 import re
 import sys
@@ -35,6 +36,34 @@ def rule_text() -> str:
     text = PRACTICE_FILE.read_text(encoding="utf-8")
     m = re.search(r"## Rule\n(.*?)\n## ", text, re.S)
     return m.group(1).strip() if m else "(no Rule found)"
+
+
+# practices/ is MATERIALIZED output in a consuming repo: precedent_materialize.py
+# rewrites it from every declared source on each sync. A practice that came from
+# another source is that source's text -- a Story missing there cannot be written
+# here, and the next sync would overwrite the attempt anyway. Without this the
+# check would fire, in every repo consuming this set, on the universal
+# catalogue's own empty Stories (30 of 65 as of 2026-09-07): real findings, but
+# permanently unactionable where reported, which is how a check teaches people
+# to ignore it. In THIS repo -- a source, with no MANIFEST.json -- the lookup
+# finds nothing and every practice is checked, which is the intended asymmetry.
+#
+# Attribution comes from the COMMITTED MANIFEST.json, never from live source
+# resolution: a bare CI checkout can reach neither a team sibling clone nor a
+# private user-level config, so "did not resolve here" is not "owned here".
+# Same mechanism, and the same reasoning, as check_private_repo_scrub.py.
+def _foreign_practice(path: pathlib.Path) -> bool:
+    manifest = ROOT / "MANIFEST.json"
+    if not manifest.is_file():
+        return False
+    try:
+        entries = json.loads(manifest.read_text(encoding="utf-8")).get("practices", [])
+    except (ValueError, OSError):
+        return False
+    for entry in entries:
+        if entry.get("slug") == path.stem:
+            return entry.get("level") != "repo-local"
+    return False
 
 
 def _status(text: str) -> str:
@@ -55,6 +84,8 @@ def _status(text: str) -> str:
 def find_violations() -> list[str]:
     findings = []
     for path in sorted(PRACTICES_DIR.glob("*.md")):
+        if _foreign_practice(path):
+            continue
         text = path.read_text(encoding="utf-8")
         if _status(text) != "active":
             continue
