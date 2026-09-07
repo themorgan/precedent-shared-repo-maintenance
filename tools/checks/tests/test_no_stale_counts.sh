@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# A fixture commit is not a person's commit: the global commit backstop
+# (commit-identity.sh, 2026-09-07) reaches the throwaway repositories
+# this test builds and would refuse them.
+export PRECEDENT_ALLOW_ANY_AUTHOR=1
 # Two-direction test for check_no_stale_counts.py:
 #   1. plant a wrong "<N> practices" count in a tracked markdown file --
 #      require the check to fire;
