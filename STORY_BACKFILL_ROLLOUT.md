@@ -6,6 +6,30 @@ an older practice system and may be carrying practices with an empty
 steps are the ones that actually mattered rather than the ones that sounded
 right.
 
+## Nothing About This Propagates on Its Own
+
+**Say this first because the opposite is the natural assumption.** Neither a
+vendored-engine refresh nor a source sync will fill in a Story anywhere.
+
+- **An engine refresh carries tools, never practices.**
+  `precedent_vendor_engine.py` mirrors a fixed list of engine scripts. No
+  practice text travels with it, so it cannot fix or spread this.
+- **A sync carries practices, but only into consuming repos, and only from
+  their declared sources.** That keeps a consumer's materialized copy in step
+  with a source that has already been fixed. It does nothing for a source
+  that still has empty Stories.
+- **The check travels; the fix does not.** A repo consuming this set picks up
+  `catalogue-carries-stories` and its check on its next sync — and the check
+  is deliberately silent there on practices owned by another source, because
+  a Story missing upstream cannot be written downstream.
+- **This document does not travel at all.** `precedent_materialize.py` copies
+  only `practices/` and `tools/checks/`; a root document like this one stays
+  in the repo it was written in.
+
+So **every source repo has to be fixed in itself, by a session, once.** There
+is no mechanism that will do it in the background, and treating the next sync
+as though it might is how the backlog survives.
+
 ## First, Check Whether the Repo Even Has the Problem
 
 Most repos will not. A **consuming** repo materializes its practices from
