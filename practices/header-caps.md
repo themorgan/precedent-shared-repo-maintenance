@@ -40,7 +40,11 @@ NY Times headline capitalization, which is exactly what
 [`no-duplication`](no-duplication.md) says to drop. Retired here rather than
 moved, per
 [spec/MOVING_PRACTICES.md](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/MOVING_PRACTICES.md)'s
-step 2 -- the universal practice had already landed, so there was no gap.
+step 2 -- the universal practice had already landed, so there was no
+*timing* gap: no window in which neither rule was in force. That is the
+only sense in which nothing was lost, and it is a narrower claim than it
+looks. What the universal practice covers is genuinely smaller in one
+direction, deliberately, and the second bullet below says so.
 `checked_by` is now null and `tools/checks/check_header_caps.py` and its
 test are removed, since `code-cites-practice` (BestPractice universal)
 forbids a `practice:` citation naming a retired practice.
@@ -103,6 +107,20 @@ written in prose.
 
 The check and its two-direction test were removed with this retirement,
 since `code-cites-practice` (BestPractice universal) forbids a `practice:`
-citation in a tool naming a practice that is no longer active. Recovering
-the same-rank check, if the gap this Story names is closed, means restoring
-those two files from this commit's parent -- not rewriting them.
+citation in a tool naming a practice that is no longer active.
+
+**What is now covered by nothing** (corrected 2026-09-07 -- this paragraph
+previously said "the gap this Story names", and the Story named none, so a
+reader chasing it found nothing): same-rank capitalization consistency
+*inside internal working files* -- practice files, specs, briefs,
+`AGENTS.md`, `TODO.md`. `headline-capitalization` excludes those by
+design, and `heading-outline` checks depth, not capitalization. So a spec
+whose H2s alternate between headline and sentence case is now caught by
+no check in any source. That is Morgan's 2026-09-06 ruling working as
+intended -- styling matters where strangers read it -- and it is worth
+stating plainly rather than leaving as an inference, because the removed
+`check_header_caps.py` was the one thing that did catch it, and it caught
+it *without* a minor-word dictionary, which is the hard part somebody
+would otherwise re-solve from scratch. Restoring it, should that ever be
+wanted, means recovering those two files from this commit's parent -- not
+rewriting them.
