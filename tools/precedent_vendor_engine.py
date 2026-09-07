@@ -21,7 +21,7 @@ Two KINDS, sharing one mechanism:
                tools — see TODO.md item 18 and this repo's own
                engine-plus-host-shims practice ("domain-neutral mechanism
                lives in the vendored tree"). Piloted 2026-09-05 against
-               themorgan/HavrutaBrainstorm — INSTALL.md §1 step 12 and §2
+               a private consumer repo — INSTALL.md §1 step 12 and §2
                step 6 document the consumer-repo procedure this closes.
 
 THE GAP 'source' CLOSED FIRST. tools/precedent_bootstrap_source.py has only
@@ -35,7 +35,7 @@ one, and precedent-team-tms's copy was simply missing outright.
 THE GAP 'consumer' CLOSES. A real consumer's own tools/ needing the same
 treatment was named explicitly as future work when 'source' shipped
 (TODO.md item 18: "not piloted... deliberately not folded into the
-source-repo fix"). themorgan/HavrutaBrainstorm — a real four-source
+source-repo fix"). A private consumer repo — a real four-source
 consumer, not a fixture — had the identical undocumented-hand-copy problem
 'source' closed for practice sets: its top-level tools/ held
 build_views.py, precedent_gate.py, precedent_paths.py, precedent_show.py,
@@ -82,7 +82,7 @@ source set or a consumer repo with a different catalogue entirely.
 `_trim_routing_scope` below keeps only the first and drops the second — the
 same trim a prior, undocumented hand-copy already applied by hand to every
 repo that needed it (precedent-individual, precedent-team-maintainers, and
-HavrutaBrainstorm's own top-level tools/routing_scope.json, all three
+and a private consumer repo's own top-level tools/routing_scope.json, all three
 confirmed byte-identical to this function's output before this tool
 existed, or was extended to the consumer kind); this tool just makes that
 trim mechanical instead of a fact only the session that did it once
@@ -192,6 +192,22 @@ ENGINE_FILES = [
     # verify_harness.py is deliberately not vendored, so
     # check_status_contract never runs there.
     'precedent_migrate_status.py',
+    # The enforced channel itself (added 2026-09-07). Until then a SOURCE set
+    # enforced nothing mechanically: this file was in CONSUMER_ENGINE_FILES
+    # but not here, so a consuming repo got the checks and a practice set --
+    # exactly where a migrated catalogue lands -- never did. That is why
+    # cite-the-incident's demand for a ## Story did not reach the sets that
+    # were migrated in with 36 empty ones, and why the status-contract check
+    # was unreachable there too (TODO.md's convert-team-set-retired-statuses
+    # records that half).
+    #
+    # A source set does NOT get this file's four optional dependencies:
+    # doc_lint.py, doc_sync.py, title_case.py and precedent_resolve.py are
+    # CONSUMER_ENGINE_FILES only, since a source set resolves no catalogue
+    # and vendors no upstream tree. Every check needing one raises
+    # NotApplicable by name, so those report SKIPPED with the missing module
+    # named -- never ERRORED, and never a silent pass.
+    'precedent_check.py',
     'precedent_vendor_engine.py',
 ]
 
