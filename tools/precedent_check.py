@@ -102,6 +102,17 @@ import split_practices as sp
 def rule_of(slug):
     path = _practice_file(slug)
     if path is None:
+        # Two very different reasons a slug has no practice file, and saying
+        # "no practice file" for both reads as a broken install for the one
+        # that is working exactly as designed. A practice_backed=False check
+        # enforces a property of the ENGINE and never had a catalogue
+        # practice; a practice_backed one whose file is absent is either a
+        # withheld private source or a genuine gap.
+        reg = CHECKS.get(slug) or {}
+        if not reg.get('practice_backed', True):
+            return (f'({slug} enforces a property of the engine itself, not a '
+                    f'catalogue practice -- there is no practices/{slug}.md by '
+                    f'design. The check\'s own description above is the rule.)')
         return f'(no practice file for {slug})'
     try:
         _fm, sections = sp._read_practice_file(path)
@@ -1175,7 +1186,7 @@ def _engine_plus_host_shims(ctx):
     # the sanctioned mechanism for putting them there is a vendored copy.
     #
     # Verified against the two real consumers, 2026-09-06: it keeps firing
-    # on WorkingWithAI's hand-copied root tools (three of which had drifted
+    # on that repository's hand-copied root tools (three of which had drifted
     # to OLDER content than that repo's own vendored tree, which is the
     # failure this rule is about), and stops firing on a manifest-recorded
     # engine.
@@ -1279,7 +1290,7 @@ _ENGINE_REF_ABSENT_OK = {
 }
 
 
-# cite-the-incident, 2026-09-06: themorgan/WorkingWithAI followed
+# cite-the-incident, 2026-09-06: the project's own prior notes repository followed
 # spec/MIGRATING_EXISTING_INSTALLS.md step 7 exactly as written and ended up
 # with a hard-crashing precedent_gate.py -- FileNotFoundError on
 # routing_scope.json, which precedent_gate.py itself names via
@@ -1289,6 +1300,118 @@ _ENGINE_REF_ABSENT_OK = {
 # target that isn't actually there, so the same class of gap (a vendored
 # engine file naming a companion that never got copied) surfaces mechanically
 # on the next `precedent_check.py` run instead of via a downstream crash.
+# cite-the-incident, 2026-09-07: promoting two practices to the universal
+# catalogue did every part of the job except the job. `git commit -a` does
+# not stage an untracked file, so `practices/fail-gracefully.md` and
+# `practices/bold-key-phrases.md` were written, regenerated into every view,
+# given routing entries, deleted from both team sets -- and never added.
+#
+# For one pushed commit the two rules were in force NOWHERE: gone from both
+# team sets, absent from the repository they had been promoted into. EVERY
+# GATE PASSED, in both directions, and neither is a bug: locally the files
+# were on disk, so the loader and every check read them and were right; in
+# the pushed tree they did not exist, and a practice that does not exist
+# violates nothing. The catalogue can lose a rule without anything saying so.
+#
+# The cheap, decidable half of that is this check. It does not attempt the
+# general problem (did the catalogue silently shrink -- that needs a baseline
+# to compare against, and is filed as `consumers-need-refresh-after-promotion`
+# for the consumer-side version of the same shape). It asserts only that what
+# a session can SEE is what the repository actually HAS.
+@check('tracked-practice-files', 'tree',
+       'every practice file, check script and routing record in the working '
+       'tree is tracked by git -- what a session reads locally is what the '
+       'repository actually carries',
+       'the opposite direction: a practice that is tracked but should not be, '
+       'and a practice DELETED from the tree, which leaves nothing behind to '
+       'notice. It compares the working tree against the index, so it cannot '
+       'see a rule that was never written or one removed in the same commit; '
+       'catching a silently shrinking catalogue needs a baseline this check '
+       'does not have.',
+       practice_backed=False)
+def _tracked_practice_files(ctx):
+    watched = []
+    for pat in ('practices/*.md', 'local/practices/*.md',
+                'tools/checks/*.py', 'tools/routing_scope.json'):
+        watched.extend(sorted(ROOT.glob(pat)))
+    if not watched:
+        raise NotApplicable('no practice files, check scripts or routing '
+                            'record in this tree')
+    rels = [str(f.relative_to(ROOT)) for f in watched]
+    r = subprocess.run(['git', '-C', str(ROOT), 'ls-files', '--error-unmatch',
+                        '-z', '--'] + rels,
+                       capture_output=True, text=True)
+    tracked = {x for x in r.stdout.split('\0') if x}
+    # NOTHING TRACKED AT ALL is a repository that has not committed yet, not
+    # a lost rule -- a freshly bootstrapped source set, or a scratch fixture.
+    # The first version of this check flagged every file in exactly that
+    # state, and the harness caught it as "a check that fires on a correct
+    # fresh install", which is the failure this whole registry exists to
+    # avoid. The state worth reporting is MIXED: this kind of file is tracked
+    # here, and one of them is not, which is the shape a forgotten `git add`
+    # actually leaves.
+    if not tracked:
+        raise NotApplicable(
+            'nothing of this kind is tracked yet -- an uncommitted or freshly '
+            'bootstrapped repository, not a file left out of one')
+    out = []
+    for rel in rels:
+        if rel not in tracked:
+            out.append(Finding(rel,
+                               'is in the working tree but NOT tracked by '
+                               'git -- every local check reads it and passes, '
+                               'and the pushed repository does not have it '
+                               '(`git add` it, or delete it)'))
+    return out
+
+
+@check('document-status-header', 'tree',
+       "every document under spec/ and record/ that CARRIES a lifecycle "
+       "frontmatter header declares a legal kind/status pair, a title "
+       "matching its own first heading, a `closed:` date exactly when it is "
+       "closed, a `superseded_by:` that resolves exactly when it is "
+       "superseded, and no competing hand-maintained `Last updated:` comment",
+       "whether a declared status is TRUE. That a brief marked `open` really "
+       "is open, or that a reference marked `current` still describes the "
+       "system, is a judgment no field can carry and no check can make -- "
+       "this verifies the claim is well-formed and internally consistent, "
+       "not that it is honest. It is also blind to a document OUTSIDE spec/ "
+       "and record/: the standard is scoped to those two trees, so a status "
+       "declared in prose at the repository root is not reached. A repo "
+       "part-way through its own backfill wants "
+       "`python3 tools/doc_lifecycle.py --warn-only`, which reports "
+       "unstamped files without failing; that was this check's own mode "
+       "until the 2026-09-07 backfill stamped all 24 documents.")
+def _document_status_header(ctx):
+    try:
+        import doc_lifecycle as dl
+    except Exception as e:
+        raise NotApplicable(f'tools/doc_lifecycle.py did not import: {e}')
+    if not any((ROOT / d).is_dir() for d in dl.SCAN_DIRS):
+        raise NotApplicable('this repo has no spec/ or record/ tree to stamp')
+    findings, unstamped, stamped = dl.scan(root=ROOT)
+    if not stamped and unstamped:
+        # NOTHING stamped is a repo that has not started the backfill, not a
+        # repo doing it wrong -- the same distinction tracked-practice-files
+        # had to learn. The MIXED state is what this check is for.
+        raise NotApplicable(
+            f'{len(unstamped)} document(s) and none stamped -- this tree has '
+            f'not adopted the lifecycle header at all')
+    out = []
+    for f in findings:
+        rel, _, msg = f.partition(': ')
+        out.append(Finding(rel, msg))
+    # Blocking since the phase-2 backfill: a document with no header at all
+    # is the failure this standard exists to prevent, not a lesser state.
+    # Before the backfill this was deliberately silent -- see blind_to.
+    for rel in unstamped:
+        out.append(Finding(
+            rel, 'carries no lifecycle frontmatter -- a reader cannot tell '
+                 'from the file whether it is a live reference or the record '
+                 'of something finished (see spec/DOCUMENT_LIFECYCLE.md)'))
+    return out
+
+
 @check('vendored-engine-file-refs-resolve', 'tree',
        "every hardcoded `_ENGINE_DIR / '<name>'` or `ROOT / 'tools' / '<name>'` "
        "path inside a tools/*.py file names a file that actually exists under "
@@ -1315,7 +1438,7 @@ def _vendored_engine_file_refs_resolve(ctx):
                     f'tools/{p.name}',
                     f"references tools/{name}, which does not exist locally "
                     f"-- a vendored engine file naming a companion that was "
-                    f"never copied over is exactly how themorgan/WorkingWithAI "
+                    f"never copied over is exactly how the project's own prior notes repository "
                     f"ended up with a hard-crashing precedent_gate.py "
                     f"(2026-09-06, missing routing_scope.json)"))
     return findings
@@ -1645,8 +1768,15 @@ def _heading_outline(ctx):
        'Times headline capitalization',
        'headings outside the practice\'s scope (practice files, specs, the '
        'repo\'s own working documents), which are deliberately sentence '
-       'case; and a phrase whose capitalization carries meaning, which only '
-       'a person can add to title_case.KEEP_PHRASES.')
+       'case; a phrase whose capitalization carries meaning, which only '
+       'a person can add to title_case.KEEP_PHRASES; a heading that is a '
+       'SENTENCE rather than a title -- a rule stated outright, a question, '
+       'an example line -- which --write capitalizes word by word into '
+       'something correct by the NYT rule and wrong to read, and which only '
+       'a person can rewrite as a title or exclude; and, in a CONSUMING '
+       'repo, the scope boundary itself, since title_case.INTERNAL_DIRS is '
+       'this repo\'s own list of directory names and a consumer\'s working '
+       'directory that nobody thought to name there reads as publishable.')
 def _headline_capitalization(ctx):
     sys.path.insert(0, str(ROOT / 'tools'))
     try:
@@ -1660,10 +1790,13 @@ def _headline_capitalization(ctx):
         # is missing; the runner already prints that a skip is not a pass.
         raise NotApplicable(f'tools/title_case.py did not import: {e}')
     # title_case.is_outward() is the one definition of "outward-facing"
-    # -- everything except its INTERNAL_DIRS/INTERNAL_FILES. This gate
-    # asks it rather than carrying a second copy of the boundary.
+    # -- everything except its INTERNAL_DIRS/INTERNAL_FILES plus whatever
+    # this repo's own precedent.json adds under `internal_paths`. This gate
+    # asks it rather than carrying a second copy of the boundary, and passes
+    # ROOT so the repo-declared half is read from THIS repo's config rather
+    # than the process's working directory.
     scope = [f for f in ctx.changed
-             if f.endswith('.md') and title_case.is_outward(f)
+             if f.endswith('.md') and title_case.is_outward(f, root=ROOT)
              and (ROOT / f).exists()]
     if not scope:
         raise NotApplicable('no changed outward-facing document is in scope')
@@ -1869,6 +2002,37 @@ def _docs_are_current_state(ctx):
 # intentional usage; add a file here only with the same kind of stated
 # reason, never to silence a real finding.
 INLINE_LINEAGE_SKIP_FILES = {'spec/LOADER.md'}
+
+
+def _is_historical_record(f):
+    """True when f's own stated purpose is a historical record.
+
+    Two ways to qualify. The hardcoded set above is one file that declares
+    it in prose and nowhere a script can read. The general way is
+    doc_lint's own `is_record_doc()` -- a `<!--record-doc-->` marker, a
+    record-shaped filename, or a records directory -- which any repo can
+    use and this check should honour rather than making every record
+    document earn its own line here.
+
+    2026-09-07: CHANGES_TO_TELL_ALEX.md is the case that forced the
+    generalization. It is a dated log of what changed in each inherited
+    practice, kept for one future conversation, and it carries the
+    `<!--record-doc-->` marker on line 2. Retiring a practice meant marking
+    an earlier dated entry in that same log as superseded by a later one --
+    structurally identical to spec/LOADER.md's superseded measurement runs,
+    and flagged for the same phrase. Rewording to dodge the regex would
+    have been gaming the check; hardcoding a second filename would have
+    left the third one to rediscover this.
+    """
+    if f in INLINE_LINEAGE_SKIP_FILES:
+        return True
+    try:
+        return _doc_lint().is_record_doc(f)
+    except NotApplicable:
+        # doc_lint did not import. Fail toward reporting, never toward a
+        # silent pass -- a missed exemption is a false finding a human
+        # reads, a missed finding is one nobody ever sees.
+        return False
 INLINE_LINEAGE_RE = re.compile(
     r'\bsuccessor to\b|\bsupersede[sd]?\s+by\b|\bsuperseded\s+by\b'
     r'|\breplaces?\s+the\s+(?:older|previous|prior)\b', re.I)
@@ -1881,14 +2045,17 @@ INLINE_LINEAGE_RE = re.compile(
        'the other half of the practice entirely: whether the INDEX actually '
        'carries the lineage row this check pushes the language out of. It '
        'only prevents the wrong home, never confirms there is a right one. '
-       'Also blind to any file listed in INLINE_LINEAGE_SKIP_FILES, whose '
-       'stated purpose is a historical record rather than a current-state '
-       'document -- currently just spec/LOADER.md, which keeps prior '
-       'measurement runs as a deliberate, correct appendix.')
+       'Also blind to any file whose stated purpose is a historical record '
+       'rather than a current-state document: the INLINE_LINEAGE_SKIP_FILES '
+       'set (spec/LOADER.md, which keeps prior measurement runs as a '
+       'deliberate, correct appendix) plus anything doc_lint calls a record '
+       'doc -- a <!--record-doc--> marker, a record-shaped filename, or a '
+       'records directory. A document that wrongly claims to be a record '
+       'buys itself silence here, and nothing checks that claim.')
 def _index_remembers_past(ctx):
     out = []
     for f in _md_in_scope(ctx):
-        if f in INLINE_LINEAGE_SKIP_FILES:
+        if _is_historical_record(f):
             continue
         cur = {(i, m.group(0)) for i, line in enumerate(ctx.read(f).splitlines(), 1)
                for m in INLINE_LINEAGE_RE.finditer(line)}
@@ -1954,7 +2121,10 @@ def _published_default_branch():
        'a rename whose old path is too generic to search for safely (a '
        'bare `README.md`, a single path segment) -- those are skipped '
        'rather than guessed at. It also cannot see a reference built by '
-       'string concatenation at runtime.')
+       'string concatenation at runtime, and it deliberately says nothing '
+       'about a file the repo received rather than wrote: a vendored tree, '
+       'a materialized practice or check, or the generated loader block, '
+       'each of which is overwritten by its own next sync.')
 def _rename_updates_links(ctx):
     base = _published_default_branch()
     if base is None:
@@ -1965,6 +2135,58 @@ def _rename_updates_links(ctx):
     r = _git('diff', '--name-status', '--find-renames', f'{base}...HEAD')
     if r.returncode != 0:
         raise NotApplicable(f'could not diff against {base}')
+    # A practice a PUBLIC repo withholds is a third state this check had no
+    # way to see. It was not renamed and it was not deleted: it is published
+    # in a private source and deliberately kept out of this tree, so a
+    # document that links to it is not a stale reference to repoint -- there
+    # is nothing here to repoint it at. Found 2026-09-07: closing a public
+    # consumer's disclosure produced 26 such findings in one repo, six of
+    # them inside a vendored tree nobody can edit there, and every one of
+    # them unactionable. MANIFEST.json's `withheld` list records exactly
+    # this, written by precedent_materialize.py.
+    # Files this repo received rather than wrote (see the skip below).
+    _vendored_engine = set()
+    try:
+        _em = json.loads(
+            (ROOT / 'tools' / 'ENGINE_MANIFEST.json').read_text(encoding='utf-8'))
+        _vendored_engine = {f"tools/{f}" for f in (_em.get('files') or [])}
+    except (ValueError, OSError):
+        pass
+
+    withheld = set()
+    # Materialized output is the same third state one level further out.
+    # precedent_materialize.py DELETES AND REWRITES practices/ and
+    # tools/checks/ from every declared source on every sync, so a reference
+    # inside one of those files cannot be repointed in the consuming repo at
+    # all -- an edit survives until the next `precedent_sync_views.py` run and
+    # no longer. The reference belongs to whichever source wrote it, and so
+    # does the fix. Attribution is by MANIFEST.json's own committed record
+    # (which source produced each file), never by live resolution: a bare CI
+    # checkout can reach universal and repo-local but never team or
+    # individual, and "this source did not resolve here" is not evidence of
+    # anything. Found 2026-09-07, a consumer renaming its content directory:
+    # of eight findings, seven sat in an individual source's own practice
+    # text, its check script and that check's test -- all of which use the
+    # old directory name as the canonical EXAMPLE of a convention, none of
+    # which points at anything in the consuming repo, and not one of which
+    # that repo could fix.
+    received = set()
+    try:
+        _m = json.loads((ROOT / 'MANIFEST.json').read_text(encoding='utf-8'))
+        withheld = {f"practices/{slug}.md" for slug in (_m.get('withheld') or [])}
+        _local = {s.get('name') for s in (_m.get('sources') or [])
+                  if isinstance(s, dict) and s.get('level') == 'repo-local'}
+        for _e in (_m.get('practices') or []):
+            if isinstance(_e, dict) and _e.get('slug') \
+                    and _e.get('source') not in _local:
+                received.add(f"practices/{_e['slug']}.md")
+        for _e in (_m.get('checks') or []):
+            if isinstance(_e, dict) and _e.get('path') \
+                    and _e.get('source') not in _local:
+                received.add(_e['path'])
+    except (ValueError, OSError):
+        pass
+
     old_paths = []
     for line in r.stdout.splitlines():
         parts = line.split('\t')
@@ -1989,6 +2211,20 @@ def _rename_updates_links(ctx):
         for rel in tracked:
             if rel == new_path or rel == old:
                 continue
+            if old in withheld:
+                continue      # withheld, not deleted -- see the note above
+            # A file the consuming repo RECEIVED cannot be repointed there:
+            # the vendored upstream tree and the vendored engine are mirrored
+            # wholesale from a published commit, and an edit is overwritten by
+            # the next refresh. The reference is upstream's, and so is the fix.
+            if rel.startswith('process/upstream/') or rel in _vendored_engine \
+                    or rel in received or rel == RETIRED_PATHS_REGISTRY:
+                # The retirement registry names every path this repo has
+                # deleted, on purpose (practice: retirement-deletes-files) --
+                # it is the record OF the deletion, not a reference left
+                # behind by one, so reading it as a stranded link would make
+                # every retirement fail the moment it was recorded.
+                continue
             f = ROOT / rel
             if not f.is_file():
                 continue
@@ -1996,7 +2232,21 @@ def _rename_updates_links(ctx):
                 text = f.read_text(encoding='utf-8', errors='ignore')
             except OSError:
                 continue
+            in_generated = False
             for i, line in enumerate(text.splitlines(), 1):
+                # The loader block is rewritten wholesale by build_views.py
+                # from the practice sources, so a reference inside it is the
+                # sources' to fix, exactly like the materialized files it is
+                # summarising. Skipped as a REGION, not as a file: the
+                # hand-written half of the same document must still be
+                # repointed, and usually is the thing that most needs to be.
+                if '<!-- BEGIN GENERATED: precedent-loader -->' in line:
+                    in_generated = True
+                elif '<!-- END GENERATED -->' in line:
+                    in_generated = False
+                    continue
+                if in_generated:
+                    continue
                 if old in line:
                     where = f'renamed to {new_path}' if new_path else 'deleted'
                     out.append(Finding(
@@ -2008,6 +2258,72 @@ def _rename_updates_links(ctx):
     if not out and skipped:
         print(f'  (rename-updates-links: {skipped} single-segment path(s) '
               f'skipped as too generic to search)')
+    return out
+
+
+RETIRED_PATHS_REGISTRY = 'process/retired_paths.json'
+
+
+@check('retirement-deletes-files', 'tree',
+       'every path this repo declared retired is still absent, and every '
+       'retirement carries the reason it happened',
+       'the whole positive direction -- a deprecated file nobody has '
+       'declared. Nothing here can tell a dead file from a live one, so '
+       'this catches a retirement coming UNDONE (a vendored tree mirrored '
+       'back over a deletion, a materialized directory rewritten from its '
+       'source), never one that was never made. The audit that decides a '
+       'path is safe to delete is tools/precedent_retire_path.py, run by a '
+       'person at the moment of retirement; this check is only the record '
+       'holding afterwards.')
+def _retirement_deletes_files(ctx):
+    cfg_path = ROOT / RETIRED_PATHS_REGISTRY
+    if not cfg_path.is_file():
+        raise NotApplicable(f'no {RETIRED_PATHS_REGISTRY} -- this repo has '
+                            f'retired nothing, which is the correct state '
+                            f'for a repo that has never retired a mechanism')
+    try:
+        cfg = json.loads(cfg_path.read_text(encoding='utf-8'))
+    except json.JSONDecodeError as e:
+        return [Finding(RETIRED_PATHS_REGISTRY, f'not valid JSON: {e}')]
+    # Same guard, and the same reason, as migration-scrubs-vocabulary's:
+    # a valid-JSON-wrong-shape config reaching `.get` below raises an
+    # uncaught AttributeError that takes down every OTHER check in the run.
+    if not isinstance(cfg, dict):
+        return [Finding(RETIRED_PATHS_REGISTRY,
+                        f'must be a JSON object with a "retired" list (e.g. '
+                        f'{{"retired": [{{"path": ..., "reason": ...}}]}}), '
+                        f'not a {type(cfg).__name__}')]
+    entries = cfg.get('retired') or []
+    if not isinstance(entries, list):
+        return [Finding(RETIRED_PATHS_REGISTRY,
+                        f"'retired' must be a JSON array of objects, not a "
+                        f'{type(entries).__name__}')]
+    if not entries:
+        raise NotApplicable(f'{RETIRED_PATHS_REGISTRY} declares no '
+                            f'retirement -- nothing to hold')
+    tracked = set(_git('ls-files').stdout.split())
+    out = []
+    for i, e in enumerate(entries):
+        if not isinstance(e, dict) or not e.get('path'):
+            out.append(Finding(f'{RETIRED_PATHS_REGISTRY}[{i}]',
+                               'every entry needs a "path"'))
+            continue
+        rel = str(e['path']).rstrip('/')
+        if not str(e.get('reason') or '').strip():
+            # The reason is the only part history does not already hold.
+            out.append(Finding(f'{RETIRED_PATHS_REGISTRY}[{i}]',
+                               f'{rel!r} was retired with no reason recorded '
+                               f'-- git history holds what the file was; '
+                               f'only this holds why it went'))
+        back = sorted(f for f in tracked
+                      if f == rel or f.startswith(rel + '/'))
+        if back:
+            out.append(Finding(
+                RETIRED_PATHS_REGISTRY,
+                f'{rel!r} is declared retired but is tracked again '
+                f'({len(back)} file(s), e.g. {back[0]}) -- a mirror or a '
+                f'materialization has undone the deletion, or the '
+                f'retirement should be withdrawn from this file on purpose'))
     return out
 
 
@@ -2490,7 +2806,17 @@ CODE_CITE_SKIP_FILES = {'verify_harness.py'}
        "happened to source_practice_number's old position-based citations "
        "(three tool comments cited a stale practice NUMBER after a "
        "renumbering -- fixed once by hand in 2026-08; this check is what "
-       "makes sure that fix never has to happen by hand again).")
+       "makes sure that fix never has to happen by hand again). It is also "
+       "blind to an UNANCHORED mention -- a bare `(some-slug)` or "
+       "`# some-slug` with no `practice:` before it -- which this practice's "
+       "own Rule already forbids as \"a bare mention of the practice's "
+       "subject with no way to look it up\", and which no scanner can tell "
+       "from ordinary hyphenated prose. That blindness is not theoretical: "
+       "five citations of `fail-gracefully` sit in this repo's own tools/ in "
+       "exactly that form, naming a slug that resolves nowhere here, and the "
+       "anchored form would make this check FAIL rather than fix them, "
+       "because the practice lives in a private team set. See TODO.md's "
+       "`universal-code-cites-team-slug`.")
 def _code_cites_practice(ctx):
     known = {}
     for d in ((ROOT / 'practices'), (ROOT / 'local' / 'practices')):
@@ -2637,23 +2963,107 @@ def _exempt_matches(rel, exempt_entry):
     return rel == exempt_entry
 
 
+# The old pack mechanism's own marker file. layered-practice-packs' Install
+# section defines the pre-migration shape: the tree at `process/<pack>/`,
+# declared by `process/manifest_<pack>.json`. That manifest name belongs to
+# nothing else, which is what makes a leftover detectable without the repo
+# having to declare anything.
+OLD_PACK_MANIFEST_GLOB = 'manifest_*.json'
+
+
+def _leftover_old_packs():
+    """-> [(manifest_rel, tree_rel or None)] for a repo that MIGRATED and
+    still carries the old pack mechanism.
+
+    THE POINT IS THAT THIS NEEDS NO DECLARATION. Both existing retirement
+    checks are opt-in: migration-scrubs-vocabulary fires only once a repo
+    writes retired_vocabulary.json, and retirement-deletes-files only once
+    it records a retirement in retired_paths.json. A repo that migrated
+    WITHOUT running spec/MIGRATING_EXISTING_INSTALLS.md's step 5 declares
+    neither, so both stay silent and the leftover tree sits there
+    indefinitely -- which is exactly the state Morgan asked about on
+    2026-09-07 ("I already migrated a bunch, so even if it was migrated and
+    that still exists, it should still be deleted"). Nothing was watching
+    for it.
+
+    Scoped to a repo that has ALREADY migrated (a precedent.json at the
+    root). The pack mechanism is still supported for a repo that has not --
+    that document's own "When this applies" section says so in as many
+    words, and firing there would be telling a working install it is broken.
+    """
+    if not (ROOT / 'precedent.json').is_file():
+        return []
+    proc = ROOT / 'process'
+    if not proc.is_dir():
+        return []
+    out = []
+    for man in sorted(proc.glob(OLD_PACK_MANIFEST_GLOB)):
+        # A pack manifest may name its tree; fall back to the conventional
+        # `process/<pack>/` derived from the manifest's own suffix.
+        tree = None
+        try:
+            data = json.loads(man.read_text(encoding='utf-8'))
+            if isinstance(data, dict):
+                if data.get('kept_after_migration'):
+                    continue          # a declared, reasoned keep -- see below
+                tree = ((data.get('upstream') or {}).get('path')
+                        if isinstance(data.get('upstream'), dict) else None)
+        except (ValueError, OSError):
+            pass
+        if not tree:
+            guess = proc / man.stem.replace('manifest_', '', 1)
+            tree = guess.relative_to(ROOT).as_posix() if guess.is_dir() else None
+        out.append((man.relative_to(ROOT).as_posix(), tree))
+    return out
+
+
 @check('migration-scrubs-vocabulary', 'tree',
-       "a repo that has declared process/retired_vocabulary.json carries "
-       "none of its listed terms outside the declared exempt files/directories",
-       "NotApplicable for any repo that hasn't declared the config -- this "
-       "is opt-in per migrated repo, since the terms themselves (a specific "
-       "old repo's name, a retired secret) are never something BestPractice "
-       "could know in advance. process/upstream/ is always excluded, "
-       "vendored content never being this repo's own migration to finish.")
+       "a migrated repo carries no leftover pre-migration practice pack "
+       "(process/manifest_*.json and its tree), and -- where the repo has "
+       "declared process/retired_vocabulary.json -- none of its listed terms "
+       "outside the declared exempt files/directories",
+       "the SECOND half is opt-in: the terms themselves (a specific old "
+       "repo's name, a retired secret) are never something BestPractice "
+       "could know in advance, so a repo that has declared no config is not "
+       "scanned for words at all. The pack half needs no declaration but is "
+       "scoped to a repo that has already migrated (a precedent.json at the "
+       "root) -- the old pack mechanism is still supported for one that has "
+       "not, and firing there would call a working install broken. Neither "
+       "half can tell whether the pack's CONTENT actually reached a "
+       "Precedent source: it sees that the tree is still here, never "
+       "whether deleting it would lose a rule. process/upstream/ is always "
+       "excluded, vendored content never being this repo's own migration to "
+       "finish.")
 def _migration_scrubs_vocabulary(ctx):
+    leftover = [
+        Finding(man,
+                f'is the pre-migration practice-pack mechanism, in a repo '
+                f'that has already migrated to the Precedent loader'
+                + (f' (its tree is still at {tree}/)' if tree else '')
+                + '. A pack\'s rules live in a team or individual source '
+                  'now, so the tree is a second, unsynced copy of rules '
+                  'nobody reads. Retire it through the audit rather than by '
+                  'hand: `python3 tools/precedent_retire_path.py '
+                  + (f'{tree} {man}' if tree else man)
+                  + '` reports every file still referencing it and refuses '
+                    'while any remain; then re-run with --reason "..." '
+                    '--apply. If this pack is deliberately kept -- its '
+                    'upstream never split into Precedent sources -- record '
+                    'why with a "kept_after_migration" key in the manifest '
+                    'and this stops asking.')
+        for man, tree in _leftover_old_packs()]
+
     cfg_path = ROOT / RETIRED_VOCAB_CONFIG
     if not cfg_path.is_file():
+        if leftover:
+            return leftover
         raise NotApplicable(f'no {RETIRED_VOCAB_CONFIG} -- this repo has not '
-                            f'declared any retired vocabulary to scrub for')
+                            f'declared any retired vocabulary to scrub for, '
+                            f'and carries no leftover pre-migration pack')
     try:
         cfg = json.loads(cfg_path.read_text(encoding='utf-8'))
     except json.JSONDecodeError as e:
-        return [Finding(RETIRED_VOCAB_CONFIG, f'not valid JSON: {e}')]
+        return leftover + [Finding(RETIRED_VOCAB_CONFIG, f'not valid JSON: {e}')]
     if not isinstance(cfg, dict):
         # Valid JSON, wrong shape (e.g. a bare `["OldName"]` array where a
         # `{"terms": [...]}` object belongs) used to reach `cfg.get(...)`
@@ -2661,7 +3071,7 @@ def _migration_scrubs_vocabulary(ctx):
         # OTHER check in the same run with it (found in a 2026-09-03
         # deep-check audit) -- a malformed config is exactly the kind of
         # thing this check exists to catch, not crash on.
-        return [Finding(RETIRED_VOCAB_CONFIG,
+        return leftover + [Finding(RETIRED_VOCAB_CONFIG,
                         f'must be a JSON object with a "terms" list (e.g. '
                         f'{{"terms": [...], "exempt_files": [...]}}), not a '
                         f'{type(cfg).__name__}')]
@@ -2669,10 +3079,12 @@ def _migration_scrubs_vocabulary(ctx):
     exempt_files = cfg.get('exempt_files') or []
     if not isinstance(terms, list) or not isinstance(exempt_files, list):
         bad = 'terms' if not isinstance(terms, list) else 'exempt_files'
-        return [Finding(RETIRED_VOCAB_CONFIG,
+        return leftover + [Finding(RETIRED_VOCAB_CONFIG,
                         f'{bad!r} must be a JSON array of strings, not a '
                         f'{type(cfg[bad]).__name__}')]
     if not terms:
+        if leftover:
+            return leftover
         raise NotApplicable(f'{RETIRED_VOCAB_CONFIG} declares no terms -- '
                             f'nothing to scrub for')
     # A directory exemption (an exempt_files entry ending in `/`) exists for
@@ -2694,7 +3106,7 @@ def _migration_scrubs_vocabulary(ctx):
     # forced dropping otherwise-real retired terms rather than exempting the
     # one directory they were colliding in.
     exempt_files = [RETIRED_VOCAB_CONFIG] + exempt_files
-    out = []
+    out = list(leftover)
     for dirpath, dirnames, filenames in os.walk(ROOT):
         rel_dir = pathlib.Path(dirpath).relative_to(ROOT).as_posix()
         rel_dir = '' if rel_dir == '.' else rel_dir

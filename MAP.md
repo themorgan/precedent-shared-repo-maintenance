@@ -59,6 +59,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [tools/precedent_gate.py](tools/precedent_gate.py) | The GATE-TRIGGERED loading channel — Rules for a named moment (merge, review, push, reply) |
 | [tools/precedent_migrate_status.py](tools/precedent_migrate_status.py) | Classifies practices written under the old status vocabulary, where `retired` meant two different things; proposes, and refuses to guess a renamed successor |
 | [tools/precedent_paths.py](tools/precedent_paths.py) | The PATH-TRIGGERED channel — matches a touched file against every practice's `applies_to` |
+| [tools/precedent_retire_path.py](tools/precedent_retire_path.py) | Audits a deprecated file or directory before it is deleted -- refuses while anything still references it, or a workflow it names is still live -- then deletes and records it |
 | [tools/precedent_show.py](tools/precedent_show.py) | Loads a practice's Rule/Detail/Why/Story/Install — the one code path that reads a practice file |
 | [tools/precedent_vendor_engine.py](tools/precedent_vendor_engine.py) | Vendors the minimal source-repo engine (this file, precedent_gate/paths/show.py, split_practices.py, a trimmed routing_scope.json) into an individual or team set, and keeps it refreshable |
 | [tools/split_practices.py](tools/split_practices.py) | PRACTICES.md ↔ practices/ converter |
