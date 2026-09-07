@@ -192,6 +192,13 @@ ENGINE_FILES = [
     # verify_harness.py is deliberately not vendored, so
     # check_status_contract never runs there.
     'precedent_migrate_status.py',
+    # The retirement audit (added 2026-09-07). In ENGINE_FILES rather than
+    # the consumer half because retiring a mechanism is not a consumer-only
+    # act -- a practice set retires its own tooling too, and the repo most
+    # likely to be carrying dead files is one that migrated off something.
+    # retirement-deletes-files' Install names it, so a repo resolving that
+    # practice and lacking the file has a rule it cannot obey.
+    'precedent_retire_path.py',
     # The enforced channel itself (added 2026-09-07). Until then a SOURCE set
     # enforced nothing mechanically: this file was in CONSUMER_ENGINE_FILES
     # but not here, so a consuming repo got the checks and a practice set --
@@ -263,6 +270,17 @@ CONSUMER_ENGINE_FILES = ENGINE_FILES[:-1] + [
     # design, so the individual source simply never resolved and nothing
     # said why.
     'precedent_source_bootstrap.py',
+    # The REPLACEMENT channel for what a public repo's tracked files may not
+    # carry. build_views.py excludes team- and individual-level sources from
+    # a public repo's block and precedent_sync_views.py now keeps their text
+    # out of its materialized tree -- and this is the tool that renders them
+    # into .precedent/SESSION_PRACTICES.md instead, untracked, per session.
+    # It was never vendored, so a consumer got the exclusion with no
+    # replacement and those practices simply stopped binding there. Found
+    # 2026-09-07 repairing a real public consumer's install: half a
+    # mechanism shipped, and the missing half was the half that keeps the
+    # rules in force.
+    'precedent_session_practices.py',
     # precedent_check.py is NOT re-listed here. It was consumer-only when
     # this list was written, and was later promoted into ENGINE_FILES
     # (a source set runs the enforced channel too) without being removed

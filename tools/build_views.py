@@ -96,18 +96,78 @@ def _approx_tokens(text):
 PRIVATE_LEVELS = ('team', 'individual')
 
 
-def repo_is_public(root):
-    """Whether this repo declares `visibility: public` in precedent.json.
+_VISIBILITY_WARNED = set()
 
-    Public means the tracked loader block is a publication, so private
-    sources are excluded from it -- and it is therefore also the signal
-    that something else has to carry them, which is what the standing
-    instruction's pointer and precedent_session_practices.py are for."""
+
+def visibility_is_declared(root):
+    """True when precedent.json states `visibility` outright, either way.
+
+    repo_is_public() collapses "declared public" and "not declared at all"
+    into one answer, deliberately -- undeclared has to fail safe. But the two
+    differ where it matters most: a repo that DECLARED public is choosing to
+    withhold private practice text, while one that merely never declared is
+    having that chosen for it, and if it is actually private the choice
+    silently deletes practices it wanted. Callers that are about to remove
+    something need to tell those apart."""
     try:
-        return json.loads((pathlib.Path(root) / 'precedent.json').read_text(
-            encoding='utf-8')).get('visibility') == 'public'
+        return json.loads(
+            (pathlib.Path(root) / 'precedent.json').read_text(
+                encoding='utf-8')).get('visibility') in ('public', 'private')
     except (ValueError, OSError):
         return False
+
+
+def repo_is_public(root):
+    """Whether this repo's tracked files are a publication.
+
+    Public means the tracked loader block and the materialized practices/
+    tree are publications, so private sources are excluded from both -- and
+    it is therefore also the signal that something else has to carry them,
+    which is what the standing instruction's pointer and
+    precedent_session_practices.py are for.
+
+    AN UNDECLARED `visibility` COUNTS AS PUBLIC, which reverses this
+    function's original default, and the reversal is the whole point. The
+    two ways of being wrong are not symmetric:
+
+      declared private, actually public -> a private source's practice TEXT
+        is committed into a world-readable repo, permanently, and no later
+        edit takes it back.
+      declared public, actually private -> a few practices do not
+        materialize. Visible immediately, fixed by one line.
+
+    The old default was the first of those, justified in precedent.json's
+    own comment as "a repo that omits this field publishes nothing by
+    accident". The opposite is true: omitting it is exactly how a public
+    repo publishes by accident. Found 2026-09-07 in a real public consumer
+    that had never declared the field and carried 10 individual-level and
+    40 team-level practices in its tracked tree, one of them a person's name
+    and email address.
+
+    Silence would be its own failure here -- a degraded path that does not
+    announce itself is worse than the crash, because the crash at least
+    tells someone -- so the undeclared case says what it assumed and how to
+    state the truth, once per root per process."""
+    try:
+        declared = json.loads(
+            (pathlib.Path(root) / 'precedent.json').read_text(
+                encoding='utf-8')).get('visibility')
+    except (ValueError, OSError):
+        return False              # no config at all: not a Precedent repo
+    if declared == 'public':
+        return True
+    if declared == 'private':
+        return False
+    key = str(pathlib.Path(root).resolve())
+    if key not in _VISIBILITY_WARNED:
+        _VISIBILITY_WARNED.add(key)
+        print(f"build_views NOTICE: {root}/precedent.json declares no "
+              f"`visibility`, so this run assumes PUBLIC and excludes "
+              f"team- and individual-level sources from anything tracked. "
+              f"That is the safe assumption, not a guess worth trusting: "
+              f"declare \"visibility\": \"private\" to carry them, or "
+              f"\"public\" to make this explicit.", file=sys.stderr)
+    return True
 
 
 IN_FORCE_STATUS = 'active'
@@ -697,16 +757,27 @@ def loader_practices(root, own_practices):
 
 def render_agents_md(practices, agents_md=None, source_levels=None,
                      omits_private=False):
+    """-> (text, stats), where stats is (resident_tokens, n_resident,
+    n_total) FROM THE BLOCK THIS RETURNED -- not re-derived.
+
+    The stats used to be discarded here and the caller recomputed them for
+    its own summary line, from a different practice list: `main()` passed
+    the single-source catalogue where the block itself had been built from
+    the multi-source resolve. So the run reported "resident 7/69" while the
+    file it had just written said "7 of 72", and neither number knew about
+    the other (found 2026-09-07). Returning them removes the second
+    computation rather than making two computations agree, which is the
+    only version of this that cannot drift again."""
     agents_md = agents_md if agents_md is not None else AGENTS_MD
     original = agents_md.read_text(encoding='utf-8')
-    block, _tokens, _n = build_loader_block(practices, source_levels=source_levels,
-                                            omits_private=omits_private)
+    block, tokens, n_resident = build_loader_block(
+        practices, source_levels=source_levels, omits_private=omits_private)
     if BEGIN_MARKER not in original or END_MARKER not in original:
         sys.exit(f"build_views FAIL: {agents_md} has no "
                  f"{BEGIN_MARKER} / {END_MARKER} markers to regenerate between.")
     pre = original[:original.index(BEGIN_MARKER)]
     post = original[original.index(END_MARKER) + len(END_MARKER):]
-    return pre + block + post
+    return pre + block + post, (tokens, n_resident, len(practices))
 
 
 
@@ -798,6 +869,8 @@ TOOLS_DESCRIPTIONS = {
     'doc_html.py': "The one sortable-table HTML renderer for repo documents",
     'parse_check.py': "Does every JSON/YAML file in scope still parse — changed files for the deep check, the whole tree for the very deep check",
     'doc_lint.py': "Markdown hygiene checks — strikethrough, links, acronyms",
+    'doc_lifecycle.py': "The document status header — kind, status, "
+                        "supersession — checked across spec/ and record/",
     'doc_sync.py': "Keeps script-generated blocks inside documents in sync with what the script emits",
     'full_practice_audit.py': "The full practice audit — on-demand, whole-catalogue sweep across every source",
     'leak_gate.py': "The push-time leak gate — structural rules always, private-term blocklist when configured",
@@ -816,6 +889,7 @@ TOOLS_DESCRIPTIONS = {
     'precedent_promote.py': "Stage 3 (phase 5) — runs a candidate against the four promotion criteria",
     'precedent_refresh_sources.py': "Reports which attached practice-set sources have a stale vendored engine, and with --apply brings them up to date",
     'precedent_resolve.py': "Resolves the universal, team and individual sources into one set, by precedence",
+    'precedent_retire_path.py': "Audits a deprecated file or directory before it is deleted -- refuses while anything still references it, or a workflow it names is still live -- then deletes and records it",
     'precedent_migrate_status.py': "Classifies practices written under the old status vocabulary, where `retired` meant two different things; proposes, and refuses to guess a renamed successor",
     'precedent_retire.py': "Stage 6 (phase 5) — the periodic removal report; proposes, never acts",
     'precedent_session_practices.py': "Writes the team/individual/repo-local practices in force into an untracked .precedent/ file at session start, since this repo is public and their text may not be committed",
@@ -826,6 +900,7 @@ TOOLS_DESCRIPTIONS = {
     'resplit_sections.py': "The editorial Rule/Detail/Why/Story/Install split, applied from tools/section_split.json",
     'routing_audit.py': "The routing audit — mechanical coverage check plus a rotating deep-read slice",
     'routing_eval.py': "Measures whether trigger-based loading actually beats carrying the whole catalogue",
+    'routing_eval_synthetic.py': "Stress-tests the occasion-index channel alone, on hand-written synthetic tasks rather than real commits",
     'split_practices.py': "PRACTICES.md ↔ practices/ converter",
     'table_fmt.py': "One formatter per quantity kind — the engine",
     'title_case.py': "Headline (New York Times) capitalization for markdown headings — --check to gate, --write to fix",
@@ -922,9 +997,9 @@ def main():
                  "resolvable, then re-run.")
     # A public repo's block deliberately omits the private levels, so the
     # standing instruction has to point at what carries them instead.
-    new_agents = render_agents_md(block_practices, agents_md,
-                                  source_levels=levels,
-                                  omits_private=repo_is_public(root))
+    new_agents, (block_tokens, n_resident, n_total) = render_agents_md(
+        block_practices, agents_md, source_levels=levels,
+        omits_private=repo_is_public(root))
     targets = [(agents_md, new_agents)]
     if not agents_only:
         targets.append((map_md, render_map_md(practices)))
@@ -946,11 +1021,12 @@ def main():
 
     for path, new_text in targets:
         path.write_text(new_text, encoding='utf-8')
-    _block, tokens, n_resident = build_loader_block(
-        practices, source_levels=source_levels_from_manifest(root))
     wrote = ', '.join(p.name for p, _t in targets)
+    # These three figures come from the block that was just written, not
+    # from a second build -- see render_agents_md's docstring for the
+    # mismatch that made this the only safe shape.
     print(f"build_views OK: wrote {wrote} (loader block regenerated, resident "
-          f"{n_resident}/{len(practices)} practices, ~{tokens} tokens)")
+          f"{n_resident}/{n_total} practices, ~{block_tokens} tokens)")
     return 0
 
 
