@@ -23,7 +23,11 @@ Headers and subheaders at the same rank in a document must all follow one capita
 A repo is free to choose a different scheme and document that choice inline, the same way it documents any other repo-wide convention. A document whose sections mix capitalization schemes, or mix heading levels, at the same rank is the failure this rule exists to catch.
 
 ## Why
+Two different failures share one fix, which is why the rule states a consistency requirement before it states a default.
 
+**Mixed capitalization at the same rank is the failure**, not any particular scheme. A document whose sections alternate between headline and sentence case reads as unmaintained regardless of which one a reader would have preferred, because the inconsistency itself is the signal.
+
+The named default exists only so the question does not have to be re-decided per document — a repo is explicitly free to choose otherwise and document that choice inline, the same way it documents any other convention. What it is not free to do is leave the choice implicit, since an implicit choice is what drifts.
 
 ## Story
 Retired on 2026-09-06 as a duplicate. BestPractice landed
