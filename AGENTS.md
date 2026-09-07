@@ -9,7 +9,7 @@ here and how the practices in [practices/](practices/) got here.
 
 <!-- Regenerate with: python3 tools/build_views.py -- do not hand-edit this block, tools/verify_harness.py's regeneration check fails on drift. -->
 
-## Resident block (~248 of 2000 token budget, 3 of 40 practices)
+## Resident block (~248 of 2000 token budget, 3 of 39 practices)
 
 **bold-key-phrases.** People don't read; they skim, and bolding makes skimming easy. Bold the key phrases in a document by default, without being asked, scaling with length -- a long paragraph or document is where a skimmer most needs a spine to follow, a short note usually needs little or none.
 
@@ -70,8 +70,6 @@ When drafting or revising a list, or a document with list-like sections:
   list-item-parity — keep list items comparable in length; default to the shorter side
 When installing a vendored practice layer that could check in upstream:
   blank-blocklist — leave a check-in blocklist blank at install; don't ask, don't remind
-When landing practices in bulk -- a migration, an import, or a move from another set:
-  catalogue-carries-stories — no active practice in this set sits with an empty ## Story
 When leaving a placeholder or fill-in-later note mid-draft:
   draft-marker — wrap a draft placeholder in ➡️ TEXT ⬅️, bold and all caps
 When mentioning a repo file in a chat reply, PR description, or commit message:
