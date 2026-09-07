@@ -33,7 +33,33 @@ There is deliberately no filename marker (no `.generated.<ext>` suffix) -- a `gi
 An earlier form of this rule used a filename suffix and a "DO NOT EDIT BY HAND" warning; both were dropped once editing became a legitimate way to raise a change against a derived file -- a rule that states something false teaches that a pack's rules are approximations.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text, and the real
+history here is of an earlier version of this rule being wrong.
 
+That earlier form required a `.generated.<ext>` filename suffix alongside
+the header. It was dropped for four reasons that compound: the word named
+the wrong axis, since in a repo where an assistant writes every document
+"auto-generated" picks out no subset at all; the suffix read as low-value
+machine exhaust on files that are real deliverables; adopting it broke every
+existing link to those files; and its "DO NOT EDIT BY HAND" became false the
+moment editing was made a legitimate way to raise a change. That last one is
+the serious one -- a rule that states something false teaches a reader that
+this set's rules are approximations.
+
+The cost of dropping it was accepted rather than argued away: nothing marks
+a derived file in a directory listing or a pull request's file list any
+more. What replaced it is an index that cannot go stale (`git grep -l
+"DERIVED from"`) plus a row in the repo's own map, which rides on an update
+adding the file already requires instead of being a separate list to forget.
+
+The `@ <sha>` stamp is load-bearing for a reason worth keeping visible:
+generation is usually a nondeterministic model call, so re-running it
+against an unchanged source returns different prose. No comparison of
+content can therefore tell a hand edit from an honest re-run -- every diff
+looks alike. The recorded commit settles it, and yields three checkable
+conditions instead: the file moved while the stamp did not, the source
+advanced past the stamp, or the stamp names no real commit.
 
 ## Install
 Checked mechanically by [`tools/checks/check_derived_file_marker.py`](../tools/checks/check_derived_file_marker.py), scope `tree`. There's no filename convention to key off (per this file's own Detail section, that's deliberate), so the check keys off the same thing a reader would: any tracked file whose opening lines contain `DERIVED from ... @ <sha>` is making the claim, and from there must also carry the `Recipe:` line, the `Regenerate with:` line, and the routing sentence. It doesn't check that the `@ <sha>` is actually current, or that the recipe path exists -- only that the header is complete once a file makes the claim. Two-direction tested in [`tools/checks/tests/test_derived_file_marker.sh`](../tools/checks/tests/test_derived_file_marker.sh).

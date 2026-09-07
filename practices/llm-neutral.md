@@ -25,7 +25,24 @@ OpenRouter's own API is itself OpenAI-request-shaped and fronts most major model
 That keeps swapping providers, or dropping in whichever token happens to be on hand, a config change rather than a rewrite chasing call sites through the codebase.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. No originating incident was recorded, and this Story does not
+supply one.
 
+The reasoning is about the cost of the alternative: hard-wiring one vendor's
+SDK, auth header shape or response schema turns swapping providers into a
+rewrite that chases call sites through the codebase, where a neutral
+interface makes it a config change. Model name, token and base URL are the
+three things that actually vary.
+
+The OpenRouter default is an assumption with a date on it, not a
+preference: it is the provider actually in day-to-day use, so it is the
+safer thing to design and test against, and its API is OpenAI-request-shaped
+while fronting most major providers behind one key and one endpoint
+(*verified 2026-08-22*). That makes it double as a sensible default shape
+for the neutral interface itself. The date is on the claim deliberately --
+if code built against this rule ever breaks because of the API's shape, that
+claim is the thing to re-verify first.
 
 ## Install
 No mechanical check: "provider-neutral" is a property of a whole integration's design (is the model name, key, and base URL actually swappable configuration, or hard-wired), not something a grep for a vendor's name can classify -- a comment or a config default mentioning a provider isn't itself a violation, and a real violation (a response schema parsed assuming one vendor's shape) has no fixed textual signature.

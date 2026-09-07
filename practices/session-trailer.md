@@ -25,7 +25,16 @@ A `Session: <url>` trailer on every commit -- for Claude Code, `https://claude.a
 So a reviewer can tell "considered and skipped" from "forgotten" at a glance, and can trace a change back to the conversation that reasoned it through.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. No incident was recorded, and none is invented here.
 
+The one design detail with a stated reason is the explicit
+no-link-available form. A trailer that is simply omitted when a tool has no
+shareable session link is indistinguishable from one that was forgotten, so
+the rule requires saying so in the trailer itself -- which lets a reviewer
+tell "considered and skipped" from "forgotten" at a glance. The same
+reasoning covers unattended automation, where the workflow run's own URL
+stands in rather than the field going blank.
 
 ## Install
 Checked mechanically by [`tools/checks/check_session_trailer.py`](../tools/checks/check_session_trailer.py), scope `tree`: every non-merge commit reachable from HEAD in this repo must carry a session trailer line -- `Session:` or `Claude-Session:` (the key Claude Code Remote's own harness actually emits as of 2026-09; the check accepts either), a URL or the explicit `none available (<tool>)` form. It doesn't verify the URL actually resolves to a real session -- only that the trailer, in one of its valid shapes, is present, which is the "considered and skipped" vs. "forgotten" distinction this practice's own Why section names. Merge commits are excluded (GitHub's own merge-via-API/UI commits never carry a custom trailer, and a merge isn't new planned work of its own); merge detection reads the raw commit object rather than `git log --format=%P`, which silently loses a shallow clone's boundary commit's real parents -- see the check's own `_is_merge` docstring. One pre-existing, non-merge commit from before this check existed is exempted by SHA (`GRANDFATHERED_SHAS` in the script) rather than rewritten, per `no-rewrite-for-warnings`. Two-direction tested in [`tools/checks/tests/test_session_trailer.sh`](../tools/checks/tests/test_session_trailer.sh).

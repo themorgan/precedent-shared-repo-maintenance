@@ -25,7 +25,30 @@ This isn't a rule against numbers in general -- a version number, a date, or a c
 No audit checks a sentence like "twenty-nine numbered sections" against the actual count, so it just sits there being wrong until a session happens to notice.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text, and this one
+has two concrete instances found on the same day the rule was written.
 
+The first: an entry-point document said "Twenty-nine numbered sections" while
+the pack it described already had thirty. Nothing had gone wrong mechanically
+-- the sentence was simply true when written and quietly stopped being true,
+and no audit compares a sentence like that against the real count, so it sat
+there being wrong until somebody happened to notice. The second, written the
+same day, was in another rule's own text: "over a hundred" pre-existing lint
+warnings, a figure that shifts on nearly every edit to the files it
+describes. Both were fixed as part of adding the rule.
+
+That pairing is what makes the rule's shape right. In neither case was the
+number the point being made -- both sentences only needed to convey "there
+are several" or "a real backlog exists". So the fix is to drop the figure
+rather than replace it with a vaguer but still numeric approximation, which
+only goes stale on a slower clock.
+
+It is deliberately not a rule against numbers. A version, a date, or a count
+genuinely maintained alongside the thing it counts all stay exact. The
+target is a count that can change independently of the sentence stating it,
+where the number was scene-setting detail that happened to be numeric. That
+distinction needs intent to judge, so nothing enforces it mechanically.
 
 ## Install
 Checked mechanically, but only half of it: [`tools/checks/check_no_stale_counts.py`](../tools/checks/check_no_stale_counts.py), scope `tree`, catches the one shape of violation that needs no writer intent to judge -- a sentence stating "`<N> practices`" is a claim about this repo's own `practices/` directory, and that claim is either currently true or it isn't, independent of intent. It's deliberately narrow: it does not (and, per this file's own Detail section, cannot) tell a "genuinely maintained" count apart from one that merely happens to be accurate today, and it doesn't push toward the Rule's preferred fix of dropping the number outright -- it only catches a count that has already gone stale, which is the concrete harm the Rule names. A general digit-plus-noun scan across arbitrary count types stays a judgment call, for the reason already given. Two-direction tested in [`tools/checks/tests/test_no_stale_counts.sh`](../tools/checks/tests/test_no_stale_counts.sh).

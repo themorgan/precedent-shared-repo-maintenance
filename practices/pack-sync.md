@@ -25,7 +25,32 @@ The one real difference: this team's own source repo is private, so both the com
 A private source needs its own credential precisely because it is private -- a public source needs none, which is the whole difference from the universal-set sync.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text.
 
+The trigger was a threshold rather than a failure: copying the pack once at
+install is sufficient right up until rules start being added often enough
+that every dependent repo is quietly running an old copy. This sync is the
+sibling of the universal one -- same compare-then-update shape, separate
+workflow, separate concern -- pointed at the private source instead of the
+public upstream.
+
+The one real difference from its sibling is that the source is private, so
+both jobs need a repository secret to reach it at all, on top of the model
+credential the universal sync already needs. Nothing automated can mint or
+install that token on the owner's behalf; an administrator has to generate
+it and add it themselves. The design decision that followed is the
+interesting one: a missing token skips the update rather than failing the
+workflow, because a private-repo credential should not block an otherwise
+successful install -- but a skip that is silent is indistinguishable from a
+sync that is working, so every such run also raises a tracked issue. That is
+what turns a token never set, or later revoked, into something noticed the
+same day rather than by chance.
+
+The schedule is set deliberately outside working hours, so an unattended
+self-merging run is skimmed as a finished thing the next morning rather than
+landing mid-workday, and offset from the universal sync so the two never
+race over the same working tree.
 
 ## Install
 No mechanical check, same reason as its sibling `bestpractice-sync`: the workflow this rule requires runs in a repo that vendors this team's set, comparing against this team's own private source with its own credential. This repo is that private source, not a consumer of it -- there is no such workflow here to check.

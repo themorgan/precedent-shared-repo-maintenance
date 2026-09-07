@@ -25,7 +25,29 @@ A code-oriented repo doesn't get this recommendation at all -- its root-level cl
 Left alone, both kinds of root-level file pile up together, and enough deliverable content reads as cluttered even when the navigation layer is doing exactly what it should.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text.
 
+It was noticed in a real dependent repo, named here only in general terms
+because this practice text ships into consuming repos (`private-repo-scrub`).
+That repo's root had accumulated two different kinds of file at once: the
+navigation layer that helps a reader find things, and the deliverable
+writing itself. Left alone both pile up together, and enough of the second
+kind reads as clutter even while the first is doing exactly its job. The fix
+there was to group the manuscript and its supporting raw notes each into
+their own named subdirectory while the navigation layer stayed at root.
+
+Two limits came with it deliberately. It does not reach a code-oriented
+repo, whose root clutter is a different problem with its own long-standing
+idioms this set has nothing to add to. And it is not retroactive on its own:
+a restructure means updating every relative link into the moved files, which
+is real work with real link-churn, worth doing when somebody decides to do
+it and not merely because a rule now exists.
+
+It is also the one advisory rule in this group. Nothing checks it, and that
+is on purpose -- it was written down mainly so a session would stop reading
+root-level content clutter as an install-time defect the way a missing
+manifest entry genuinely is.
 
 ## Install
 No mechanical check, and the practice says so itself: its own Detail section states it's "not mechanically enforced... raise it as a judgment call when a session actually notices," since telling deliverable content apart from navigation-layer files (and deciding whether root genuinely reads as cluttered) is exactly that kind of call.

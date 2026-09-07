@@ -25,7 +25,23 @@ This runs both directions: whether the instruction lands first in the README and
 A stray instruction left in only one file is exactly the kind of drift a capture gate exists to catch -- check for it at the same checkpoint any other captured decision gets folded in.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. That pack recorded the reasoning rather than an incident.
 
+The reasoning turns on where people write things versus where sessions are
+told to look. A README, a contributing guide or a getting-started page
+accumulates operational instructions over time -- a setup step, a gotcha, a
+constraint on how to work -- written where a human reader would look for
+them. A session reads the agent instructions file first, so an instruction
+that lands only in the other file is found by accident or not at all.
+
+Two boundaries keep it from becoming a mandate to duplicate everything. It
+runs in both directions, since the instruction is as likely to be written
+straight into the agents file and never mirrored back to where a human would
+expect it. And it explicitly does not run for content that belongs in one
+place only -- a README's marketing framing and screenshots have no business
+in the agents file, and that file's own meta-structure has no business
+padding out a README.
 
 ## Install
 No mechanical check: deciding whether a given addition to a README or other key file is "the operational kind... not general project description" is the judgment the rule's own Rule text names explicitly. A check could flag any `AGENTS.md`/README divergence at all, but that would fire constantly on content that correctly belongs in only one place, which the rule's own Detail section says is normal.

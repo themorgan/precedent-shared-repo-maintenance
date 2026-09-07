@@ -25,7 +25,21 @@ Before pushing, check the thread's discussion against the repo's own backlog doc
 A backlog document drifting out of sync with what was actually decided is common enough in practice that it earns its own gate rather than staying an occasional "oh, I should update that" afterthought.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. No single incident was recorded -- what was recorded is a
+frequency judgment, which is its own kind of evidence.
 
+The backlog document drifting out of sync with what was actually decided
+happened often enough in practice to stop being an occasional "oh, I should
+update that" afterthought and earn a fixed position in the merge runbook
+instead. That is the whole argument: not that any one drift was costly, but
+that the failure recurred reliably enough to be worth a gate.
+
+Its placement is deliberate, immediately after the universal capture and
+export gates, since all three ask the same kind of question -- did this
+thread's work imply something that has to be written down before the branch
+lands -- and answering them together is cheaper than remembering each one
+separately.
 
 ## Install
 No mechanical check: reconciling the backlog document against "the thread's discussion" requires comparing a file to a conversation this repo's tree never records -- a check could confirm a `TODO.md` exists and was touched in the same commit, but that's a weak proxy that would pass on an unrelated edit to the file and fail on a push that genuinely needed no reconciliation.
