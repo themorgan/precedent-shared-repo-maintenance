@@ -9,7 +9,8 @@ gates:       []
 index_clause: "a scheduled workflow keeps the vendored universal copy current"
 checked_by:  null
 defines:     []
-status:      retired
+status:      deduplicated
+in_force_at: bestpractice-sync
 supersedes:  []
 overrides:   null
 added:       2026-08-31
