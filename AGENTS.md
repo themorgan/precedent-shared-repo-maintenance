@@ -9,9 +9,7 @@ here and how the practices in [practices/](practices/) got here.
 
 <!-- Regenerate with: python3 tools/build_views.py -- do not hand-edit this block, tools/verify_harness.py's regeneration check fails on drift. -->
 
-## Resident block (~248 of 2000 token budget, 3 of 40 practices)
-
-**bold-key-phrases.** People don't read; they skim, and bolding makes skimming easy. Bold the key phrases in a document by default, without being asked, scaling with length -- a long paragraph or document is where a skimmer most needs a spine to follow, a short note usually needs little or none.
+## Resident block (~183 of 2000 token budget, 2 of 38 practices)
 
 **nonblocking-questions.** Once a question is worth asking at all, asking is not itself a stopping point. A session holding a queue of work and an open question doesn't go idle waiting for the answer -- it keeps going on everything the answer doesn't touch.
 
@@ -90,8 +88,6 @@ When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
 When writing a sentence that cites an exact, changeable count:
   no-stale-counts — drop a count that will go stale; say "several", not the number
-When writing code that depends on something outside its own control, handling a part that could not run, or deciding how loudly to report one:
-  fail-gracefully — keep going, never look complete — and match the telling to the stake and the reader
 When writing content that will vendor or ship into another repo:
   private-repo-scrub — name a private repo only in general terms in anything that ships elsewhere
 ```
