@@ -6,7 +6,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## The practice catalogue
 
-`practices/` holds 40 practice files (3 resident, 37 on-demand). One file per practice.
+`practices/` holds 39 practice files (3 resident, 36 on-demand). One file per practice.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
@@ -15,7 +15,6 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [bold-key-phrases](practices/bold-key-phrases.md) | resident | writing any document meant to be read |
 | [brainstorm-citations](practices/brainstorm-citations.md) | on-demand | citing support for a claim in a formal document |
 | [branch-links](practices/branch-links.md) | on-demand | naming a git branch in a document, reply, or status update |
-| [catalogue-carries-stories](practices/catalogue-carries-stories.md) | on-demand | landing practices in bulk -- a migration, an import, or a move from another set |
 | [content-subdirs](practices/content-subdirs.md) | on-demand | root has accumulated three or more deliverable-content documents |
 | [deep-check](practices/deep-check.md) | on-demand | asked for a "deep check" by name, or after drift-inviting work |
 | [default-branch](practices/default-branch.md) | on-demand | setting up a new repo, or installing into an existing one |

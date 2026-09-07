@@ -7,9 +7,10 @@ applies_to:  ["practices/*.md"]
 occasion:    "landing practices in bulk -- a migration, an import, or a move from another set"
 gates:       ["merge"]
 index_clause: "no active practice in this set sits with an empty ## Story"
-checked_by:  tools/checks/check_catalogue_stories.py
+checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: catalogue-carries-stories
 supersedes:  []
 overrides:   null
 added:       2026-09-07
@@ -31,6 +32,10 @@ The universal catalogue already asks an author to record the failure a rule prev
 A standing invariant sees both. It fires on the landing commit, and it keeps firing every day the gap stays open, which is the property that actually makes the backlog get paid down instead of noticed once and deferred.
 
 ## Story
+**Deduplicated the same day it was written, 2026-09-07.** BestPractice landed this rule at universal level under the same slug hours after this copy was created, so the rule is in force there and a second statement of it here is what `no-duplication` says to drop. The record stays rather than being deleted, because the enforcement arrangement below is not obvious from the status alone.
+
+**The check script in this set is deliberately kept**, even though the practice is not in force here. [`tools/checks/check_catalogue_stories.py`](../tools/checks/check_catalogue_stories.py) is the only thing that actually enforces this rule inside a practice set: universal's own check lives in `precedent_check.py`, which is in neither `ENGINE_FILES` nor `CONSUMER_ENGINE_FILES`, so it has never run in a set at all. Deleting the script to match the status would trade a working check for a tidy record. Retire it once `precedent_check.py` is vendored.
+
 Written 2026-09-07, from a gap this set had been sitting in since it was created.
 
 Thirty-four of this set's practices, and two of the individual set's, carried an empty `## Story`. The rules were all there and enforceable; the incidents that justified them had stayed behind in the personal rule set they were migrated out of, reachable only by knowing where to look. A rule whose reason nobody can see is the first one somebody deletes as arbitrary, which makes this a slow-acting failure rather than a cosmetic one.
