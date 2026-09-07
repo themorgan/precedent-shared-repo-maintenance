@@ -107,6 +107,34 @@ if python3 "$CHECK" > /dev/null; then
 fi
 echo "ok: fires on planted violation (no ## Story section at all)"
 
+# 7. the consuming-repo case: an empty-Story practice that a committed
+#    MANIFEST.json attributes to ANOTHER source -> must stay clean. Without
+#    this, every repo consuming this set would go red on the universal
+#    catalogue's own empty Stories -- real findings, unactionable where
+#    reported. Reproduced here rather than reasoned about: the universal
+#    catalogue really did have 30 of 65 empty when this was written.
+rm -f "$SCRATCH/practices/p.md"   # case 5 left it Story-less on purpose
+plant "foreign.md" active "" ""
+cat > "$SCRATCH/MANIFEST.json" <<'JSON'
+{"practices": [{"slug": "foreign", "level": "universal"}]}
+JSON
+if ! python3 "$CHECK" > /dev/null; then
+  echo "FAIL: fired on a practice a committed MANIFEST.json attributes to another source -- unactionable where reported" >&2; exit 1
+fi
+echo "ok: stays clean on planted non-violation (empty Story owned by another source)"
+
+# 8. same manifest, but the practice is attributed to THIS repo -> must fire.
+#    Without this, case 7 would pass even if _foreign_practice always returned
+#    true, which would disable the check entirely in every consuming repo.
+cat > "$SCRATCH/MANIFEST.json" <<'JSON'
+{"practices": [{"slug": "foreign", "level": "repo-local"}]}
+JSON
+if python3 "$CHECK" > /dev/null; then
+  echo "FAIL: did not fire on an empty Story this repo owns, with a manifest present" >&2; exit 1
+fi
+echo "ok: fires on planted violation (empty Story owned here, manifest present)"
+rm -f "$SCRATCH/MANIFEST.json" "$SCRATCH/practices/foreign.md"
+
 cd "$ROOT"
 if ! python3 tools/checks/check_catalogue_stories.py > /dev/null; then
   echo "FAIL: check_catalogue_stories.py is not clean on the real, current repo" >&2; exit 1
