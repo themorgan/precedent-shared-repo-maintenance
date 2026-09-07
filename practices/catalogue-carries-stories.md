@@ -9,8 +9,7 @@ gates:       ["merge"]
 index_clause: "no active practice in this set sits with an empty ## Story"
 checked_by:  null
 defines:     []
-status:      deduplicated
-in_force_at: catalogue-carries-stories
+status:      active
 supersedes:  []
 overrides:   null
 added:       2026-09-07
@@ -32,9 +31,11 @@ The universal catalogue already asks an author to record the failure a rule prev
 A standing invariant sees both. It fires on the landing commit, and it keeps firing every day the gap stays open, which is the property that actually makes the backlog get paid down instead of noticed once and deferred.
 
 ## Story
-**Deduplicated the same day it was written, 2026-09-07.** BestPractice landed this rule at universal level under the same slug hours after this copy was created, so the rule is in force there and a second statement of it here is what `no-duplication` says to drop. The record stays rather than being deleted, because the enforcement arrangement below is not obvious from the status alone.
+**Deduplicated and then re-activated the same day, 2026-09-07, and the round trip is the point.** BestPractice landed this rule at universal level under the same slug hours after this copy was written, so it was marked deduplicated as `no-duplication` asks. That turned out to be wrong for a mechanical reason nobody had written down: **a source repo consumes no catalogue**, so universal's copy never reaches this set, and `precedent_check.py` gates every check on its practice actually being in force *here*. Deduplicating it did not defer enforcement to universal — it switched enforcement off.
 
-**The check script in this set is deliberately kept**, even though the practice is not in force here. [`tools/checks/check_catalogue_stories.py`](../tools/checks/check_catalogue_stories.py) is the only thing that actually enforces this rule inside a practice set: universal's own check lived in `precedent_check.py`, which was in `CONSUMER_ENGINE_FILES` but **not** in `ENGINE_FILES` — so a consuming repo got it and a source set never did. (Corrected 2026-09-07: this first said *neither* list, which was wrong about consumers and right about sources; the sets are what was actually broken.) **That is now fixed upstream** — `precedent_check.py` is in both lists as of the same day — so this script's job is done once this set's next engine refresh lands it, and it should be retired then.
+So this file is not a restatement of the universal rule; it is the mechanism by which a source set puts that rule in force on its own catalogue. `checked_by` stays `null` because the check itself is universal's, now vendored in `ENGINE_FILES` and running here.
+
+**The local check script was retired in the same commit.** `tools/checks/check_catalogue_stories.py` existed only because `precedent_check.py` was in `CONSUMER_ENGINE_FILES` but not `ENGINE_FILES` — a consuming repo got the universal checks and a source set never did. (Corrected 2026-09-07: an earlier note here said *neither* list, which was wrong about consumers and right about sources.) With that fixed upstream and the engine refreshed, the universal check runs here and the local copy was two implementations of one rule.
 
 Written 2026-09-07, from a gap this set had been sitting in since it was created.
 
@@ -45,4 +46,6 @@ The migration tool was not at fault, and the record should say so. It declines t
 The actual defect was that nothing ever came back for the declared gap, and nothing could. The universal check that demands a Story lives in a tool that is not in the vendored engine's file list at all, so it has never run inside a practice set -- the same shape as a status-contract check that turned out to be unreachable here for the same reason. A gap declared in a repo that cannot check for it is indistinguishable from one nobody declared. Hence a check owned by this set, over its own whole tree, rather than a note asking the next session to remember.
 
 ## Install
-Checked mechanically by [`tools/checks/check_catalogue_stories.py`](../tools/checks/check_catalogue_stories.py), scope `tree`: it reads every `practices/*.md`, skips any whose `status:` is not `active`, and fails on an empty or whitespace-only `## Story`, naming each one. It skips any practice a committed `MANIFEST.json` attributes to another source, so it stays silent in a consuming repo on text that repo cannot fix, and checks everything in a source repo, which has no such manifest. It deliberately does not judge whether a Story is a *good* incident -- that is not a property a script can test -- only that the section says something. Two-direction tested in [`tools/checks/tests/test_catalogue_stories.sh`](../tools/checks/tests/test_catalogue_stories.sh).
+Checked mechanically by the universal catalogue's own `precedent_check.py`, vendored here in `ENGINE_FILES`, scope `tree`: every `practices/*.md` whose frontmatter `status:` is `active` must carry a non-empty `## Story`. `status:` is read from the frontmatter block only, never searched for anywhere in the file, since several practices here discuss the status vocabulary in their own prose. A practice a committed `MANIFEST.json` attributes to another source is skipped. It tests that the incident was recorded, never that it was the right incident.
+
+`checked_by` is `null` rather than naming a script in this set: the check is universal's, and this file's job is to put that rule in force here, which is what makes `precedent_check.py` run it at all. This set carried its own `tools/checks/check_catalogue_stories.py` until 2026-09-07, retired once the universal check reached source sets -- two implementations of one rule, which is the state `engine-plus-host-shims` exists to prevent.
