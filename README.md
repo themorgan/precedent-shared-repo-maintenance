@@ -20,6 +20,13 @@ session actually loads; regenerate it with
 section gives the history and allocation reasoning `AGENTS.md`'s generated
 block doesn't carry.
 
+[`NOT_BINDING_FINDINGS.md`](NOT_BINDING_FINDINGS.md) — a one-off measurement
+record, not a practice: which of the practices in force in BestPractice do and
+do not bind that repository, produced here because this is where the private
+practice text is actually readable. It is output for a later
+BestPractice-rooted session to act on, and nothing in it has been applied
+upstream.
+
 `practices/*.md` — one file per practice, in the format
 [spec/PRACTICE_FORMAT.md](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/PRACTICE_FORMAT.md)
 documents: practices migrated from RepoPersonalPreferences' 46 rules
