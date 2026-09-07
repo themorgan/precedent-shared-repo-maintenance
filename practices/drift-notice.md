@@ -25,7 +25,35 @@ A fired notice is also persisted, not just printed: write it into the repo's own
 A purely printed notice competes for a session's attention against whatever concrete task the person actually opened the session to do, and can lose that fight silently -- read once, never acted on, and nothing forces it back into view.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text. Two real
+incidents shaped it.
 
+The first, on 2026-08-27, is why a fired notice is persisted rather than
+only printed. In a dependent repo a drift notice fired at session start, was
+never raised to the user, and surfaced only when he asked directly a full
+task later. Nothing had malfunctioned -- the notice was printed and is in the
+transcript. It simply lost a priority fight against whatever concrete task
+the session had been opened to do, and once the turn moved on nothing forced
+it back into view. A notice that competes for attention and loses is
+indistinguishable from one that never fired, so the notice now also writes
+itself into the repo's own backlog document, where a per-commit check keeps
+warning while the entry stays open.
+
+The second is why the check verifies the install and not just the recorded
+commit. A repo can carry a vendored tree without carrying the mechanisms
+that keep it current -- through a fork, a template copy, or the case that
+actually prompted it, a repo vendored from an already-dependent repo rather
+than from canonical source. Comparing recorded commits there answers a
+question nobody asked, because the wiring that would act on the answer is
+missing. So a missing workflow, bootstrap snippet or woven-in section is
+reported as an incomplete install rather than as drift, with an offer to
+finish it from canonical source regardless of which repo the files on disk
+arrived from.
+
+Taking an update stays deliberate, which is the one deliberate difference
+from the scheduled syncs that merge unattended: a human is already present
+to answer, so there is no reason to skip the ask.
 
 ## Install
 No mechanical check: this is a rule about when a session raises drift (immediately at session start, not saved for later) -- a property of session conduct and turn ordering, not of any file this repo's own tree holds. There is no artifact left behind that distinguishes a notice raised early from one raised late.

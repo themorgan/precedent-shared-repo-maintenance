@@ -25,7 +25,26 @@ Before showing or sharing any document, scan it for the marker specifically -- a
 Plain caps alone isn't enough: an all-caps placeholder still reads as ordinary body text on a fast scan once the eye has adjusted to a document that already uses bold and caps for other things. Nothing else on the page looks like the arrow marker.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text, and it records
+a real failure.
 
+In a dependent repo -- named only in general terms here, since this text
+ships into consuming repos (`private-repo-scrub`) -- a draft still carried
+an all-caps fill-in-later placeholder when somebody scanned it quickly
+before showing it to someone else. The caps did not register as an alarm;
+they read as ordinary body text, and the document got shown anyway.
+
+That is the whole argument for the specific marker. Bold and caps alone stop
+working in a document that already uses bold and caps for other things -- the
+eye adjusts, and the placeholder becomes texture. The arrows are the
+load-bearing part rather than decoration, because nothing else on a page
+looks like an arrow hugging the first and last word.
+
+The scan-before-sharing half exists for the same reason: a marker only helps
+if something actually looks for it. Grepping for the arrow is cheaper than
+rereading the document, and it answers the one question that matters before
+sharing.
 
 ## Install
 Checked mechanically by [`tools/checks/check_draft_marker.py`](../tools/checks/check_draft_marker.py), scope `tree`, over tracked markdown files. It implements the Detail section's own described check -- a text search for the marker -- rather than a new invention: any `**➡️ ... ⬅️**` sitting in real document prose (not inside backtick code, which is how this practice's own Rule text illustrates the format) is a marker that should have been caught and cleared before the content was committed. Two-direction tested in [`tools/checks/tests/test_draft_marker.sh`](../tools/checks/tests/test_draft_marker.sh), which also confirms the check doesn't misfire on this file's own illustration of the format.

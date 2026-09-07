@@ -27,7 +27,29 @@ The test: would the rule's own text still make sense applied to a different docu
 The ask is nearly free while the rule is still in front of the person proposing it; the same question weeks later costs a full reload of the context that produced it.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. No dated incident was recorded; what was recorded is why this
+rule is a deliberate carve-out from another one, which is the part worth
+keeping.
 
+By `small-calls`' own test -- how hard is it to undo -- filing a newly
+proposed rule at the wrong layer looks cheap, so `small-calls` would say
+decide and move on. The carve-out exists because the cost that matters here
+is not undoing the mistake but noticing it, and both misfilings are silent.
+A rule that is really general, filed onto one document, ends up restated
+across several recipes in several phrasings, drifting, with nothing pointing
+at it. A rule that is really local, filed as a repo convention, quietly
+constrains every document in the repo and is never connected back to the one
+file it was meant for. Neither announces itself.
+
+The timing argument is the other half: the ask is nearly free while the rule
+is still in front of the person proposing it, and the same question three
+weeks later costs them a full reload of the context that produced it.
+
+The test and the three worked examples are there to stop the rule
+overfiring, which would defeat it -- asking on all three trains the person to
+wave the question through. Only genuine ambiguity warrants stopping, and the
+ask carries a guess and its reason so confirming costs a word.
 
 ## Install
 No mechanical check: this is a live judgment call made while a rule is being proposed -- whether its scope is genuinely ambiguous by the rule's own test ("would the rule's own text still make sense applied to a different document?"). Nothing in committed content records whether that ask happened, or should have.

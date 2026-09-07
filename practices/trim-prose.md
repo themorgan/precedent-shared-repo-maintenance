@@ -25,7 +25,25 @@ Prose revised repeatedly in the same conversation tends to only grow -- each pas
 Both triggers fire at a checkpoint that already exists -- making an edit, declaring the piece finished -- rather than a mechanical count needing counters or stored baselines.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. No dated incident was recorded; the rule names a drift, and the
+interesting part is the mechanism it rejected.
 
+The drift is that prose tweaked repeatedly in one conversation only grows:
+each pass adds a clause or qualifier without anyone removing what the new
+wording made redundant, and the result is a paragraph several times its
+original length carrying the same point plus a pile of overlapping caveats.
+
+The rejected fix is a running count -- edits since the last trim, or current
+length against an earlier baseline. That needs state persisted across edits
+and often across sessions, which is a cost out of all proportion to a minor
+writing problem. So both triggers are deliberately state-free and fire at
+checkpoints that already exist: making a substantial edit, where the
+paragraph is already open and being reworked, and declaring the piece done.
+
+The second trigger is not redundant with the first. It exists to catch slow
+drift from a run of edits each too small on its own to fire the immediate
+one -- which is the way a paragraph usually gets long.
 
 ## Install
 No mechanical check: whether a paragraph has "grown noticeably longer than the point it's making warrants" is a judgment about proportion between content and substance -- word or sentence count alone can't distinguish a legitimately long, dense point from one padded by iterative edits, so a length-based trigger would flag exactly the paragraphs this rule doesn't target as often as the ones it does.

@@ -27,7 +27,27 @@ Where the person working in the target repo has their own individual set, this i
 Copying gets a repo the files but not the tracked provenance (source, commit, per-file record) that makes a vendored set auditable and syncable later -- an install that skips the manifest is not really an install.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. This one is a procedure rather than a rule with a failure behind
+it, so there is no originating incident to record and this Story does not
+manufacture one.
 
+What is worth carrying is why the procedure is a written checklist at all
+rather than "vendor the tree and read the rules." Every step exists because
+something is load-bearing beyond the files themselves: the conventions have
+to be woven into the target repo's own agent instructions in reading-order
+position or a session never sees them; the scheduled sync and check
+workflows have to be installed or the vendored copy silently ages; the
+session-start freshness snippets have to be added to the bootstrap script or
+drift is never noticed; and every installed file has to be recorded in a
+manifest with the source repo and commit, or a later sync has nothing real
+to compare against.
+
+A vendored tree without those mechanisms is the exact shape `drift-notice`
+learned to detect and report as an incomplete install rather than as drift.
+That is the strongest argument for following the procedure as written: the
+failure it prevents is one another rule in this set had to grow a special
+case to catch.
 
 ## Install
 No mechanical check: this rule describes a procedure a *target* repo's install session follows (vendor the tree, weave `AGENTS.md`, wire checks, write the tracking manifest). This repo is the source being vendored, not a target -- there's no install here to verify the outcome of. A target repo could check its own manifest for completeness (light-check's own Detail section already covers exactly that), but that check would live there, not here.

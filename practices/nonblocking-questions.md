@@ -27,7 +27,27 @@ Ask early, not at the end -- put the question in front of the person as soon as 
 The point is that the answer can arrive while work is still in flight, so a question asked only at the end of a session has nowhere useful to land.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. No dated incident was recorded; the rule states a working cadence
+and its reason, and this Story keeps to that.
 
+It picks up exactly where `small-calls` stops. That rule settles which
+judgment calls are worth asking about at all; this one settles what happens
+after -- and the answer is that asking is not itself a stopping point. A
+session holding both a queue of work and an open question does not go idle
+waiting for a reply.
+
+The sorting rule is what makes it safe. A blocker is a question where
+proceeding under any assumption would be unsafe, spend real money, touch
+production the wrong way, or make the delivered work useless if the guess is
+wrong -- those, and only those, justify stopping with nothing delivered.
+Everything else gets the same order: do the independent work, do the work
+that comes out the same either way, ask, carry on.
+
+Asking early rather than at the end is the part with a practical reason
+behind it. The point is for the answer to arrive while work is still in
+flight, and a question saved for a closing summary has nowhere to land --
+particularly when the person being asked is often away from the computer.
 
 ## Install
 No mechanical check: this is a rule about how a session paces its own work against an open question -- whether it kept moving on independent work instead of going idle. That's a property of session conduct across a conversation, not of any file this repo's tree holds.

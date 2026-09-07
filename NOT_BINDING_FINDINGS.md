@@ -6,8 +6,9 @@ TODO item [`unreachable-practices`](https://github.com/alex137/BestPractice/blob
 which was blocked on a session that could actually read the private practice
 text. This session could: rooted in this set, with `precedent-individual` and
 `precedent-team-tms` alongside it and a public clone of BestPractice as a
-sibling, `precedent_resolve.py` resolved all four sources for the first time —
-116 practices, 39 team, 13 individual, 63 universal, 1 repo-local.
+sibling, `precedent_resolve.py` resolved all four sources together for the first
+time — universal, team, individual and repo-local, every one of them
+reachable in a single session.
 
 **Nothing here has been applied.** BestPractice was treated as read-only for
 the session that produced this, so `precedent.json`'s `not_binding` list is
