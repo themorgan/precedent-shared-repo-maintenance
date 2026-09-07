@@ -27,7 +27,33 @@ Never push back just to push back: this is not a quota, and a piece with no real
 Nothing here can distinguish, from the outside, a session that stayed quiet out of excessive deference from one that correctly found nothing serious to say -- this rule leans entirely on honest judgment about whether a given disagreement is real.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. No incident was recorded, and this rule is unusual enough that
+the absence is worth stating rather than papering over.
 
+It sits deliberately next to `small-calls` and covers the opposite case.
+That rule governs judgment calls -- a default to fill, two fine
+implementations, an ambiguity that does not change what gets delivered --
+and says decide them yourself. This one governs contested reasoning, where
+the deliverable is prose meant to persuade or be judged as an argument, and
+says argue before building on a stance as given.
+
+The scope boundary is drawn by what the current piece of work is for, not by
+which repo or file it lives in. A conversation about design tradeoffs is
+push-back mode; the implementation that follows from it is not, even in the
+same session and the same file.
+
+The honest part is the last part, and it is why this Story exists even
+without an incident. Nearly every other rule in this set is checkable -- a
+config value, a file's presence, a timestamp format, a workflow that ran or
+did not. This one is not, and cannot be. Nothing can distinguish from the
+outside a session that stayed quiet on a real problem out of deference from
+one that correctly found nothing serious to say, or a session performing a
+disagreement it does not hold from one raising a genuine one. The rule
+leans entirely on honest judgment, and the only available check is somebody
+noticing over time whether push-back shows up when it should, and saying so
+if the calibration drifts. Hence also the explicit anti-quota clause: a
+piece with no real problem is handed over as-is.
 
 ## Install
 No mechanical check, and the practice says so itself: its own Why section states this "leans entirely on honest judgment about whether a given disagreement is real," since nothing external can distinguish correctly finding no real problem from staying quiet out of excessive deference.

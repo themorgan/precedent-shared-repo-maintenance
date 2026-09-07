@@ -29,7 +29,31 @@ A rule of any practice set has one canonical citation form: the slug, linked to 
 A reply that says "fixed in the header rule, see the backlog item" is exactly as unhelpful as a document that says it -- a reply is usually more disposable, which is why it needs the links more, not less. This is stricter than a plain doc-references-are-links convention about where the link lands and what counts as mentionable, so it replaces that practice rather than sitting beside it.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text.
 
+The rule generalizes: `branch-links` closed the gap the universal
+references-are-links rule leaves for a git branch, and this one closes the
+rest and names the principle both are instances of. The surface people
+forget is chat -- a reply that says "fixed in the header rule, see the TODO
+item" is exactly as unhelpful as a document that says it, and a reply is
+more disposable, so it needs the link more rather than less.
+
+There is a real incident behind one detail. The mechanical half fails a
+positional citation to one of this set's own rules, since a number names
+where a rule sits today rather than which rule it is, while leaving the
+file-qualified form alone for documents whose numbering this set does not
+control. The first version of that check carried a fixed list of filenames
+and produced a false positive against another vendored pack's own numbered
+file on 2026-08-29 -- a legitimate citation, correctly formed, flagged
+because the check did not know that pack existed. It was rewritten to
+recognize the shape generically, so a newly vendored pack needs no update to
+the check at all.
+
+The enforcement boundary is stated rather than implied: only the slug half
+is checkable. A commit, a pull request number or an external page cannot be
+told from ordinary prose without flagging every hex string and product name,
+so those ride on the review half of `deep-check` instead of on a gate.
 
 ## Install
 No mechanical check: it's the general case of `branch-links` and `file-mention-links`, one level broader (any file, rule, branch, commit, PR, issue, tool, or spec named in a document or a reply), and inherits the same limit -- recognizing that something was "mentioned" in free-form prose, as opposed to a coincidentally similar word, has no reliable syntactic signature to key a check off.

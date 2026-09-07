@@ -25,7 +25,24 @@ What this doesn't reach: a document's own provenance note ("promoted out of the 
 Citing a specific brainstorm entry as a claim's own support borrows a credibility the entry never earned -- it's raw material precisely because nobody has argued it through yet.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. That pack recorded the reasoning rather than a dated incident,
+and this Story keeps that distinction rather than manufacturing one.
 
+The rule exists because a general rule of this set has a blind spot here.
+`rule-links` says anything mentioned gets a link to its destination -- good
+almost everywhere, and wrong for one case. A formal document citing a
+specific entry inside a brainstorm as that claim's support borrows
+credibility the entry never earned: the entry is raw material precisely
+because nobody has argued it through yet, so pointing at it as backing is
+citing an idea to itself.
+
+The originating context was a repo that keeps a running brainstorm document
+alongside its formal ones, which is the shape the rule assumes. The fix is
+deliberately cheap: promote the idea into whichever formal document it fits,
+then link there. What the rule does not reach matters as much as what it
+does -- a document's own provenance note, or a link to the brainstorm as an
+object, states a true fact rather than borrowing support, and stays fine.
 
 ## Install
 No mechanical check: catching a violation requires classifying a document as "formal" versus "brainstorm" and telling a citation used as substantive support apart from a provenance note or a link to the brainstorm document as a whole -- both genuinely allowed by the rule's own Detail section. Nothing in a link's syntax carries that distinction; it's a judgment about what the link is doing in context.

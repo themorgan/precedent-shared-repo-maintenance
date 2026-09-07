@@ -25,7 +25,22 @@ Any time a reply or document names a git branch -- not only in a files-touched f
 A doc-references-are-links convention covers files at the repo's current tree; it doesn't reach a branch, since a branch is a ref rather than a path at the current tree, so it needs its own explicit rule.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text, which recorded
+a gap rather than an incident.
 
+The gap is precise. The universal rule that references in documents are
+links covers files at the repo's current tree, and a relative markdown link
+is the right form for those. A git branch is not a path at the current tree
+-- it is a ref -- so that rule does not reach it, and a bare branch name in
+backticks sails past a reader with nothing to click. That is the failure
+mode this rule exists to catch, and it is the same failure an unlinked
+filename is, one category over.
+
+Hence the extension rather than a new idea: link a branch anywhere it is
+named, not only in a files-touched footer, to that branch's tree view on
+whichever host the repo actually lives on. A branch in some other repo a
+reply happens to mention gets linked on that repo's host, not this one's.
 
 ## Install
 No mechanical check: it governs free-form prose (chat replies, status updates, any document) naming a branch, which has no reliable syntactic signature distinguishing "a git branch was named here" from any other backticked or plain-text token (a filename, a variable, a package name). A static scan would either miss real mentions or misfire constantly on lookalikes.

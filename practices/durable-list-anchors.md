@@ -25,7 +25,34 @@ Doesn't reach a short bullet list -- three or four quick options, a set of open 
 Position-only numbering makes every future insertion a choice between distorting the list's own logical order or paying for a repo-wide citation sweep; a slug removes that choice entirely.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration; the Story is backfilled from that pack's own text, and the
+incident behind it is a good one because the damage was invisible.
 
+In a dependent repo -- named in general terms here, since this text ships
+into consuming repos (`private-repo-scrub`) -- a session had a new idea to
+add to a numbered list and folded it into an existing item as an awkward
+corollary instead of inserting it where it belonged. The reason was
+mechanical, not editorial: a plain insertion would have forced a sweep
+renumbering every "item N" cross-reference pointing past it, so the session
+distorted the list's own logical order to avoid paying for the sweep.
+
+That is the failure worth naming, because nothing about the result looks
+broken. The list still reads, the cross-references still resolve, and only
+the shape of the argument quietly got worse. Position-only numbering makes
+every future insertion a choice between distorting the order and paying a
+renumbering cost, and sessions will keep choosing the cheap side.
+
+A slugged list has nothing to renumber: insert the entry where it actually
+belongs and every existing citation keeps working untouched. A list that
+already uses real headings still needs the anchor explicitly, because the
+host's auto-generated anchor bakes the number into the slug and so breaks on
+renumbering anyway.
+
+The rule deliberately stops at the edge of anything vendored. A numbered
+list inside a vendored tree is not ours to renumber or re-anchor -- that
+tree has to stay byte-identical to what its sync mirrored, so a local anchor
+is just a merge conflict on the next sync.
 
 ## Install
 No mechanical check: whether a given numbered list holds "durable content likely to be cited by position" versus a short, disposable set of options is exactly the judgment the rule turns on, and the Detail section's own carve-outs (a short bullet list; a list vendored byte-identical from upstream) need the same judgment to apply correctly. A check that flagged every unanchored numbered list would misfire on most of them.

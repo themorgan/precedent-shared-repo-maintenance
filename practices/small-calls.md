@@ -25,7 +25,26 @@ A small or moderate call made this way still gets surfaced, just not as an inter
 Most calls in day-to-day work (a wording choice, which of two valid layouts to use, a template's exact phrasing) are small enough to just make; stopping for each one trades a session's own judgment for round-trip latency on decisions that don't need a second opinion.
 
 ## Story
+Migrated here from RepoPersonalPreferences by the phase-3 private-set
+migration. No dated incident was recorded; the rule is a deliberate
+calibration of a universal default, and that is what this Story records.
 
+The universal default is to ask when genuinely unsure. This sharpens it
+toward a specific risk tolerance: most calls in day-to-day work -- a wording
+choice, which of two valid layouts to use, a template's exact phrasing --
+are small enough to just make. The list of what still justifies stopping is
+the substance: hard or costly to undo, changes what gets delivered or to
+whom, spends real money, touches credentials or production, or is a toss-up
+two reasonable people would clearly land differently on.
+
+The part that keeps this from being a licence is the double recording, and
+it has a real reason. A small call still gets surfaced, just not as an
+interruption -- and it goes in both the end-of-work reply and the commit
+message under its own heading. The chat reply is easy to miss once a thread
+scrolls on; the commit message is the copy that survives into the log and
+the diff, where somebody reviewing a merged pull request later can still see
+what was decided on their behalf. The heading is skipped on a commit that
+genuinely made no calls, rather than padded with "none" on every commit.
 
 ## Install
 No mechanical check: a commit either has a "Judgment calls made:" heading or doesn't, and that presence alone is trivially greppable -- but the actual rule is about which calls were correctly sized as small enough to just make versus which should have stopped and asked, and that sizing (hard/costly to undo, touches production, a real two-reasonable-people toss-up) is the judgment itself, not observable after the fact from the commit alone.
