@@ -2124,7 +2124,9 @@ def _published_default_branch():
        'string concatenation at runtime, and it deliberately says nothing '
        'about a file the repo received rather than wrote: a vendored tree, '
        'a materialized practice or check, or the generated loader block, '
-       'each of which is overwritten by its own next sync.')
+       'each of which is overwritten by its own next sync. It also says '
+       'nothing about a file the decommissioning registry exempts -- the record OF a deletion naming what went is not a reference left behind '
+       'by one.')
 def _rename_updates_links(ctx):
     base = _published_default_branch()
     if base is None:
@@ -2187,6 +2189,8 @@ def _rename_updates_links(ctx):
     except (ValueError, OSError):
         pass
 
+    _retired_exempt = _decommissioning_record_exemptions()
+
     old_paths = []
     for line in r.stdout.splitlines():
         parts = line.split('\t')
@@ -2218,12 +2222,20 @@ def _rename_updates_links(ctx):
             # wholesale from a published commit, and an edit is overwritten by
             # the next refresh. The reference is upstream's, and so is the fix.
             if rel.startswith('process/upstream/') or rel in _vendored_engine \
-                    or rel in received or rel == RETIRED_PATHS_REGISTRY:
-                # The retirement registry names every path this repo has
-                # deleted, on purpose (practice: retirement-deletes-files) --
+                    or rel in received or rel == DECOMMISSIONED_PATHS_REGISTRY \
+                    or any(_exempt_matches(rel, e) for e in _retired_exempt):
+                # The decommissioning registry names every path this repo has
+                # deleted, on purpose (practice: decommission-deletes-files) --
                 # it is the record OF the deletion, not a reference left
                 # behind by one, so reading it as a stranded link would make
-                # every retirement fail the moment it was recorded.
+                # every decommissioning fail the moment it was recorded.
+                #
+                # And so is everything the registry's own `exempt_files`
+                # names, which is the half this check was missing: the
+                # migration record explaining the deletion, and the dated
+                # backlog entry it closed, are the same kind of document as
+                # the registry and were being flagged for doing their job.
+                # See _decommissioning_record_exemptions() for the incident.
                 continue
             f = ROOT / rel
             if not f.is_file():
@@ -2261,69 +2273,70 @@ def _rename_updates_links(ctx):
     return out
 
 
-RETIRED_PATHS_REGISTRY = 'process/retired_paths.json'
+DECOMMISSIONED_PATHS_REGISTRY = 'process/decommissioned_paths.json'
 
 
-@check('retirement-deletes-files', 'tree',
-       'every path this repo declared retired is still absent, and every '
-       'retirement carries the reason it happened',
+@check('decommission-deletes-files', 'tree',
+       'every path this repo declared decommissioned is still absent, and '
+       'every decommissioning carries the reason it happened',
        'the whole positive direction -- a deprecated file nobody has '
        'declared. Nothing here can tell a dead file from a live one, so '
-       'this catches a retirement coming UNDONE (a vendored tree mirrored '
+       'this catches a decommissioning coming UNDONE (a vendored tree mirrored '
        'back over a deletion, a materialized directory rewritten from its '
        'source), never one that was never made. The audit that decides a '
-       'path is safe to delete is tools/precedent_retire_path.py, run by a '
-       'person at the moment of retirement; this check is only the record '
+       'path is safe to delete is tools/precedent_decommission.py, run by a '
+       'person at the moment of decommissioning; this check is only the record '
        'holding afterwards.')
-def _retirement_deletes_files(ctx):
-    cfg_path = ROOT / RETIRED_PATHS_REGISTRY
+def _decommission_deletes_files(ctx):
+    cfg_path = ROOT / DECOMMISSIONED_PATHS_REGISTRY
     if not cfg_path.is_file():
-        raise NotApplicable(f'no {RETIRED_PATHS_REGISTRY} -- this repo has '
-                            f'retired nothing, which is the correct state '
-                            f'for a repo that has never retired a mechanism')
+        raise NotApplicable(f'no {DECOMMISSIONED_PATHS_REGISTRY} -- this repo has '
+                            f'decommissioned nothing, which is the correct '
+                            f'state for a repo that has never '
+                            f'decommissioned a mechanism')
     try:
         cfg = json.loads(cfg_path.read_text(encoding='utf-8'))
     except json.JSONDecodeError as e:
-        return [Finding(RETIRED_PATHS_REGISTRY, f'not valid JSON: {e}')]
+        return [Finding(DECOMMISSIONED_PATHS_REGISTRY, f'not valid JSON: {e}')]
     # Same guard, and the same reason, as migration-scrubs-vocabulary's:
     # a valid-JSON-wrong-shape config reaching `.get` below raises an
     # uncaught AttributeError that takes down every OTHER check in the run.
     if not isinstance(cfg, dict):
-        return [Finding(RETIRED_PATHS_REGISTRY,
-                        f'must be a JSON object with a "retired" list (e.g. '
-                        f'{{"retired": [{{"path": ..., "reason": ...}}]}}), '
+        return [Finding(DECOMMISSIONED_PATHS_REGISTRY,
+                        f'must be a JSON object with a "decommissioned" list (e.g. '
+                        f'{{"decommissioned": [{{"path": ..., "reason": ...}}]}}), '
                         f'not a {type(cfg).__name__}')]
-    entries = cfg.get('retired') or []
+    entries = cfg.get('decommissioned') or []
     if not isinstance(entries, list):
-        return [Finding(RETIRED_PATHS_REGISTRY,
-                        f"'retired' must be a JSON array of objects, not a "
+        return [Finding(DECOMMISSIONED_PATHS_REGISTRY,
+                        f"'decommissioned' must be a JSON array of objects, not a "
                         f'{type(entries).__name__}')]
     if not entries:
-        raise NotApplicable(f'{RETIRED_PATHS_REGISTRY} declares no '
-                            f'retirement -- nothing to hold')
+        raise NotApplicable(f'{DECOMMISSIONED_PATHS_REGISTRY} declares no '
+                            f'decommissioning -- nothing to hold')
     tracked = set(_git('ls-files').stdout.split())
     out = []
     for i, e in enumerate(entries):
         if not isinstance(e, dict) or not e.get('path'):
-            out.append(Finding(f'{RETIRED_PATHS_REGISTRY}[{i}]',
+            out.append(Finding(f'{DECOMMISSIONED_PATHS_REGISTRY}[{i}]',
                                'every entry needs a "path"'))
             continue
         rel = str(e['path']).rstrip('/')
         if not str(e.get('reason') or '').strip():
             # The reason is the only part history does not already hold.
-            out.append(Finding(f'{RETIRED_PATHS_REGISTRY}[{i}]',
-                               f'{rel!r} was retired with no reason recorded '
+            out.append(Finding(f'{DECOMMISSIONED_PATHS_REGISTRY}[{i}]',
+                               f'{rel!r} was decommissioned with no reason recorded '
                                f'-- git history holds what the file was; '
                                f'only this holds why it went'))
         back = sorted(f for f in tracked
                       if f == rel or f.startswith(rel + '/'))
         if back:
             out.append(Finding(
-                RETIRED_PATHS_REGISTRY,
-                f'{rel!r} is declared retired but is tracked again '
+                DECOMMISSIONED_PATHS_REGISTRY,
+                f'{rel!r} is declared decommissioned but is tracked again '
                 f'({len(back)} file(s), e.g. {back[0]}) -- a mirror or a '
                 f'materialization has undone the deletion, or the '
-                f'retirement should be withdrawn from this file on purpose'))
+                f'decommissioning should be withdrawn from this file on purpose'))
     return out
 
 
@@ -2963,6 +2976,41 @@ def _exempt_matches(rel, exempt_entry):
     return rel == exempt_entry
 
 
+def _decommissioning_record_exemptions():
+    """-> the `exempt_files` list from the decommissioning registry, or [].
+
+    THE SAME LIST, FOR THE SAME REASON, READ BY ONE MORE CHECK. A repo that
+    retires a mechanism writes two things: the registry saying what went, and
+    a record saying why. `decommission-deletes-files` and
+    `migration-scrubs-vocabulary` both already read this list; that the
+    registry FILE ITSELF was hard-coded into rename-updates-links, and
+    nothing else was, is how the gap stayed invisible -- the one file the
+    author happened to be looking at got covered and the category did not.
+
+    2026-09-07, a real migration: retiring a vendored practice pack produced
+    four findings, and three were the record OF the deletion being read as a
+    reference left behind BY one -- a migration record's own "what was
+    deleted" table, and a closed, dated backlog entry quoting the notice that
+    prompted it. Neither can be repointed at anything: naming the dead path
+    is the entire content. The fourth was a genuine stranded reference in a
+    merge runbook, which is the finding this check exists for and which the
+    three false ones were burying.
+
+    Deliberately NOT a blanket exemption for any file mentioning a retired
+    path. The list is written by a person at the moment of retirement,
+    through tools/precedent_decommission.py, which refuses while any
+    undeclared reference remains -- so an entry here is somebody's stated
+    reason, reviewable in the same diff, not a wildcard.
+    """
+    try:
+        cfg = json.loads(
+            (ROOT / DECOMMISSIONED_PATHS_REGISTRY).read_text(encoding='utf-8'))
+    except (ValueError, OSError):
+        return []
+    ex = cfg.get('exempt_files')
+    return ex if isinstance(ex, list) else []
+
+
 # The old pack mechanism's own marker file. layered-practice-packs' Install
 # section defines the pre-migration shape: the tree at `process/<pack>/`,
 # declared by `process/manifest_<pack>.json`. That manifest name belongs to
@@ -2977,8 +3025,8 @@ def _leftover_old_packs():
 
     THE POINT IS THAT THIS NEEDS NO DECLARATION. Both existing retirement
     checks are opt-in: migration-scrubs-vocabulary fires only once a repo
-    writes retired_vocabulary.json, and retirement-deletes-files only once
-    it records a retirement in retired_paths.json. A repo that migrated
+    writes retired_vocabulary.json, and decommission-deletes-files only once
+    it records a retirement in decommissioned_paths.json. A repo that migrated
     WITHOUT running spec/MIGRATING_EXISTING_INSTALLS.md's step 5 declares
     neither, so both stay silent and the leftover tree sits there
     indefinitely -- which is exactly the state Morgan asked about on
@@ -3043,7 +3091,7 @@ def _migration_scrubs_vocabulary(ctx):
                 + '. A pack\'s rules live in a team or individual source '
                   'now, so the tree is a second, unsynced copy of rules '
                   'nobody reads. Retire it through the audit rather than by '
-                  'hand: `python3 tools/precedent_retire_path.py '
+                  'hand: `python3 tools/precedent_decommission.py '
                   + (f'{tree} {man}' if tree else man)
                   + '` reports every file still referencing it and refuses '
                     'while any remain; then re-run with --reason "..." '
@@ -3141,6 +3189,84 @@ def _migration_scrubs_vocabulary(ctx):
                                             f'record or materialized '
                                             f'third-party content'))
     return sorted(out, key=lambda f: f.where)
+
+
+# practice: open-item-disposition -- the grammar of the disposition line, so
+# that "an item with no disposition is `wait`" can be relied on. A malformed
+# line is the dangerous case, not a missing one: absence is a defined state
+# (quiet), while `**Disposition:** parkd` reads as parked to a person
+# skimming and as nothing at all to a session grepping for the word.
+DISPOSITION_VALUES = ('parked', 'wait', 'ask')
+DISPOSITION_RE = re.compile(
+    r'^[ \t]*\*\*Disposition:\*\*[ \t]*'
+    r'(?P<value>[^\s(]*)[ \t]*'
+    r'(?:\((?P<stamp>[^)]*)\))?', re.M)
+DISPOSITION_STAMP_RE = re.compile(r'^(?P<date>\d{4}-\d{2}-\d{2}),[ \t]*(?P<who>\S.*)$')
+# Mirrors the practice's own applies_to. Kept as a literal rather than read
+# out of the practice file: a check that derives its own scope from the
+# document it is checking cannot report that the two disagree.
+DISPOSITION_FILE_GLOBS = ('**/TODO.md', 'templates/TODO.md.template')
+
+
+@check('open-item-disposition', 'tree',
+       'every `**Disposition:` line in a TODO file names one of the three '
+       'dispositions, and a `parked` or `ask` line records the date it was '
+       'set and who set it',
+       'whether a disposition is HONOURED -- nothing mechanical can see a '
+       'session raising a parked item in chat, which is the behaviour the '
+       'practice is actually about. It also cannot tell a correct `wait` '
+       '(the default, written as nothing) from an item whose disposition '
+       'nobody has ever considered: those are the same text by design, '
+       'because the alternative was backfilling 52 items to say "quiet".')
+def _open_item_disposition(ctx):
+    # Resolved without precedent_paths: this module is copied ALONE into
+    # fixtures that carry no sibling tools (the source-check harness builds
+    # exactly that), so a module-level import of a neighbour takes those
+    # fixtures down with a ModuleNotFoundError that reads as a broken check.
+    # Both globs here are simple enough to resolve directly -- "**/x" is a
+    # basename match, anything else is an exact path.
+    files = []
+    for glob in DISPOSITION_FILE_GLOBS:
+        if glob.startswith('**/'):
+            found = [p.relative_to(ROOT).as_posix()
+                     for p in sorted(ROOT.rglob(glob[3:]))]
+        else:
+            found = [glob] if (ROOT / glob).is_file() else []
+        for rel in found:
+            if rel.split('/')[0] == '.git' or rel.startswith('process/upstream/'):
+                continue
+            if rel not in files:
+                files.append(rel)
+    if not files:
+        raise NotApplicable('this repository has no TODO file to check')
+
+    out = []
+    for rel in sorted(files):
+        try:
+            text = (ROOT / rel).read_text(encoding='utf-8')
+        except (UnicodeDecodeError, OSError) as e:
+            out.append(Finding(rel, f'could not be read ({e})'))
+            continue
+        for m in DISPOSITION_RE.finditer(text):
+            line_no = text.count('\n', 0, m.start()) + 1
+            where = f'{rel}:{line_no}'
+            value, stamp = m.group('value'), m.group('stamp')
+            if value not in DISPOSITION_VALUES:
+                out.append(Finding(where, f'disposition {value!r} is not one of '
+                                          f'{", ".join(DISPOSITION_VALUES)}'))
+                continue
+            if value == 'wait':
+                continue
+            if stamp is None:
+                out.append(Finding(where, f'{value!r} carries no "(YYYY-MM-DD, who)" '
+                                          f'-- a disposition nobody owns is the '
+                                          f'silence this practice replaces'))
+                continue
+            if not DISPOSITION_STAMP_RE.match(stamp.strip()):
+                out.append(Finding(where, f'{value!r} stamp {stamp.strip()!r} is not '
+                                          f'"YYYY-MM-DD, who"'))
+    return out
+
 
 
 # --------------------------------------------------------------------------
