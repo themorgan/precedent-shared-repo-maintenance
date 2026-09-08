@@ -16,7 +16,7 @@ added:       2026-08-31
 approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; revised 2026-09-05, Morgan F, to document the materialized-check-has-a-source extension and its CI-resolution gotcha"
 ---
 ## Rule
-A repo maintains one cheap, mechanical audit script that runs before every commit: conflict markers, invalid JSON/YAML syntax, secret-shaped strings (an AWS-style key ID, a private-key PEM header, a token), and broken relative doc links, at minimum. Run it yourself before every commit; wire it into CI too, so it binds every push even when a session forgets to run it by hand.
+A repo maintains one cheap, mechanical audit script that runs before every commit: conflict markers, invalid JSON/YAML syntax, secret-shaped strings (an Amazon Web Services (AWS)-style key ID, a Privacy-Enhanced Mail (PEM) private-key header, a token), and broken relative doc links, at minimum. Run it yourself before every commit; wire it into CI too, so it binds every push even when a session forgets to run it by hand.
 
 ## Detail
 Where this team set (or any vendored practice set) is installed into a project repo, extend the same check to verify the install is real, not a plain copy: the tracking manifest exists, parses, has at least one entry, and every entry's recorded path exists on disk. A style-oriented linter (accidental strikethrough, unlinked references, unglossed acronyms) is a separate, complementary tool -- this is the broader, cheaper net for "something obviously went wrong" that isn't a style question.
