@@ -801,7 +801,127 @@ def _upstream_doc_pointer():
     return (" See " + " and ".join(tail) + ".") if tail else ""
 
 
-def render_map_md(practices):
+def _withdrawn_reason(sections):
+    """One line from a withdrawn practice's ## Story: the WHY, not the what.
+
+    The reason is the load-bearing field, and it is the one thing history
+    cannot hand back. Anyone can recover a rule's text from a file that was
+    never deleted; nobody can recover the argument for dropping it once the
+    person who made it has moved on. So this pulls the Story's first
+    sentence rather than the Rule's.
+    """
+    # LOWERCASE key: _read_practice_file() normalises headings, so it is
+    # 'story', not 'Story'. Getting this wrong reads as an ABSENT Story
+    # rather than as a lookup miss -- the first run of this table accused
+    # catalogue-carries-stories of letting an empty one through, on a
+    # practice whose Story is one of the better ones in the catalogue.
+    story = (sections or {}).get('story') or ''
+    for para in story.split('\n\n'):
+        para = ' '.join(para.split())
+        # A BULLET is "- " or "* " -- with the space. Skipping a bare '*'
+        # swallows every paragraph that opens in bold, which is how this
+        # catalogue's Story sections conventionally open ("**Retired
+        # 2026-09-07, by Morgan...**"). First run reported "no ## Story" for
+        # a practice carrying an excellent one.
+        if not para or para.startswith(('|', '#', '- ', '* ')):
+            continue
+        # First sentence, but never a fragment: a ". " inside "e.g." or a
+        # version number would otherwise cut mid-thought.
+        cut = para.find('. ')
+        while 0 < cut < len(para) - 2 and not para[cut + 2].isupper():
+            nxt = para.find('. ', cut + 1)
+            if nxt == -1:
+                break
+            cut = nxt
+        line = para[:cut + 1] if cut > 0 else para
+        return line if len(line) <= 400 else line[:397] + '...'
+    return ''
+
+
+def _render_withdrawn(withdrawn):
+    """The catalogue's own memory of what it stopped believing.
+
+    WHY THIS EXISTS. A practice that is `retired` or `deduplicated` keeps its
+    file -- the rule, the Story, the reasoning -- and the loader simply stops
+    putting it in force. That was already true, and it was undiscoverable:
+    the generated views list only what is in force, so the ONLY way to reach a
+    withdrawn practice was to already know its slug. Morgan, 2026-09-07:
+    "I could see us wanting to potentially re-evaluate and learn from deleted
+    practices one day, not to mention, for the record."
+
+    Deliberately DERIVED rather than a directory the files get moved into,
+    which was the other option on the table. Moving them would break every
+    sibling link between practice files -- they cite each other by bare
+    filename, and those links travel into every consuming repo, where nobody
+    can repoint them. It would also put the fact in two places at once (a
+    path AND a status field) with nothing deciding which wins, and it would
+    hide withdrawn rules from the grep a person doing prior-art research
+    actually runs. A generated table costs none of that and goes stale only
+    if the build stops running.
+    """
+    if not withdrawn:
+        # Said, not omitted: an empty section and a missing section look the
+        # same to a reader, and only one of them means "nothing has been
+        # withdrawn".
+        return [
+            "## Withdrawn practices",
+            '',
+            "None. No practice in this catalogue has been retired or "
+            "deduplicated yet -- when one is, its file stays and it is listed "
+            "here.",
+        ]
+    lines = [
+        "## Withdrawn practices",
+        '',
+        f"{len(withdrawn)} practice file(s) here are **not in force** and are "
+        "left out of every table above. **The files are kept on purpose** -- a "
+        "withdrawn rule and the argument against it are worth re-reading, and "
+        "`retired` is not a synonym for deleted (that is "
+        "`decommission-deletes-files`, and it is about mechanisms, not rules). "
+        "Read one in full with `python3 tools/precedent_show.py SLUG`.",
+        '',
+        "| Practice | Status | Now in force at | Why it was withdrawn |",
+        "|---|---|---|---|",
+    ]
+    for fm, sections, _f in sorted(withdrawn, key=lambda t: t[0].get('slug', '')):
+        slug = _json_str(fm.get('slug', '')) or '?'
+        status = practice_status(fm)
+        target = _json_str(fm.get('in_force_at', '')) or ''
+        if target in ('', 'none'):
+            where = '— (nowhere)'
+        elif target == 'engine':
+            where = 'the engine'
+        elif (pathlib.Path(_f).parent / f'{target}.md').is_file():
+            where = f"[{target}](practices/{target}.md)"
+        else:
+            # THE SUCCESSOR USUALLY LIVES IN ANOTHER SOURCE, and linking it
+            # as if it were local writes a broken relative link into a
+            # generated file. `in_force_at:` names a slug, not a source, and
+            # deduplication is precisely the case where a team or individual
+            # rule was dropped because a UNIVERSAL one already said it -- so
+            # the successor is in a different repo by definition, more often
+            # than not.
+            #
+            # Found 2026-09-08, the first time the withdrawn table (landed
+            # that day) was regenerated in a team set: `header-caps` names
+            # `headline-capitalization`, which is universal, and the table
+            # linked `practices/headline-capitalization.md` into a repo that
+            # has no such file. The set then FAILED ITS OWN light-check on a
+            # broken relative link, in a file it is told never to hand-edit
+            # -- unfixable from inside that repo.
+            #
+            # Named, not linked: a reader can find the slug with
+            # precedent_show, and a link that resolves to nothing is worse
+            # than no link (practice: doc-references-are-links).
+            where = (f"`{target}` — in another source; "
+                     f"`python3 tools/precedent_show.py {target}`")
+        reason = _withdrawn_reason(sections).replace('|', '\\|') or \
+            '*(no ## Story -- catalogue-carries-stories should have caught this)*'
+        lines.append(f"| [{slug}](practices/{slug}.md) | {status} | {where} | {reason} |")
+    return lines
+
+
+def render_map_md(practices, withdrawn=()):
     by_tier = collections.Counter(fm.get('tier') for fm, _s, _f in practices)
     lines = [
         "<!-- GENERATED by tools/build_views.py -- do not hand-edit. Regenerate with "
@@ -829,6 +949,8 @@ def render_map_md(practices):
         applies_to = _json_list(fm.get('applies_to', '[]'))
         scope = occasion if occasion else ', '.join(applies_to)
         lines.append(f"| [{fm['slug']}](practices/{fm['slug']}.md) | {fm.get('tier')} | {scope} |")
+    lines += ['']
+    lines += _render_withdrawn(withdrawn)
     lines += [
         '',
         "## The engine",
@@ -889,10 +1011,11 @@ TOOLS_DESCRIPTIONS = {
     'precedent_promote.py': "Stage 3 (phase 5) — runs a candidate against the four promotion criteria",
     'precedent_refresh_sources.py': "Reports which attached practice-set sources have a stale vendored engine, and with --apply brings them up to date",
     'precedent_resolve.py': "Resolves the universal, team and individual sources into one set, by precedence",
-    'precedent_retire_path.py': "Audits a deprecated file or directory before it is deleted -- refuses while anything still references it, or a workflow it names is still live -- then deletes and records it",
+    'precedent_decommission.py': "Audits a deprecated file or directory before it is deleted -- refuses while anything still references it, or a workflow it names is still live -- then deletes and records it",
     'precedent_migrate_status.py': "Classifies practices written under the old status vocabulary, where `retired` meant two different things; proposes, and refuses to guess a renamed successor",
     'precedent_retire.py': "Stage 6 (phase 5) — the periodic removal report; proposes, never acts",
     'precedent_session_practices.py': "Writes the team/individual/repo-local practices in force into an untracked .precedent/ file at session start, since this repo is public and their text may not be committed",
+    'precedent_session_check.py': "Reports whether this session's SessionStart guarantees are actually in effect -- practices file, commit identity, backstop, packages, refspec, freshness, and the branch it started on -- and `--apply` runs the hooks by hand when the harness never did",
     'precedent_show.py': "Loads a practice's Rule/Detail/Why/Story/Install — the one code path that reads a practice file",
     'precedent_simulate.py': "One command over the reach/mechanical-correctness and synthetic-batch tiers, plus the running trend log",
     'precedent_sync_views.py': "One command for a consuming repo: precedent_materialize.py + build_views.py --agents-only, glued together",
@@ -1002,7 +1125,14 @@ def main():
         omits_private=repo_is_public(root))
     targets = [(agents_md, new_agents)]
     if not agents_only:
-        targets.append((map_md, render_map_md(practices)))
+        # Load a SECOND time without the in-force filter: load_practices()
+        # drops withdrawn practices by design (that filter is what stopped a
+        # retired rule being emitted into the loader block), so the only way
+        # to list them is to ask for everything and subtract.
+        _all = load_practices(practices_dir, in_force_only=False)
+        _in_force = {id(t) for t in practices}
+        withdrawn = [t for t in _all if not is_in_force(t[0])]
+        targets.append((map_md, render_map_md(practices, withdrawn)))
         targets.append((glossary_md, render_glossary_md(practices)))
 
     if check:

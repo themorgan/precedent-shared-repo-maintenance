@@ -72,6 +72,20 @@ against more than one tree — but they ARE in CONSUMER_ENGINE_FILES
 (consumer), where resolving four sources into one materialized tree is the
 entire point.
 
+WHAT IS DELIBERATELY IN NEITHER LIST, said out loud because its absence is
+what makes a whole class of follow-up work unnecessary. verify_harness.py
+(noted again below), and also tools/leak_gate.py and tools/very_deep_check.py:
+both run only from a BestPractice checkout, against whatever repositories that
+session can see, so improving them reaches every repo the moment this repo's
+own copy changes. Nothing to vendor, nothing to refresh.
+
+That is worth stating because the opposite is the natural assumption. On
+2026-09-07 a change to those two tools was written up as needing a
+per-set engine refresh, and a TODO item was opened saying the sets were
+running stale copies -- of files they have never held. The reasoning came
+from cross-source-rollout, which is a real practice and simply did not apply
+here; nobody checked these lists first. Check them before costing a rollout.
+
 routing_scope.json is vendored in both kinds too, but it is not a
 byte-identical copy: precedent_gate.py's SCOPE file carries two things in
 this repo — the closed GATE vocabulary (`gates`, the moments a practice can
@@ -196,9 +210,9 @@ ENGINE_FILES = [
     # the consumer half because retiring a mechanism is not a consumer-only
     # act -- a practice set retires its own tooling too, and the repo most
     # likely to be carrying dead files is one that migrated off something.
-    # retirement-deletes-files' Install names it, so a repo resolving that
+    # decommission-deletes-files' Install names it, so a repo resolving that
     # practice and lacking the file has a rule it cannot obey.
-    'precedent_retire_path.py',
+    'precedent_decommission.py',
     # The enforced channel itself (added 2026-09-07). Until then a SOURCE set
     # enforced nothing mechanically: this file was in CONSUMER_ENGINE_FILES
     # but not here, so a consuming repo got the checks and a practice set --
@@ -306,6 +320,28 @@ for _lst, _nm in ((ENGINE_FILES, 'ENGINE_FILES'),
 KINDS = {'source': ENGINE_FILES, 'consumer': CONSUMER_ENGINE_FILES}
 DEFAULT_KIND = 'source'  # unchanged default -- see seed()'s docstring note
 MANIFEST_NAME = 'ENGINE_MANIFEST.json'
+
+# Engine files this tool once shipped and no longer does. A NAME, once
+# vendored anywhere, never becomes safe to forget: the copy sitting in an
+# adopter's tools/ outlives every list that could still name it.
+#
+# WHY A TOMBSTONE AND NOT A DERIVED SET. Both live mechanisms are keyed on
+# the CURRENT lists -- _untracked_engine_files asks "known name, not in this
+# manifest", and _remove_dropped_engine_files asks "in this manifest, not in
+# this kind". A file renamed AWAY upstream is in neither: it is gone from
+# KINDS, and a pre-2026-09-08 `seed` wrote a manifest that had already
+# forgotten it while leaving it on disk. So it was invisible to every
+# mechanism at once, which is how three real practice sets each sat on a
+# dead `precedent_retire_path.py` with `status` reporting them healthy.
+#
+# Adding a name here is the cost of renaming an engine file, and it is the
+# whole cost: KINDS says what an install should have, this says what it must
+# no longer have.
+RETIRED_ENGINE_FILES = {
+    'precedent_retire_path.py':
+        'renamed to precedent_decommission.py, 2026-09-07 '
+        '(the mechanism sense of "retire" became "decommission")',
+}
 _SECOND_PASS_ENV = 'PRECEDENT_VENDOR_ENGINE_SECOND_PASS'
 
 
@@ -333,10 +369,90 @@ def _trim_routing_scope(engine_dir):
     }
 
 
+def _remove_dropped_engine_files(dest_tools, previous_manifest, kind):
+    """Delete vendored engine files this kind no longer includes.
+
+    THE GAP THIS CLOSES. `refresh` only ever added and overwrote. Rename or
+    drop a file from KINDS and every consumer that already had it kept it
+    forever: the new manifest stops listing it, so nothing tracks it, nothing
+    updates it, and nobody can tell whether it still does something. That is
+    exactly the state `decommission-deletes-files` exists to prevent,
+    produced by the tool that distributes that practice.
+
+    Found 2026-09-07 while costing the retirement->decommission rename:
+    `precedent_decommission.py` is in the consumer engine set, so renaming it
+    would have pushed the new name into every consumer and left the old one
+    beside it, in perpetuity, in two repos today and every future one.
+
+    WHY THIS IS SAFE, and it rests entirely on the manifest. The only files
+    considered are ones the PREVIOUS manifest recorded as vendored here --
+    written by this tool, into a directory the consuming repo also keeps its
+    own files in. A file the engine never wrote is never a candidate, so a
+    repo's own tools/ cannot be touched no matter what it is named.
+
+    A hand-edited file is kept and reported, never deleted. `_local_drift`
+    already refuses the whole refresh over one unless --force is passed, so
+    reaching here with a modified file means somebody asked to overwrite --
+    which is not the same as asking to throw the edit away. Recovering a
+    deleted file from git is easy only if it was committed; this costs one
+    line of output and removes the case where it was not.
+    """
+    prev_files = set(previous_manifest.get('files') or [])
+    prev_hashes = previous_manifest.get('sha256') or {}
+    now = set(KINDS.get(kind, ())) | {'routing_scope.json'}
+    removed, kept = [], []
+    for name in sorted(prev_files - now):
+        f = dest_tools / name
+        if not f.is_file():
+            continue                      # already gone: nothing to report
+        recorded = prev_hashes.get(name)
+        if recorded and _sha256(f) != recorded:
+            kept.append(name)
+            continue
+        f.unlink()
+        removed.append(name)
+    if removed:
+        print(f"precedent_vendor_engine refresh: removed {len(removed)} "
+              f"vendored engine file(s) this kind no longer includes "
+              f"({', '.join(removed)}). They were recorded in the previous "
+              f"manifest and unmodified here.")
+    for name in kept:
+        print(f"WARN: precedent_vendor_engine refresh: {name} was dropped from "
+              f"the {kind} engine set, but this copy has been hand-edited "
+              f"since it was vendored -- left in place rather than deleted. "
+              f"Move the edit upstream, then delete it by hand.", file=sys.stderr)
+    return removed
+
+
+def _rewrite_manifest_file_list(dest_tools, kind):
+    """Drop names this kind no longer includes from the manifest record.
+
+    Called only on the early-exit cleanup path, where no write happens and
+    so nothing else rewrites the manifest. Without it the removal succeeds
+    on disk and the manifest goes on listing the deleted file, which is a
+    provenance record asserting a file that is not there
+    (practice: generated-artifact-provenance) -- and every later run would
+    re-report the same orphan it already removed."""
+    path = dest_tools / MANIFEST_NAME
+    manifest = _load_manifest(dest_tools)
+    if not manifest:
+        return
+    wanted = set(KINDS[kind]) | {'routing_scope.json'}
+    manifest['files'] = [n for n in manifest.get('files', []) if n in wanted]
+    manifest['sha256'] = {k: v for k, v in manifest.get('sha256', {}).items()
+                          if k in wanted}
+    path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + '\n',
+                    encoding='utf-8')
+
+
 def _write_engine_files(dest_tools, engine_dir, source_commit, kind=DEFAULT_KIND):
     if kind not in KINDS:
         raise ValueError(f"kind must be one of {sorted(KINDS)}, got {kind!r}")
-    files = KINDS[kind]
+    # Only what _source_tools_at could actually extract: a name this (possibly
+    # stale) copy's list still carries but upstream has dropped is skipped
+    # there, so it is absent here too. Recording it in `files` anyway would
+    # write a manifest asserting a file that does not exist.
+    files = [n for n in KINDS[kind] if (engine_dir / n).is_file()]
     dest_tools.mkdir(parents=True, exist_ok=True)
     written = []
     hashes = {}
@@ -437,6 +553,53 @@ def _head_commit(repo_dir):
     return _rev(repo_dir, 'HEAD')
 
 
+def _seed_write(dest_tools, engine_dir, stamp, kind):
+    """_write_engine_files, plus the cleanup seed never did.
+
+    RESEEDING IS THE DOCUMENTED RECOVERY from a bricked refresh -- a
+    consumer whose vendored copy predates the removed-file fix cannot
+    refresh at all, and reseeding from BestPractice's own checkout is the
+    only way forward. So reseed is exactly the path a repo takes when
+    upstream has RENAMED an engine file, and it was the one path that never
+    removed the old name: seed wrote the new set and a manifest that no
+    longer mentions the old file, leaving it on disk with nothing tracking
+    it. Measured 2026-09-08 recovering three real practice sets from the
+    `precedent_retire_path.py` -> `precedent_decommission.py` rename: all
+    three came out of the documented recovery carrying the dead file.
+
+    It compounded with refresh's early exit (see refresh()): once the
+    manifest commit matched, nothing ran the cleanup again, so the orphan
+    was permanent. Cleaning here is the half that belongs to seed -- the
+    previous manifest is read BEFORE the write, because the write replaces
+    it with one that no longer remembers the dropped name."""
+    # Read the manifest DIRECTLY, not through _load_manifest: that helper
+    # sys.exit()s when there is none, which is right for status/refresh
+    # (they have nothing to work from) and fatally wrong here -- seeding a
+    # repo that has never been vendored is seed's whole primary case, and
+    # routing it through _load_manifest killed it outright. Caught by
+    # verify_harness's own consumer-seed check on the first full run after
+    # the change; a seed into a fresh directory is the one path the
+    # narrower fixtures here never exercised.
+    path = dest_tools / MANIFEST_NAME
+    previous = None
+    if path.is_file():
+        try:
+            previous = json.loads(path.read_text(encoding='utf-8'))
+        except (ValueError, OSError):
+            # An unreadable manifest is not a reason to refuse to seed --
+            # seeding is what repairs it. Nothing to clean up from, so say
+            # so rather than guessing at a file list (practice:
+            # fail-gracefully).
+            print(f"WARN: precedent_vendor_engine seed: {path} could not be "
+                  f"read, so files dropped from this kind since the last "
+                  f"vendoring cannot be identified and are left in place.",
+                  file=sys.stderr)
+    written = _write_engine_files(dest_tools, engine_dir, stamp, kind)
+    if previous:
+        _remove_dropped_engine_files(dest_tools, previous, kind)
+    return written
+
+
 def seed(dest, kind=DEFAULT_KIND):
     """Run from BestPractice's own checkout: dest is a NEW source-set or
     consumer repo's root (tools/precedent_bootstrap_source.py's own --dest,
@@ -485,7 +648,7 @@ def seed(dest, kind=DEFAULT_KIND):
                   f"{commit[:12]}+dirty. Commit and re-seed for a clean "
                   f"provenance record.", file=sys.stderr)
         stamp = commit if commit == 'unknown' else f'{commit}+dirty'
-        return _write_engine_files(dest / 'tools', ENGINE_DIR, stamp, kind)
+        return _seed_write(dest / 'tools', ENGINE_DIR, stamp, kind)
     _c, engine_dir = _source_tools_at(ROOT, kind=kind, ref=commit, fetch=False)
     try:
         dirty = [n for n in wanted
@@ -497,7 +660,7 @@ def seed(dest, kind=DEFAULT_KIND):
                   f"changes to {', '.join(dirty)} are NOT in what was "
                   f"written; commit them and re-run to ship them.",
                   file=sys.stderr)
-        return _write_engine_files(dest / 'tools', engine_dir, commit, kind)
+        return _seed_write(dest / 'tools', engine_dir, commit, kind)
     finally:
         shutil.rmtree(engine_dir, ignore_errors=True)
 
@@ -524,6 +687,20 @@ def _local_drift(dest_tools, manifest):
         if actual != recorded_hash:
             drifted.append((name, 'hand-edited (sha256 differs from manifest)'))
     return drifted
+
+
+def _retired_engine_files_present(dest_tools):
+    """-> [(name, why)] for tombstoned engine files still sitting on disk.
+
+    REPORTS, never deletes on its own. A tombstoned file that the manifest
+    still records is removed by _remove_dropped_engine_files, which can
+    check the hash first. One the manifest has already forgotten cannot be
+    verified as untouched, and `decommission-deletes-files` is explicit that
+    a deletion is audited rather than taken on a hunch -- so this says
+    exactly what the file is and why it should go, and leaves the deleting
+    to a person who can look at it."""
+    return [(n, why) for n, why in sorted(RETIRED_ENGINE_FILES.items())
+            if (dest_tools / n).is_file()]
 
 
 def _untracked_engine_files(dest_tools, manifest):
@@ -576,6 +753,14 @@ def status(clone):
               f"commit than the rest, which is how a correctly vendored "
               f"engine ends up unable to run at all. `refresh` vendors it "
               f"properly and records it.")
+    retired = _retired_engine_files_present(dest_tools)
+    for name, why in retired:
+        print(f"  RETIRED ENGINE FILE: {name} was vendored by this engine "
+              f"once and no longer is -- {why}. Nothing updates it and "
+              f"nothing else can find it: it is in no current file list, so "
+              f"LOCAL DRIFT and UNTRACKED ENGINE FILE are both blind to it. "
+              f"Delete it once you have checked nothing in this repo still "
+              f"calls it.")
 
     # _rev, not _git: plain rev-parse of a missing ref prints the REF NAME, so
     # this used to bind clone_head='origin/precedent-beta-v01' -- truthy, and
@@ -593,13 +778,13 @@ def status(clone):
               f"whether this vendored engine is current is UNKNOWN -- this is not "
               f"'confirmed current'. Fetch that branch in the clone, or point at a "
               f"clone of {SOURCE_REPO}.")
-        return 1 if (drift or untracked) else 0
+        return 1 if (drift or untracked or retired) else 0
     print(f"clone origin/{SOURCE_BRANCH}: {clone_head}"
           + ("  (== recorded)" if clone_head == recorded else "  (!= recorded)"))
     if clone_head != recorded:
         print(f"NOTICE: BestPractice's {SOURCE_BRANCH} has moved since this engine was "
               f"last vendored -- run `refresh` to pick it up.")
-    return 1 if (drift or untracked) else 0
+    return 1 if (drift or untracked or retired) else 0
 
 
 def _source_tools_at(clone, kind=DEFAULT_KIND, ref=None, fetch=True):
@@ -666,10 +851,39 @@ def _source_tools_at(clone, kind=DEFAULT_KIND, ref=None, fetch=True):
         blob = subprocess.run(['git', '-C', str(clone), 'show', f'{commit}:tools/{name}'],
                               capture_output=True)
         if blob.returncode != 0:
-            shutil.rmtree(tmp, ignore_errors=True)
-            sys.exit(f"precedent_vendor_engine FAIL: {SOURCE_BRANCH} @ {commit[:12]} has no "
-                     f"tools/{name} -- "
-                     f"{blob.stderr.decode('utf-8', 'replace').strip()}")
+            # A FILE UPSTREAM NO LONGER HAS IS A REMOVAL, NOT A BROKEN CLONE.
+            # KINDS here is the list in the RUNNING copy of this tool, and in a
+            # consumer that copy is the vendored, stale one. So the first
+            # refresh after upstream renames or drops an engine file asks for a
+            # path that is genuinely gone -- and this used to be a hard exit,
+            # which meant a rename upstream BRICKED every consumer's refresh
+            # with no way forward but a manual reseed. Reproduced 2026-09-07
+            # renaming precedent_retire_path.py -> precedent_decommission.py:
+            # the consumer refused with "has no tools/precedent_retire_path.py"
+            # and could not have acquired the new name by any documented route.
+            #
+            # Skipping converges instead. This pass writes what still exists
+            # (including this tool itself), the self-replacement triggers the
+            # second pass, and that pass runs the NEW list -- which does not
+            # ask for the dropped file at all, and whose
+            # _remove_dropped_engine_files then deletes the local leftover.
+            #
+            # This tool itself is the one file that must never be skipped: it
+            # is what carries the corrected list, so without it there is no
+            # second pass and no convergence, and a missing one really does
+            # mean a broken ref rather than a removal.
+            if name == HERE.name:
+                shutil.rmtree(tmp, ignore_errors=True)
+                sys.exit(f"precedent_vendor_engine FAIL: {SOURCE_BRANCH} @ "
+                         f"{commit[:12]} has no tools/{name} -- that is the "
+                         f"vendoring tool itself, so there is no corrected "
+                         f"file list to converge on. This is a broken ref, "
+                         f"not a removal.")
+            print(f"precedent_vendor_engine: {SOURCE_BRANCH} @ {commit[:12]} no "
+                  f"longer carries tools/{name} -- it was removed or renamed "
+                  f"upstream. Skipping it; the second pass runs the new file "
+                  f"list and cleans up the local copy.", file=sys.stderr)
+            continue
         out = tmp / name
         out.write_bytes(blob.stdout)          # bytes, not text: no newline munging
         if modes.get(name, '').endswith('755'):
@@ -848,6 +1062,27 @@ def refresh(clone, force=False, ref=None):
             n for n in wanted_set
             if n not in set(manifest.get('files', []))
             or not (dest_tools / n).is_file())
+        # A file this kind NO LONGER includes, still sitting on disk and
+        # still recorded by the manifest, is the mirror of set_incomplete --
+        # and it was not checked here, so the early exit below reported
+        # "nothing to do" over a tree carrying a dead engine file. That made
+        # the orphan PERMANENT: _remove_dropped_engine_files runs only after
+        # a write, and once the commit matched there was never another write.
+        # Found 2026-09-08 in three real practice sets, each carrying
+        # `precedent_retire_path.py` after upstream renamed it to
+        # `precedent_decommission.py` -- exactly the state
+        # `decommission-deletes-files` exists to prevent, left behind by the
+        # tool that distributes that practice.
+        set_orphaned = sorted(
+            n for n in manifest.get('files', [])
+            if n not in wanted_set and (dest_tools / n).is_file())
+        if set_orphaned and new_commit == manifest.get('source_commit'):
+            print(f"NOTICE: the recorded commit already matches, but this "
+                  f"repo's vendored engine still carries {len(set_orphaned)} "
+                  f"file(s) this kind no longer includes "
+                  f"({', '.join(set_orphaned)}) -- removing them.")
+            _remove_dropped_engine_files(dest_tools, manifest, kind)
+            _rewrite_manifest_file_list(dest_tools, kind)
         if new_commit == manifest.get('source_commit') and not force \
                 and not set_incomplete:
             print(f"precedent_vendor_engine refresh: already current with {SOURCE_BRANCH} "
@@ -870,6 +1105,12 @@ def refresh(clone, force=False, ref=None):
 
         self_before = _sha256(HERE) if HERE.is_file() else None
         written = _write_engine_files(dest_tools, engine_dir, new_commit, kind)
+        # AFTER the write, and using the manifest as it was BEFORE it:
+        # _write_engine_files rewrites `files` from the current KINDS list, so
+        # by then the dropped name is already gone from the record and there
+        # is nothing left to find it by. `manifest` is the copy loaded at the
+        # top of this function, which is the one that still remembers.
+        _remove_dropped_engine_files(dest_tools, manifest, kind)
     finally:
         shutil.rmtree(engine_dir, ignore_errors=True)
     print(f"precedent_vendor_engine refresh OK ({kind}): {len(written)} file(s) refreshed "
