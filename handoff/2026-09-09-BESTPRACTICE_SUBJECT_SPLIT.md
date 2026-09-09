@@ -1,4 +1,4 @@
-<!-- Last updated: 2026-09-09 11:05:00 (Buenos Aires) by Morgan F, to version 2 -->
+<!-- Last updated: 2026-09-09 12:50:00 (Buenos Aires) by Morgan F, to version 3 -->
 
 # BestPractice changes for the subject split — apply from a BestPractice-rooted session
 
@@ -33,10 +33,31 @@ waiting.
 
 ## To apply
 
+**First, the thing that cost a session on 2026-09-09: a BestPractice-rooted
+session cannot read this file.** The cross-tier wall is symmetric. A session
+rooted at `themorgan/*` is refused `alex137/BestPractice`; a session rooted at
+`alex137/BestPractice` is refused `themorgan/*` with the same message, on its
+first tool call. So parking the patch in a `themorgan/` repo puts it exactly
+where the session that needs it cannot go, and an instruction that says "read
+the handoff note, then `git am` the patch" is unfollowable no matter how
+carefully it is written. `list_repos` still *lists* the repo, which makes the
+wall look like a permissions hiccup rather than a hard boundary.
+
+**The patch has to be carried by the person, not fetched.** Paste it into the
+BestPractice session, or attach it there as a file, and apply from that:
+
 ```
 git checkout -b claude/split-team-sets-by-subject origin/precedent-beta-v01
-git am handoff/2026-09-09-bestpractice-subject-split.patch
+git am /path/to/the/pasted-or-attached.patch
 ```
+
+Pushing the patch onto a branch of BestPractice from a `themorgan/`-rooted
+session is not an alternative: that session has no credential for BestPractice
+either, which is the whole reason this file exists.
+
+This note stays in this repo anyway — it is the durable record of what the
+patch is and why, and this repo is where a session that can *read* it will be
+working. What changed is only the claim about how it travels.
 
 Then the deep check, and a pull request **against `precedent-beta-v01`,
 never `main`**.
