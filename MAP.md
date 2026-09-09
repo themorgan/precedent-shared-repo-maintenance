@@ -6,7 +6,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## The practice catalogue
 
-`practices/` holds 24 practice files (0 resident, 24 on-demand). One file per practice.
+`practices/` holds 21 practice files (0 resident, 21 on-demand). One file per practice.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
@@ -18,7 +18,6 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [default-branch](practices/default-branch.md) | on-demand | setting up a new repo, or installing into an existing one |
 | [derived-file-marker](practices/derived-file-marker.md) | on-demand | creating a file a later regeneration will overwrite |
 | [drift-notice](practices/drift-notice.md) | on-demand | a session starts in a repo that vendors a universal or team set |
-| [fresh-before-write](practices/fresh-before-write.md) | on-demand | setting up a project I work in, or a session reporting that its checkout is behind |
 | [fresh-check-escalation](practices/fresh-check-escalation.md) | on-demand | a session-start freshness check against a private source can't be reached |
 | [install](practices/install.md) | on-demand | bringing a vendored practice layer into a new or existing repo |
 | [light-check](practices/light-check.md) | on-demand | about to commit |
@@ -28,8 +27,6 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [new-rule-placement](practices/new-rule-placement.md) | on-demand | adding a new rule to a maintained rules document |
 | [no-duplication](practices/no-duplication.md) | on-demand | adding or reviewing a team-set rule |
 | [pack-sync](practices/pack-sync.md) | on-demand | a project repo vendors this team's own practice set, and it has moved |
-| [practice-links-travel](practices/practice-links-travel.md) | on-demand | writing or editing a practice in one of my own private sets |
-| [practice-set-engine-refresh](practices/practice-set-engine-refresh.md) | on-demand | creating a practice-set repo of mine, or finding its vendored engine stale |
 | [private-repo-scrub](practices/private-repo-scrub.md) | on-demand | writing content that will vendor or ship into another repo |
 | [rule-scope-ask](practices/rule-scope-ask.md) | on-demand | a new rule is proposed and its scope isn't obvious |
 | [session-trailer](practices/session-trailer.md) | on-demand | committing anything |
