@@ -46,20 +46,14 @@ When counting or matching entries by name against other entries that may share a
   match-parsed-id-not-prefix — When counting how many files or entries share a name (recurrence, a duplicat...
 When creating a file a later regeneration will overwrite:
   derived-file-marker — a regenerated file's header names its source, recipe, and command
-When creating a practice-set repo of mine, or finding its vendored engine stale:
-  practice-set-engine-refresh — my own practice-set repos carry a weekly engine-refresh workflow
 When installing a vendored practice layer that could check in upstream:
   blank-blocklist — leave a check-in blocklist blank at install; don't ask, don't remind
 When landing practices in bulk -- a migration, an import, or a move from another set:
   catalogue-carries-stories — no active practice in this set sits with an empty ## Story
 When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
-When setting up a project I work in, or a session reporting that its checkout is behind:
-  fresh-before-write — verify and fast-forward the checkout before the session's first write, never after
 When writing content that will vendor or ship into another repo:
   private-repo-scrub — name a private repo only in general terms in anything that ships elsewhere
-When writing or editing a practice in one of my own private sets:
-  practice-links-travel — a practice links only what travels with it -- sibling practices and its own check scripts
 ```
 
 ## Standing instruction
