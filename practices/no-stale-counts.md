@@ -9,7 +9,8 @@ gates:       []
 index_clause: "drop a count that will go stale; say \"several\", not the number"
 checked_by:  tools/checks/check_no_stale_counts.py
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: no-stale-counts
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -49,6 +50,8 @@ genuinely maintained alongside the thing it counts all stay exact. The
 target is a count that can change independently of the sentence stating it,
 where the number was scene-setting detail that happened to be numeric. That
 distinction needs intent to judge, so nothing enforces it mechanically.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 Checked mechanically, but only half of it: [`tools/checks/check_no_stale_counts.py`](../tools/checks/check_no_stale_counts.py), scope `tree`, catches the one shape of violation that needs no writer intent to judge -- a sentence stating "`<N> practices`" is a claim about this repo's own `practices/` directory, and that claim is either currently true or it isn't, independent of intent. It's deliberately narrow: it does not (and, per this file's own Detail section, cannot) tell a "genuinely maintained" count apart from one that merely happens to be accurate today, and it doesn't push toward the Rule's preferred fix of dropping the number outright -- it only catches a count that has already gone stale, which is the concrete harm the Rule names. A general digit-plus-noun scan across arbitrary count types stays a judgment call, for the reason already given. Two-direction tested in [`tools/checks/tests/test_no_stale_counts.sh`](../tools/checks/tests/test_no_stale_counts.sh).

@@ -9,7 +9,8 @@ gates:       []
 index_clause: "present-tense rules for one file, in doc-recipes/<name>.recipe.md"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: doc-recipe
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -59,6 +60,8 @@ exchange for a migration and a batch of stale references later.
 `Source:` is what distinguishes a derived file's recipe from a written
 document's, so there is one mechanism rather than two, and a document can
 become derived later by gaining that line with no rename and no migration.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: recognizing that "a standing constraint on one file gets stated a second time" -- the trigger for creating a recipe at all -- requires comparing two pieces of prose for semantic restatement, not syntactic match. Whether an existing recipe's own format (file-header, title, optional `Source:` line, flat rule list) is well-formed is checkable in principle, but the actual judgment this practice turns on -- was this really restated, does a line still belong, has a per-file rule become a repo-wide one -- isn't.

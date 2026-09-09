@@ -9,7 +9,8 @@ gates:       []
 index_clause: "cite a formal document for support, never a raw brainstorm entry"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: brainstorm-citations
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -43,6 +44,8 @@ deliberately cheap: promote the idea into whichever formal document it fits,
 then link there. What the rule does not reach matters as much as what it
 does -- a document's own provenance note, or a link to the brainstorm as an
 object, states a true fact rather than borrowing support, and stays fine.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: catching a violation requires classifying a document as "formal" versus "brainstorm" and telling a citation used as substantive support apart from a provenance note or a link to the brainstorm document as a whole -- both genuinely allowed by the rule's own Detail section. Nothing in a link's syntax carries that distinction; it's a judgment about what the link is doing in context.
