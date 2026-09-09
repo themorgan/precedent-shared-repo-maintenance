@@ -9,7 +9,8 @@ gates:       []
 index_clause: "wrap a draft placeholder in \u27a1\ufe0f TEXT \u2b05\ufe0f, bold and all caps"
 checked_by:  tools/checks/check_draft_marker.py
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: draft-marker
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -45,6 +46,8 @@ The scan-before-sharing half exists for the same reason: a marker only helps
 if something actually looks for it. Grepping for the arrow is cheaper than
 rereading the document, and it answers the one question that matters before
 sharing.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 Checked mechanically by [`tools/checks/check_draft_marker.py`](../tools/checks/check_draft_marker.py), scope `tree`, over tracked markdown files. It implements the Detail section's own described check -- a text search for the marker -- rather than a new invention: any `**➡️ ... ⬅️**` sitting in real document prose (not inside backtick code, which is how this practice's own Rule text illustrates the format) is a marker that should have been caught and cleared before the content was committed. Two-direction tested in [`tools/checks/tests/test_draft_marker.sh`](../tools/checks/tests/test_draft_marker.sh), which also confirms the check doesn't misfire on this file's own illustration of the format.

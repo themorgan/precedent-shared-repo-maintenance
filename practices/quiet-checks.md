@@ -9,7 +9,8 @@ gates:       []
 index_clause: "\"checks passed\" is fine; don't re-explain the same old backlog"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: quiet-checks
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -49,6 +50,8 @@ distinction is between reporting an outcome, which is fine, and re-explaining
 a known static backlog every time as though it were new information. A run
 that actually failed, or a warning this edit introduced, is new information
 every time and always worth flagging.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-working-style`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: it governs how a session narrates a check's outcome in its own reply across turns of a conversation -- whether the same static-backlog disclaimer got repeated -- which isn't content this repo's tree, or any single commit, holds a record of.

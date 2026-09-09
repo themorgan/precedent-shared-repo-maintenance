@@ -9,7 +9,8 @@ gates:       []
 index_clause: "link anything mentioned that has a destination, on first use"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: rule-links
 supersedes:  []
 overrides:   doc-references-are-links
 added:       2026-08-31
@@ -54,6 +55,8 @@ The enforcement boundary is stated rather than implied: only the slug half
 is checkable. A commit, a pull request number or an external page cannot be
 told from ordinary prose without flagging every hex string and product name,
 so those ride on the review half of `deep-check` instead of on a gate.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: it's the general case of `branch-links` and `file-mention-links`, one level broader (any file, rule, branch, commit, PR, issue, tool, or spec named in a document or a reply), and inherits the same limit -- recognizing that something was "mentioned" in free-form prose, as opposed to a coincidentally similar word, has no reliable syntactic signature to key a check off.

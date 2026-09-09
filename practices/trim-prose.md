@@ -9,7 +9,8 @@ gates:       []
 index_clause: "trim a paragraph right after editing it, and before calling it done"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: trim-prose
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -44,6 +45,8 @@ paragraph is already open and being reworked, and declaring the piece done.
 The second trigger is not redundant with the first. It exists to catch slow
 drift from a run of edits each too small on its own to fire the immediate
 one -- which is the way a paragraph usually gets long.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: whether a paragraph has "grown noticeably longer than the point it's making warrants" is a judgment about proportion between content and substance -- word or sentence count alone can't distinguish a legitimately long, dense point from one padded by iterative edits, so a length-based trigger would flag exactly the paragraphs this rule doesn't target as often as the ones it does.

@@ -9,7 +9,8 @@ gates:       []
 index_clause: "soften or ask before committing a blunt description of a real person"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: sensitive-characterization-scrub
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -26,6 +27,8 @@ Marked blocking because it guards against a real information harm -- a descripti
 
 ## Story
 Found the hard way in a dependent repo's own brainstorm notes: a direct, off-the-cuff description of a real, named acquaintance made it into a committed document, was then shown to that person, and read back more bluntly than intended.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check, despite `blocking` severity -- tried, and rejected rather than skipped outright: the rule turns on whether a description of a real, identifiable person is "unusually direct, strong, negative, or otherwise sensitive enough that the person might wince reading it," which is a judgment about tone and the specific relationship between writer and subject, not a property of vocabulary alone. A keyword list of negative-sounding words would misfire constantly -- on quoted dialogue, on fiction, on a blunt trait restated as a neutral institutional one (the rule's own recommended fix), on any strongly-worded sentence about a person that isn't actually sensitive -- and would miss a description that's damning without a single flagged word. A check that fires on the wrong things this often is the exact failure phase 4 found in the universal catalogue's own first checked_by attempts: it wouldn't be enforcing this rule, just producing noise under its name. Left as a judgment call every session makes directly, the way the rule itself is written to ask.

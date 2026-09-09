@@ -9,7 +9,8 @@ gates:       []
 index_clause: "group deliverable content under a named subdirectory -- a recommendation"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: content-subdirs
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -48,6 +49,8 @@ It is also the one advisory rule in this group. Nothing checks it, and that
 is on purpose -- it was written down mainly so a session would stop reading
 root-level content clutter as an install-time defect the way a missing
 manifest entry genuinely is.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check, and the practice says so itself: its own Detail section states it's "not mechanically enforced... raise it as a judgment call when a session actually notices," since telling deliverable content apart from navigation-layer files (and deciding whether root genuinely reads as cluttered) is exactly that kind of call.
