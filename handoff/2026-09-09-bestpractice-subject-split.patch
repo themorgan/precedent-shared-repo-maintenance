@@ -1,7 +1,7 @@
 From a947483f38fe44313c6f2f1c89e7bc4208e35aab Mon Sep 17 00:00:00 2001
 From: Morgan F <morgan@westegg.com>
 Date: Wed, 9 Sep 2026 10:25:13 -0300
-Subject: [PATCH 1/4] Declare team sets by subject, and read their names from
+Subject: [PATCH 1/5] Declare team sets by subject, and read their names from
  precedent.json
 
 Three changes, all of them upstream groundwork for splitting the private
@@ -190,7 +190,7 @@ index 7e0ff6d..a962ec9 100644
 From 2121b298e5d923b8117106550204531ac8a6dfdb Mon Sep 17 00:00:00 2001
 From: Morgan F <morgan@westegg.com>
 Date: Wed, 9 Sep 2026 10:37:14 -0300
-Subject: [PATCH 2/4] Close split-team-sets-by-subject with the sort and the
+Subject: [PATCH 2/5] Close split-team-sets-by-subject with the sort and the
  migration it used
 
 The sort is done, from a session holding all five sets plus this repo --
@@ -297,7 +297,7 @@ index 1e8bd7a..43eb714 100644
 From cb439eb21cb0857eb2b6a81a682cc90e50b4d268 Mon Sep 17 00:00:00 2001
 From: Morgan F <morgan@westegg.com>
 Date: Wed, 9 Sep 2026 10:39:43 -0300
-Subject: [PATCH 3/4] Link the second precedent.json reference, matching the
+Subject: [PATCH 3/5] Link the second precedent.json reference, matching the
  first
 
 doc-references-are-links: the same file is linked one paragraph above.
@@ -332,7 +332,7 @@ index 6cb994b..625b36e 100644
 From 1b85084b61e336d7b10774c77bb783d609c93266 Mon Sep 17 00:00:00 2001
 From: Morgan F <morgan@westegg.com>
 Date: Wed, 9 Sep 2026 10:50:19 -0300
-Subject: [PATCH 4/4] Correct the catalogue-carries-stories note: it is not a
+Subject: [PATCH 4/5] Correct the catalogue-carries-stories note: it is not a
  duplicate
 
 I recorded it as a team copy shadowing a live universal one, for
@@ -419,6 +419,140 @@ index 43eb714..9dfda3c 100644
    - **It must not be a judge-only reading pass.**
      [spec/ATTENTION_CEILING.md](spec/ATTENTION_CEILING.md) pre-registered and
      measured that exact shape at 54% recall — worse than doing the work with
+-- 
+2.43.0
+
+
+From 8069afbd0c4b346fdc047481e980117949c4775b Mon Sep 17 00:00:00 2001
+From: Morgan F <morgan@westegg.com>
+Date: Wed, 9 Sep 2026 15:18:09 -0300
+Subject: [PATCH 5/5] Ask which practice sources a repo should declare -- on
+ install, migration and every update
+
+An undeclared practice source is invisible. It throws no error, writes no
+file, leaves nothing missing: the repo simply resolves fewer practices
+than its owner believes, and no check will ever say so, because the sets a
+repo COULD declare are not derivable from the sets it does. That is the
+one gap in this whole mechanism that no tool can close, so it is closed by
+asking a person at the moments they are already thinking about it.
+
+Three places, one rule:
+
+  practices/vendor-update-runbook.md  step 8 -- ask before finishing an
+                                      update, naming what the repo
+                                      declares now
+  INSTALL.md                          ask at install rather than inferring
+  spec/MIGRATING_EXISTING_INSTALLS.md step 0, before re-vendoring
+
+Measured rather than argued, across three real repositories on
+2026-09-09: one had no add_repo instruction at all, so nothing ever told a
+session to reach for the sources its own config named; one had never
+declared `visibility`, and an absent field counts as public, which
+silently excluded every private-level source from its generated views;
+and all three named their sources by hand in prose that went stale the day
+a team set was split by subject. Not one of those produced a failing
+check.
+
+Morgan's idea, 2026-09-09, and the "ask again on every vendored update"
+half is the part that makes it durable: an install happens once, but the
+set of sources worth declaring keeps changing.
+
+Checks: doc_lint exit 0, precedent_check 0 violated.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01FnCixQKqYYaSG6dHNoPFo8
+---
+ INSTALL.md                          | 10 ++++++++++
+ practices/vendor-update-runbook.md  | 16 ++++++++++++++++
+ spec/MIGRATING_EXISTING_INSTALLS.md | 20 ++++++++++++++++++++
+ 3 files changed, 46 insertions(+)
+
+diff --git a/INSTALL.md b/INSTALL.md
+index 6c8c7a4..f026b7d 100644
+--- a/INSTALL.md
++++ b/INSTALL.md
+@@ -370,6 +370,16 @@ it applies.
+      | a document or content project | that team's set + the writing set + the working-style set |
+      | a practice set's own repository | the maintaining team's set + the writing set |
+ 
++     **Ask, out loud, rather than inferring it.** Whoever is installing
++     should be asked which of these apply, in the same conversation, and
++     asked again on every migration and every vendored update — the
++     `vendor-update-runbook` practice carries that as a numbered step. A
++     set that was never declared is **invisible**: it produces no error, no
++     warning and no missing file, only a repo quietly resolving fewer
++     practices than its owner believes it does. Nothing mechanical can
++     raise it, because the sets a repo *could* declare are not derivable
++     from the ones it *does*.
++
+      The pattern underneath it: **a set that is about a kind of work is
+      declared by everyone who does that work**, whatever team they are on,
+      and a set that is about running a particular kind of repository is
+diff --git a/practices/vendor-update-runbook.md b/practices/vendor-update-runbook.md
+index 4b2c7a7..c527a99 100644
+--- a/practices/vendor-update-runbook.md
++++ b/practices/vendor-update-runbook.md
+@@ -49,6 +49,14 @@ every step's answer is wrong if the one before it was skipped.
+ 6. **Run this repo's own full check**, not the upstream's.
+ 7. **Verify by content on the remote**, never by ref equality
+    ([verify-postcondition](verify-postcondition.md)).
++8. **Ask the person whether a practice source should be added or dropped**,
++   in the same conversation, before you finish. Name what the repo declares
++   now, and ask outright — do not infer it from the tree and do not skip the
++   question because nothing looks wrong. An update is the one moment
++   somebody is already thinking about which rules bind this repo, and a set
++   that was not declared is invisible: it produces no error, no warning and
++   no missing file, only a repo quietly resolving fewer practices than its
++   owner believes.
+ 
+ **A refusal naming a file that no longer exists upstream means reseed, not
+ investigate.** The refresh runs *this repo's own vendored copy* of the
+@@ -57,6 +65,14 @@ first refresh after upstream renames or drops an engine file asks for a
+ path that is genuinely gone.
+ 
+ ## Detail
++**Step 8 is the one that cannot be mechanised, which is why it is a step
++and not a check.** No tool can know that a team set exists and would suit
++this repo — the sets a repo *could* declare are not derivable from the
++sets it *does*. The person can answer in a sentence, and only at a moment
++when they are already looking. Ask on a new install, on a migration, and on
++every vendored update; the cost of asking is one line, and the cost of not
++asking accrues silently for as long as nobody happens to wonder.
++
+ **Step 1 is first because it is the one nobody thinks of as part of the
+ update.** The instinct is to start with the command that does the
+ vendoring. Every failure mode below step 1 is silent — no error, just an
+diff --git a/spec/MIGRATING_EXISTING_INSTALLS.md b/spec/MIGRATING_EXISTING_INSTALLS.md
+index 9d13f53..fafb9ab 100644
+--- a/spec/MIGRATING_EXISTING_INSTALLS.md
++++ b/spec/MIGRATING_EXISTING_INSTALLS.md
+@@ -50,6 +50,26 @@ the loader.
+ 
+ ## The pattern
+ 
++**Step 0, before any of it: ask which practice sources this repo should
++declare.** Not which it declares now — which it *should*. Ask the person,
++in the conversation, and write the answer into `precedent.json` as part of
++the migration rather than leaving it for later. This is a numbered step in
++[practices/vendor-update-runbook.md](../practices/vendor-update-runbook.md)
++too, for the same reason: a migration is a moment when somebody is already
++thinking about what binds this repo, and it is the cheapest moment there
++will ever be to correct the answer.
++
++**Why it has to be asked rather than detected.** An undeclared source is
++invisible. It throws no error, writes no file and leaves nothing missing —
++the repo simply resolves fewer practices than its owner believes, and
++nothing in any check will ever say so, because the sets a repo *could*
++declare are not derivable from the sets it *does*. Measured on 2026-09-09
++across three real repositories: one had no `add_repo` instruction at all,
++one had never declared `visibility` (which silently excluded every
++private-level source from its generated views), and all three named their
++sources by hand in prose that went stale the day a team set was split.
++None of those produced a single failing check.
++
+ 1. **Re-vendor `process/upstream/`.** If tracking a real, released
+    BestPractice branch (the normal case once a Precedent-carrying branch
+    has merged to `main`), this is an ordinary
 -- 
 2.43.0
 
