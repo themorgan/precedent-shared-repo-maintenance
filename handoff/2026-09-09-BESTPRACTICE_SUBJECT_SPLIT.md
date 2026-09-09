@@ -1,8 +1,8 @@
-<!-- Last updated: 2026-09-09 12:50:00 (Buenos Aires) by Morgan F, to version 3 -->
+<!-- Last updated: 2026-09-09 14:40:00 (Buenos Aires) by Morgan F, to version 4 -->
 
 # BestPractice changes for the subject split — apply from a BestPractice-rooted session
 
-**Status: not applied upstream.** Five commits against
+**Status: not applied upstream.** Six commits against
 `precedent-beta-v01`, exported as
 [`2026-09-09-bestpractice-subject-split.patch`](2026-09-09-bestpractice-subject-split.patch).
 Same shape as [`NOT_BINDING_FINDINGS.md`](../NOT_BINDING_FINDINGS.md) and
@@ -29,6 +29,7 @@ waiting.
 | `INSTALL.md` | A repo declares as many team sets as its work needs. Adds the table answering *which* ones from the kind of work the repo is for, and the pattern under it. |
 | `templates/nontechnical-document-project/AGENTS.md` | The session-start `add_repo` instruction named one set outright; it now reads the names out of `precedent.json`, so declaring another set is one edit rather than two files kept in agreement by hand. |
 | `templates/nontechnical-document-project/precedent.json` | Declares the two new subject-scoped sets; says why the repo-mechanics set is deliberately not declared; corrects this file's own description of that set as "code-repo conventions", which was never true. |
+| `practices/vendor-update-runbook.md`, `INSTALL.md`, `spec/MIGRATING_EXISTING_INSTALLS.md` | Ask the person which practice sources a repo should declare -- at install, at migration, and as a numbered step of every vendored update. An undeclared source is invisible: no error, no warning, just fewer practices in force than the owner believes. Nothing mechanical can raise it. |
 | `TODO.md` | Closes `split-team-sets-by-subject` with what the sort found and the migration path repos on the old declaration follow. Also corrects a wrong finding from the same session — `catalogue-carries-stories`' same-slug copy in this set is load-bearing, not redundant — and attaches it to `practice-consistency-across-team-repos` as the counter-example a reconcile tool must not break. |
 
 ## To apply
