@@ -9,11 +9,11 @@ here and how the practices in [practices/](practices/) got here.
 
 <!-- Regenerate with: python3 tools/build_views.py -- do not hand-edit this block, tools/verify_harness.py's regeneration check fails on drift. -->
 
-## Resident block (~183 of 2000 token budget, 2 of 38 practices)
+## Resident block (~249 of 2000 token budget, 2 of 38 practices)
 
 **nonblocking-questions.** Once a question is worth asking at all, asking is not itself a stopping point. A session holding a queue of work and an open question doesn't go idle waiting for the answer -- it keeps going on everything the answer doesn't touch.
 
-**small-calls.** Default to continuing, not asking. When a judgment call is needed to keep the work moving -- filling in a default, picking between two reasonable implementations, resolving an ambiguity that doesn't change the shape of what gets delivered -- make the call and note it, rather than stopping to ask first. Reserve stopping and asking for calls that are genuinely big: hard or costly to undo, change what gets delivered or to whom, spend real money, touch credentials or production, or are the kind of toss-up where two reasonable people would clearly land in different places.
+**small-calls.** Default to continuing, not asking. When a judgment call is needed to keep the work moving -- filling in a default, picking between two reasonable implementations, resolving an ambiguity that doesn't change the shape of what gets delivered -- make the call and note it, rather than stopping to ask first. Reserve stopping and asking for calls that are genuinely big: hard or costly to undo, change what gets delivered or to whom, spend real money, touch credentials or production, or are the kind of toss-up where two reasonable people would clearly land in different places. **Making a call is never authorization to write it into the repository.** Where `brainstorm-holds-commits` applies -- an exploratory thread, until the person authorizes the work -- keep making small calls and keep moving; just do not commit them. The reply carries them until there is a commit to carry them instead.
 
 ## Occasion index
 
