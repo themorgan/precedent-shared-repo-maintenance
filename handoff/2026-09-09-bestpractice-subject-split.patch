@@ -1,0 +1,330 @@
+From a947483f38fe44313c6f2f1c89e7bc4208e35aab Mon Sep 17 00:00:00 2001
+From: Morgan F <morgan@westegg.com>
+Date: Wed, 9 Sep 2026 10:25:13 -0300
+Subject: [PATCH 1/3] Declare team sets by subject, and read their names from
+ precedent.json
+
+Three changes, all of them upstream groundwork for splitting the private
+team catalogue by subject rather than by where the rules were written.
+
+INSTALL.md: a repo declares as many team sets as its work needs, and that
+is the ordinary case. Adds the table that answers "which ones?" from the
+kind of work the repo is for, and states the pattern under it -- a set
+about a KIND OF WORK is declared by everyone who does that work, whatever
+team they are on; a set about running a kind of repository is declared
+only by repositories of that kind.
+
+templates/nontechnical-document-project/AGENTS.md: the session-start
+`add_repo` instruction named one set outright, so declaring a second one
+silently required editing two files that nothing kept in agreement. It
+now reads the set names out of precedent.json. The failure mode it
+removes is not an error but a session that quietly resolves fewer
+practices than the config promises.
+
+templates/nontechnical-document-project/precedent.json: declares the two
+new subject-scoped sets, and says why the repo-mechanics set is
+deliberately NOT declared -- not declaring a set is the cheap way to say
+"this does not apply here"; a not_binding entry per slug is the expensive
+one. Also corrects this file's own description of that set as "code-repo
+conventions", which was never true: over half its rules are about
+writing, and they were unreachable from a document project because of it.
+
+doc_lint on INSTALL.md: 40 findings before, 40 after -- a pre-existing
+backlog, nothing added.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01FnCixQKqYYaSG6dHNoPFo8
+---
+ INSTALL.md                                    | 28 +++++++++++-
+ .../nontechnical-document-project/AGENTS.md   | 17 +++++--
+ .../precedent.json                            | 44 ++++++++++++++++---
+ 3 files changed, 77 insertions(+), 12 deletions(-)
+
+diff --git a/INSTALL.md b/INSTALL.md
+index 226e2d6..6c8c7a4 100644
+--- a/INSTALL.md
++++ b/INSTALL.md
+@@ -348,10 +348,36 @@ it applies.
+      {
+        "sources": [
+          {"level": "universal", "name": "precedent", "path": "process/upstream"},
+-         {"level": "team", "name": "precedent-team-<slug>", "path": "../precedent-team-<slug>"}
++         {"level": "team", "name": "precedent-team-<slug>", "path": "../precedent-team-<slug>"},
++         {"level": "team", "name": "precedent-team-<other>", "path": "../precedent-team-<other>"}
+        ]
+      }
+      ```
++     **A repo declares as many team sets as its work needs, and this is
++     the ordinary case, not an exception.** Team sets are named for a
++     **subject**, so one team declares several and one set serves several
++     teams. Two team sets defining the same slug is refused outright —
++     that guard is what keeps one rule to one home, and it is why a set
++     you need is added by declaring it rather than by copying its rules
++     in.
++
++     **Which team sets does this repo declare?** Start from the kind of
++     work the repo is for:
++
++     | The repo is… | Declare |
++     |---|---|
++     | software or tooling, maintained by a team | that team's set + the writing set + the working-style set |
++     | a document or content project | that team's set + the writing set + the working-style set |
++     | a practice set's own repository | the maintaining team's set + the writing set |
++
++     The pattern underneath it: **a set that is about a kind of work is
++     declared by everyone who does that work**, whatever team they are on,
++     and a set that is about running a particular kind of repository is
++     declared only by repositories of that kind. A document project that
++     declares a repo-mechanics set receives a stack of rules about syncs,
++     gates and branch setup it has no way to act on — and the cheap
++     remedy is not declaring the set, not a `not_binding` entry per slug.
++
+      **Names are fixed by level, not chosen** — `precedent` for the
+      universal set, `precedent-individual` for a person's own,
+      `precedent-team-<slug>` for a team's, `local` for a repo-local one.
+diff --git a/templates/nontechnical-document-project/AGENTS.md b/templates/nontechnical-document-project/AGENTS.md
+index 253ea45..6cb994b 100644
+--- a/templates/nontechnical-document-project/AGENTS.md
++++ b/templates/nontechnical-document-project/AGENTS.md
+@@ -49,21 +49,30 @@ deliverables and indexes which documents back each part of each one.
+   last regenerated. Re-run without `--check` to refresh it, review the
+   diff, and commit.
+ 
+-- **A brand-new session on this repo alone has no git read access to
+-  `precedent-team-tms`** — session repo access is scoped per session, never
++- **A brand-new session on this repo alone has no git read access to this
++  project's team sets** — session repo access is scoped per session, never
+   inherited just because `precedent.json` names a repo. No token or secret is
+   involved: the tool that grants a session this access rides the same GitHub
+   identity already behind the session, so it only ever succeeds because that
+   person is already a collaborator on the target repo. **At the very start of
+   every session, before running `tools/bootstrap.sh`, call that tool
+-  (`add_repo`, read access) for `precedent-team-tms` — silently, with no
++  (`add_repo`, read access) for every `precedent-team-*` source
++  [`precedent.json`](precedent.json) declares — silently, with no
+   confirmation needed first.** This is a read-only scope extension, not a
+   credential or production change. Never write this as "if the clone fails,
+   ask to add the repo" — that only works when a human happens to be watching
+   for the failure, and the whole point is that a person only ever attaches
+-  the one repo they're actually working in; reaching for the team source is
++  the one repo they're actually working in; reaching for the team sources is
+   this session's own job, every time.
+ 
++  **Read the set names out of `precedent.json`; never hard-code them here.**
++  This paragraph used to name one set outright, which meant declaring a
++  second one silently required editing two files that nothing kept in
++  agreement — and the failure mode of getting that wrong is not an error but
++  a session that quietly resolves fewer practices than the config promises.
++  A repo declaring several subject-scoped sets is the ordinary case now, not
++  an exception.
++
+ ## Non-technical contributor access
+ 
+ <!-- Verbatim from spec/NONTECHNICAL_CONTRIBUTOR_ACCESS.md's Step 3, adapted
+diff --git a/templates/nontechnical-document-project/precedent.json b/templates/nontechnical-document-project/precedent.json
+index 7e0ff6d..a962ec9 100644
+--- a/templates/nontechnical-document-project/precedent.json
++++ b/templates/nontechnical-document-project/precedent.json
+@@ -11,13 +11,33 @@
+     "INSTALL.md §0 step 1 -- not a live reference; every collaborator and",
+     "every fresh container needs it without a sibling checkout.",
+     "",
+-    "The team source is precedent-team-tms, the shared editorial/content",
+-    "practice set for non-technical document work (distinct from",
+-    "precedent-team-maintainers, which is code-repo conventions) -- see",
+-    "spec/NONTECHNICAL_TEAM_PRACTICE_CAPTURE.md. Resolved LIVE from a",
+-    "sibling clone, never vendored, per that source's own precedence rules.",
+-    "A hosted/ephemeral session needs AGENTS.md's own instruction to",
+-    "call add_repo for it at session start -- see that file."
++    "THREE team sources, each named for a SUBJECT rather than for a roster,",
++    "and a project declares the ones its kind of work needs (INSTALL.md's",
++    "'Which team sets does this repo declare?'):",
++    "",
++    "  precedent-team-tms -- this team's own conventions for non-technical",
++    "    document work; see spec/NONTECHNICAL_TEAM_PRACTICE_CAPTURE.md.",
++    "  precedent-team-writing -- the craft of documents and prose: length,",
++    "    emphasis, lists, drafting markers, citation and linking. Wanted by",
++    "    anyone writing for a human reader, on any team.",
++    "  precedent-team-working-style -- how a session works alongside the",
++    "    person: decide small calls, don't stall on a non-blocking question,",
++    "    don't repeat the same disclaimer every run. Mostly resident, so it",
++    "    fires on every turn.",
++    "",
++    "precedent-team-maintainers is deliberately NOT declared here: it holds",
++    "repo and practice-set mechanics -- syncs, gates, branch setup, catalogue",
++    "upkeep -- which a document project has no way to act on. Not declaring a",
++    "set is the cheap way to say that; a `not_binding` entry per slug is the",
++    "expensive one. (Until 2026-09-09 this comment called that set 'code-repo",
++    "conventions', which was never true: over half its rules were about",
++    "writing, and they were unreachable from here because of it.)",
++    "",
++    "All three are resolved LIVE from sibling clones, never vendored, per",
++    "those sources' own precedence rules. A hosted/ephemeral session needs",
++    "AGENTS.md's own instruction to call add_repo for each at session start",
++    "-- that instruction reads this file's `sources` rather than naming any",
++    "set, so declaring another one here is the only edit required."
+   ],
+   "sources": [
+     {
+@@ -29,6 +49,16 @@
+       "level": "team",
+       "name": "precedent-team-tms",
+       "path": "../precedent-team-tms"
++    },
++    {
++      "level": "team",
++      "name": "precedent-team-writing",
++      "path": "../precedent-team-writing"
++    },
++    {
++      "level": "team",
++      "name": "precedent-team-working-style",
++      "path": "../precedent-team-working-style"
+     }
+   ],
+   "not_binding": [
+-- 
+2.43.0
+
+
+From 2121b298e5d923b8117106550204531ac8a6dfdb Mon Sep 17 00:00:00 2001
+From: Morgan F <morgan@westegg.com>
+Date: Wed, 9 Sep 2026 10:37:14 -0300
+Subject: [PATCH 2/3] Close split-team-sets-by-subject with the sort and the
+ migration it used
+
+The sort is done, from a session holding all five sets plus this repo --
+the route attach-private-sources named, working as written.
+
+Records what the split actually found, not just that it happened: 19 of
+40 practices in the maintainers' set were about something other than
+maintaining a repository; three further moves were proposed and REVERSED
+on reading the rules rather than their slugs, one of which says in its
+own text that it is not team policy; and the two practices that fire on
+every turn of every session were reachable only by repositories that
+also took twenty-odd rules about syncs and gates.
+
+Also records the migration path for repos still on the old declaration,
+since that is the part a future session needs and the item did not have:
+the two-step move spec/MOVING_PRACTICES.md prescribes, applied 19 times,
+so every moved practice keeps a deduplicated file in the old set naming
+where it went. A repo that has not updated its precedent.json resolves
+fewer practices and can see, by name, which set now holds each one.
+
+Leaves catalogue-carries-stories' team-shadows-universal duplicate to
+practice-consistency-across-team-repos, where it belongs, and leaves item
+7 parked -- nothing here produced two sources that disagree.
+
+doc_lint TODO.md: 40 findings before, 40 after.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01FnCixQKqYYaSG6dHNoPFo8
+---
+ TODO.md | 56 +++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 51 insertions(+), 5 deletions(-)
+
+diff --git a/TODO.md b/TODO.md
+index 1e8bd7a..43eb714 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -1426,11 +1426,57 @@ which is the failure this repointing exists to end — write
+   regardless of team → a subject set. One person → individual. Only this
+   repository → repo-local.
+ 
+-  **Blocked on:** a session that can read those three repositories. Asked on
+-  2026-09-08 and refused: `add_repo` would not attach `themorgan/*` from an
+-  `alex137/*`-rooted session, and no sibling clone or user config existed on
+-  disk, so the sort could not be started from guesses about what the sets
+-  contain. Route is [`attach-private-sources`](TODO.md#attach-private-sources).
++  **DONE 2026-09-09**, from a session rooted in a `themorgan/` repo with all
++  five sets and this repo on disk — the route
++  [`attach-private-sources`](TODO.md#attach-private-sources) names, and it
++  worked exactly as written.
++
++  **The sort, and the count that made the case.** Of
++  `precedent-team-maintainers`' 40 practices, 19 were about something other
++  than maintaining a repository. 16 went to a new `precedent-team-writing`
++  (the craft of writing for a human reader: length and emphasis, when a list
++  is really a list, drafting markers, citation and linking, keeping a
++  reader's material out of a deliverable that is not for them) and 3 to a new
++  `precedent-team-working-style` (how a session paces work with the person).
++  21 stayed. Two moved up from the individual set; **three more were proposed
++  and reversed on reading the rules rather than their slugs**, each of which
++  says in its own text that it is not team policy — one of them outright
++  ("my preference for my own repositories, not a default I ask anyone else to
++  adopt"). Moving that one would have contradicted the rule while claiming to
++  enforce it.
++
++  **The strongest single finding.** The two practices that fire on *every
++  turn of every session* — the only two `tier: resident` rules in the whole
++  40 — were reachable only by a repository that also declared twenty-odd
++  rules about syncs, gates and branch setup. A document project therefore
++  declared none of them, and the team that most needed the writing rules had
++  one practice of its own. **Reach is what a set is worth, not how many files
++  it holds**, which is why a 3-practice set earns its own repository here.
++
++  **Migration for repos already on the old system is the two-step move
++  [spec/MOVING_PRACTICES.md](spec/MOVING_PRACTICES.md) prescribes**, applied
++  19 times: land at the destination first, verify it there, deduplicate at
++  the source second. Nothing was deleted and no rule left force for a moment.
++  Every moved practice keeps its file in the old set as `status:
++  deduplicated`, with `in_force_at:` naming the same slug and a `## Story`
++  line saying which set now holds it. So a repo that has not yet updated its
++  `precedent.json` resolves fewer practices — and the ones it no longer gets
++  are each sitting in the set it still declares, saying by name where they
++  went. That is the difference between a migration and a disappearance.
++
++  **What made it safe to do at all** is the guard this item already named:
++  two team sets defining one slug is a hard refusal, so one rule has exactly
++  one home by construction. Verified across all four team sets after the
++  move: no collisions.
++
++  **Left alone deliberately:** `catalogue-carries-stories` is still `active`
++  in `precedent-team-maintainers` *and* `active` at universal — a team copy
++  shadowing a live universal one, which that set's own `no-duplication` says
++  to drop on next touch. It is a duplicate, not a mis-sort, so it belongs to
++  [`practice-consistency-across-team-repos`](TODO.md#practice-consistency-across-team-repos)
++  rather than here. And item 7 stays parked: nothing in this split expresses
++  a preference between two disagreeing team sources, because nothing here
++  produced two sources that disagree.
+ 
+ - <a id="practice-consistency-across-team-repos"></a>**How one practice lives in several team repos and stays consistent** —
+   **unfolded 2026-09-08, at Morgan's prompting.** Folded into
+-- 
+2.43.0
+
+
+From cb439eb21cb0857eb2b6a81a682cc90e50b4d268 Mon Sep 17 00:00:00 2001
+From: Morgan F <morgan@westegg.com>
+Date: Wed, 9 Sep 2026 10:39:43 -0300
+Subject: [PATCH 3/3] Link the second precedent.json reference, matching the
+ first
+
+doc-references-are-links: the same file is linked one paragraph above.
+The remaining bare reference, in TODO.md, is deliberate -- it names a
+CONSUMING repo's precedent.json, and a relative link there would resolve
+to this repo's own, which is the failure shape practice-links-travel
+describes rather than the convention it enforces.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01FnCixQKqYYaSG6dHNoPFo8
+---
+ templates/nontechnical-document-project/AGENTS.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/templates/nontechnical-document-project/AGENTS.md b/templates/nontechnical-document-project/AGENTS.md
+index 6cb994b..625b36e 100644
+--- a/templates/nontechnical-document-project/AGENTS.md
++++ b/templates/nontechnical-document-project/AGENTS.md
+@@ -65,7 +65,7 @@ deliverables and indexes which documents back each part of each one.
+   the one repo they're actually working in; reaching for the team sources is
+   this session's own job, every time.
+ 
+-  **Read the set names out of `precedent.json`; never hard-code them here.**
++  **Read the set names out of [`precedent.json`](precedent.json); never hard-code them here.**
+   This paragraph used to name one set outright, which meant declaring a
+   second one silently required editing two files that nothing kept in
+   agreement — and the failure mode of getting that wrong is not an error but
+-- 
+2.43.0
+
