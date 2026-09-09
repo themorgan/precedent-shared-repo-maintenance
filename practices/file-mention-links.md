@@ -9,7 +9,8 @@ gates:       ["reply"]
 index_clause: "every file mention in chat or PR/commit text is a live GitHub link"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: file-mention-links
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -50,6 +51,8 @@ turn-end hook can see before it is posted, so those still ride on habit. And
 the check is a heuristic that can occasionally flag a mention never meant as
 a reference to this repo -- accepted deliberately, since clearing a false
 positive costs exactly what complying costs, which is adding a link.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: the surfaces this rule governs -- a chat reply, a PR description, an issue, a commit message -- aren't content this repo's own tree contains, so there's nothing here to scan. The practice's own Detail section names the one place this is worth enforcing mechanically: a harness's blocking turn-end hook reading the closing reply, which is a property of the harness, not of this repo.

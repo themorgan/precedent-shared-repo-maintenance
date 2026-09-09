@@ -9,7 +9,8 @@ gates:       []
 index_clause: "make small calls yourself; note them; stop only for big ones"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: small-calls
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -45,6 +46,8 @@ scrolls on; the commit message is the copy that survives into the log and
 the diff, where somebody reviewing a merged pull request later can still see
 what was decided on their behalf. The heading is skipped on a commit that
 genuinely made no calls, rather than padded with "none" on every commit.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-working-style`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: a commit either has a "Judgment calls made:" heading or doesn't, and that presence alone is trivially greppable -- but the actual rule is about which calls were correctly sized as small enough to just make versus which should have stopped and asked, and that sizing (hard/costly to undo, touches production, a real two-reasonable-people toss-up) is the judgment itself, not observable after the fact from the commit alone.

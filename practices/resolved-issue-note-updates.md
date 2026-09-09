@@ -9,7 +9,8 @@ gates:       []
 index_clause: "When a commit fixes a bug, closes a gap, or resolves a limitation that some ..."
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: resolved-issue-note-updates
 supersedes:  []
 overrides:   null
 added:       2026-09-02
@@ -24,6 +25,8 @@ Raised via Precedent's creation pipeline (Stage 1 signal: review-found-defect), 
 
 ## Story
 BestPractice's spec/PHASE5_BRIEF.md named a real bug in prose: 'A known bug, found while writing this brief, not yet fixed' (precedent_candidate.py create's same-day recurrence collision). This deep-check session fixed the bug in tools/precedent_candidate.py, but the brief's own 'not yet fixed' sentence would have kept reading that way indefinitely if the session hadn't gone back to it on purpose -- nothing flags a stale not-yet-fixed claim once the code it describes has actually changed. The same shape recurs with any 'known issue' or 'open gap' note written into a spec, README, or backlog document: the note and the code drift apart the moment one of them moves without the other.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check yet -- reached via occasion only, per checkable-gets-checked's own standing rule, a real check should still be attempted before this stays null indefinitely.

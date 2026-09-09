@@ -9,7 +9,8 @@ gates:       []
 index_clause: "argue a real counter-case before building on a stated stance"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: push-back
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -54,6 +55,8 @@ leans entirely on honest judgment, and the only available check is somebody
 noticing over time whether push-back shows up when it should, and saying so
 if the calibration drifts. Hence also the explicit anti-quota clause: a
 piece with no real problem is handed over as-is.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check, and the practice says so itself: its own Why section states this "leans entirely on honest judgment about whether a given disagreement is real," since nothing external can distinguish correctly finding no real problem from staying quiet out of excessive deference.

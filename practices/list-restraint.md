@@ -9,7 +9,8 @@ gates:       []
 index_clause: "don't reformat connected reasoning as bullet fragments"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: list-restraint
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -43,6 +44,8 @@ five-item enumeration from a three-sentence argument chopped into three
 bullets; both are a list on the page. Hence the default: when genuinely
 unsure, prose, since a paragraph that could have been a list costs the
 reader little while a list that erases reasoning costs more.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: telling "connected reasoning reformatted as bullet fragments" apart from "a genuine enumeration a reader will scan individually" is precisely the semantic call the rule's own Detail section describes -- reading the bullets back as plain sentences and judging whether the connective logic survives. No syntax-level property of a markdown list captures that.
