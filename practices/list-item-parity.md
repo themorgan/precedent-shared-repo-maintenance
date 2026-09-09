@@ -9,7 +9,8 @@ gates:       []
 index_clause: "keep list items comparable in length; default to the shorter side"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: list-item-parity
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -41,6 +42,8 @@ The escape hatch is deliberate: an item that genuinely carries more weight
 is a signal to pull it out into its own section, not a licence to let it
 balloon in place. And it is a strong preference rather than a hard rule,
 because padding a short item to match its neighbors makes it worse.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: "roughly comparable length" is deliberately not a fixed ratio (the rule's own Detail section calls it "a strong preference, not a hard rule"), and whether one item's extra length reflects genuinely greater weight or just drafting mood is a judgment about the content, not something a length comparison alone can settle without flagging plenty of legitimately uneven lists.

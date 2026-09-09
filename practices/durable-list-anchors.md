@@ -9,7 +9,8 @@ gates:       []
 index_clause: "anchor and slug each entry of a durable numbered list, not just its number"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: durable-list-anchors
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -53,6 +54,8 @@ The rule deliberately stops at the edge of anything vendored. A numbered
 list inside a vendored tree is not ours to renumber or re-anchor -- that
 tree has to stay byte-identical to what its sync mirrored, so a local anchor
 is just a merge conflict on the next sync.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: whether a given numbered list holds "durable content likely to be cited by position" versus a short, disposable set of options is exactly the judgment the rule turns on, and the Detail section's own carve-outs (a short bullet list; a list vendored byte-identical from upstream) need the same judgment to apply correctly. A check that flagged every unanchored numbered list would misfire on most of them.

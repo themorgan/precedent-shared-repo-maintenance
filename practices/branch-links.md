@@ -9,7 +9,8 @@ gates:       []
 index_clause: "link every git branch mentioned to its tree view"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: branch-links
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -41,6 +42,8 @@ Hence the extension rather than a new idea: link a branch anywhere it is
 named, not only in a files-touched footer, to that branch's tree view on
 whichever host the repo actually lives on. A branch in some other repo a
 reply happens to mention gets linked on that repo's host, not this one's.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: it governs free-form prose (chat replies, status updates, any document) naming a branch, which has no reliable syntactic signature distinguishing "a git branch was named here" from any other backticked or plain-text token (a filename, a variable, a package name). A static scan would either miss real mentions or misfire constantly on lookalikes.

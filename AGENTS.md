@@ -9,39 +9,23 @@ here and how the practices in [practices/](practices/) got here.
 
 <!-- Regenerate with: python3 tools/build_views.py -- do not hand-edit this block, tools/verify_harness.py's regeneration check fails on drift. -->
 
-## Resident block (~183 of 2000 token budget, 2 of 38 practices)
-
-**nonblocking-questions.** Once a question is worth asking at all, asking is not itself a stopping point. A session holding a queue of work and an open question doesn't go idle waiting for the answer -- it keeps going on everything the answer doesn't touch.
-
-**small-calls.** Default to continuing, not asking. When a judgment call is needed to keep the work moving -- filling in a default, picking between two reasonable implementations, resolving an ambiguity that doesn't change the shape of what gets delivered -- make the call and note it, rather than stopping to ask first. Reserve stopping and asking for calls that are genuinely big: hard or costly to undo, change what gets delivered or to whom, spend real money, touch credentials or production, or are the kind of toss-up where two reasonable people would clearly land in different places.
-
 ## Occasion index
 
 ```
 When a README or other key file just gained an operational instruction:
   mirror-into-agents — an agent-relevant instruction lands in both AGENTS.md and its human home
-When a commit fixes, closes, or resolves something a document names in prose as a known, open issue:
-  resolved-issue-note-updates — When a commit fixes a bug, closes a gap, or resolves a limitation that some ...
 When a new rule is proposed and its scope isn't obvious:
   rule-scope-ask — unclear if a new rule is repo-wide or one document? ask once
-When a numbered list's entries are durable content likely to be cited by position:
-  durable-list-anchors — anchor and slug each entry of a durable numbered list, not just its number
-When a paragraph just got a substantial edit, or the piece is done:
-  trim-prose — trim a paragraph right after editing it, and before calling it done
+When a project of mine vendors a universal practice set as tracked files:
+  bestpractice-sync — a scheduled workflow keeps the vendored universal copy current
 When a project repo vendors this team's own practice set, and it has moved:
   pack-sync — the team-set sync is the universal sync's sibling, against a private repo
 When a session starts in a repo that vendors a universal or team set:
   drift-notice — check source freshness at session start; raise it right away, not later
 When a session-start freshness check against a private source can't be reached:
   fresh-check-escalation — tell "could not verify" apart from "confirmed fresh"; verify directly
-When a standing constraint on one file gets stated a second time:
-  doc-recipe — present-tense rules for one file, in doc-recipes/<name>.recipe.md
 When about to commit:
   light-check — a cheap mechanical audit runs before every commit, not just merges
-When about to commit a document that characterizes a real, identifiable person:
-  sensitive-characterization-scrub — soften or ask before committing a blunt description of a real person
-When about to format connected prose as bullet points:
-  list-restraint — don't reformat connected reasoning as bullet fragments
 When about to push after a thread of work:
   todo-gate — add missed ideas, check off finished ones, before every push
 When adding a new rule to a maintained rules document:
@@ -56,45 +40,31 @@ When bringing a vendored practice layer into a new or existing repo:
   install — vendor the tree, weave conventions into AGENTS.md, wire checks and manifest
 When building or setting up a system that talks to an LLM:
   llm-neutral — build LLM integrations provider-neutral; assume an OpenRouter token
-When citing support for a claim in a formal document:
-  brainstorm-citations — cite a formal document for support, never a raw brainstorm entry
 When committing anything:
   session-trailer — a Session: <url> trailer on every commit
+When counting or matching entries by name against other entries that may share a prefix:
+  match-parsed-id-not-prefix — When counting how many files or entries share a name (recurrence, a duplicat...
 When creating a file a later regeneration will overwrite:
   derived-file-marker — a regenerated file's header names its source, recipe, and command
-When drafting or reviewing prose meant to persuade or be judged:
-  push-back — argue a real counter-case before building on a stated stance
-When drafting or revising a list, or a document with list-like sections:
-  list-item-parity — keep list items comparable in length; default to the shorter side
+When creating a practice-set repo of mine, or finding its vendored engine stale:
+  practice-set-engine-refresh — my own practice-set repos carry a weekly engine-refresh workflow
 When installing a vendored practice layer that could check in upstream:
   blank-blocklist — leave a check-in blocklist blank at install; don't ask, don't remind
 When landing practices in bulk -- a migration, an import, or a move from another set:
   catalogue-carries-stories — no active practice in this set sits with an empty ## Story
-When leaving a placeholder or fill-in-later note mid-draft:
-  draft-marker — wrap a draft placeholder in ➡️ TEXT ⬅️, bold and all caps
-When mentioning a repo file in a chat reply, PR description, or commit message:
-  file-mention-links — every file mention in chat or PR/commit text is a live GitHub link
-When naming a git branch in a document, reply, or status update:
-  branch-links — link every git branch mentioned to its tree view
-When naming anything that has a destination, in a document or a reply:
-  rule-links — link anything mentioned that has a destination, on first use
-When reporting a check's outcome that includes a known pre-existing backlog:
-  quiet-checks — "checks passed" is fine; don't re-explain the same old backlog
-When reviewing a draft's balance before calling it done:
-  proportional-emphasis — give a point space matching its importance, not its drafting mood
-When root has accumulated three or more deliverable-content documents:
-  content-subdirs — group deliverable content under a named subdirectory -- a recommendation
 When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
-When writing a sentence that cites an exact, changeable count:
-  no-stale-counts — drop a count that will go stale; say "several", not the number
+When setting up a project I work in, or a session reporting that its checkout is behind:
+  fresh-before-write — verify and fast-forward the checkout before the session's first write, never after
 When writing content that will vendor or ship into another repo:
   private-repo-scrub — name a private repo only in general terms in anything that ships elsewhere
+When writing or editing a practice in one of my own private sets:
+  practice-links-travel — a practice links only what travels with it -- sibling practices and its own check scripts
 ```
 
 ## Standing instruction
 
-Before starting work of a kind named in the occasion index above, run `python3 tools/precedent_show.py SLUG` for each listed slug to load its Rule. When editing a file, `python3 tools/precedent_paths.py FILE` prints any on-demand practice whose `applies_to` matches it, without needing the index at all. At a named moment — merging a branch, before pushing, ending a turn and writing the reply — run `python3 tools/precedent_gate.py merge|push|reply`: some practices fire at a moment rather than in a file, and no path glob reaches those.
+Before starting work of a kind named in the occasion index above, run `python3 tools/precedent_show.py SLUG` for each listed slug to load its Rule. When editing a file, `python3 tools/precedent_paths.py FILE` prints any on-demand practice whose `applies_to` matches it, without needing the index at all. At a named moment — merging a branch, before pushing — run `python3 tools/precedent_gate.py merge|push`: some practices fire at a moment rather than in a file, and no path glob reaches those.
 
 <!-- END GENERATED -->
 

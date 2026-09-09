@@ -9,7 +9,8 @@ gates:       []
 index_clause: "do the independent work first, ask early, keep going"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: nonblocking-questions
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -48,6 +49,8 @@ Asking early rather than at the end is the part with a practical reason
 behind it. The point is for the answer to arrive while work is still in
 flight, and a question saved for a closing summary has nowhere to land --
 particularly when the person being asked is often away from the computer.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-working-style`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: this is a rule about how a session paces its own work against an open question -- whether it kept moving on independent work instead of going idle. That's a property of session conduct across a conversation, not of any file this repo's tree holds.

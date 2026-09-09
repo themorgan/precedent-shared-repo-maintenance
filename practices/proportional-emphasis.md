@@ -9,7 +9,8 @@ gates:       []
 index_clause: "give a point space matching its importance, not its drafting mood"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: proportional-emphasis
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -43,6 +44,8 @@ would need it weighted, or does it just reflect how long the wording took?
 
 Overridable on request, since a deliberate decision to give a minor point
 outsized emphasis is a legitimate thing to ask for.
+
+**Deduplicated on 2026-09-09**: now in force from `precedent-team-writing`, a subject-scoped set. This set is named for the people who happened to write its rules, not for a subject, and this rule was never about maintaining a repository -- it was unreachable from a document project that needed it without also taking twenty-odd rules about syncs and gates. See Precedent's `TODO.md#split-team-sets-by-subject`; `spec/MOVING_PRACTICES.md` for why this is a deduplication and not a retirement -- the rule is fully in force, only the redundant copy went.
 
 ## Install
 No mechanical check: whether a point's space "matches how much a reader who doesn't already know the material would need it weighted" requires judging the material's own substance, which is exactly what the rule's own test asks a person (or a session) to do -- there's no structural proxy (paragraph count, bold density) that reliably stands in for actual importance.

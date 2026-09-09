@@ -6,57 +6,61 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## The practice catalogue
 
-`practices/` holds 38 practice files (2 resident, 36 on-demand). One file per practice.
+`practices/` holds 24 practice files (0 resident, 24 on-demand). One file per practice.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
 | [automation-issues](practices/automation-issues.md) | on-demand | an unattended scheduled job hits something blocking its normal work |
+| [bestpractice-sync](practices/bestpractice-sync.md) | on-demand | a project of mine vendors a universal practice set as tracked files |
 | [blank-blocklist](practices/blank-blocklist.md) | on-demand | installing a vendored practice layer that could check in upstream |
-| [brainstorm-citations](practices/brainstorm-citations.md) | on-demand | citing support for a claim in a formal document |
-| [branch-links](practices/branch-links.md) | on-demand | naming a git branch in a document, reply, or status update |
 | [catalogue-carries-stories](practices/catalogue-carries-stories.md) | on-demand | landing practices in bulk -- a migration, an import, or a move from another set |
-| [content-subdirs](practices/content-subdirs.md) | on-demand | root has accumulated three or more deliverable-content documents |
 | [deep-check](practices/deep-check.md) | on-demand | asked for a "deep check" by name, or after drift-inviting work |
 | [default-branch](practices/default-branch.md) | on-demand | setting up a new repo, or installing into an existing one |
 | [derived-file-marker](practices/derived-file-marker.md) | on-demand | creating a file a later regeneration will overwrite |
-| [doc-recipe](practices/doc-recipe.md) | on-demand | a standing constraint on one file gets stated a second time |
-| [draft-marker](practices/draft-marker.md) | on-demand | leaving a placeholder or fill-in-later note mid-draft |
 | [drift-notice](practices/drift-notice.md) | on-demand | a session starts in a repo that vendors a universal or team set |
-| [durable-list-anchors](practices/durable-list-anchors.md) | on-demand | a numbered list's entries are durable content likely to be cited by position |
-| [file-mention-links](practices/file-mention-links.md) | on-demand | mentioning a repo file in a chat reply, PR description, or commit message |
+| [fresh-before-write](practices/fresh-before-write.md) | on-demand | setting up a project I work in, or a session reporting that its checkout is behind |
 | [fresh-check-escalation](practices/fresh-check-escalation.md) | on-demand | a session-start freshness check against a private source can't be reached |
 | [install](practices/install.md) | on-demand | bringing a vendored practice layer into a new or existing repo |
 | [light-check](practices/light-check.md) | on-demand | about to commit |
-| [list-item-parity](practices/list-item-parity.md) | on-demand | drafting or revising a list, or a document with list-like sections |
-| [list-restraint](practices/list-restraint.md) | on-demand | about to format connected prose as bullet points |
 | [llm-neutral](practices/llm-neutral.md) | on-demand | building or setting up a system that talks to an LLM |
+| [match-parsed-id-not-prefix](practices/match-parsed-id-not-prefix.md) | on-demand | counting or matching entries by name against other entries that may share a prefix |
 | [mirror-into-agents](practices/mirror-into-agents.md) | on-demand | a README or other key file just gained an operational instruction |
 | [new-rule-placement](practices/new-rule-placement.md) | on-demand | adding a new rule to a maintained rules document |
 | [no-duplication](practices/no-duplication.md) | on-demand | adding or reviewing a team-set rule |
-| [no-stale-counts](practices/no-stale-counts.md) | on-demand | writing a sentence that cites an exact, changeable count |
-| [nonblocking-questions](practices/nonblocking-questions.md) | resident | a question worth asking has come up mid-task |
 | [pack-sync](practices/pack-sync.md) | on-demand | a project repo vendors this team's own practice set, and it has moved |
+| [practice-links-travel](practices/practice-links-travel.md) | on-demand | writing or editing a practice in one of my own private sets |
+| [practice-set-engine-refresh](practices/practice-set-engine-refresh.md) | on-demand | creating a practice-set repo of mine, or finding its vendored engine stale |
 | [private-repo-scrub](practices/private-repo-scrub.md) | on-demand | writing content that will vendor or ship into another repo |
-| [proportional-emphasis](practices/proportional-emphasis.md) | on-demand | reviewing a draft's balance before calling it done |
-| [push-back](practices/push-back.md) | on-demand | drafting or reviewing prose meant to persuade or be judged |
-| [quiet-checks](practices/quiet-checks.md) | on-demand | reporting a check's outcome that includes a known pre-existing backlog |
-| [resolved-issue-note-updates](practices/resolved-issue-note-updates.md) | on-demand | a commit fixes, closes, or resolves something a document names in prose as a known, open issue |
-| [rule-links](practices/rule-links.md) | on-demand | naming anything that has a destination, in a document or a reply |
 | [rule-scope-ask](practices/rule-scope-ask.md) | on-demand | a new rule is proposed and its scope isn't obvious |
-| [sensitive-characterization-scrub](practices/sensitive-characterization-scrub.md) | on-demand | about to commit a document that characterizes a real, identifiable person |
 | [session-trailer](practices/session-trailer.md) | on-demand | committing anything |
-| [small-calls](practices/small-calls.md) | resident | a judgment call is needed to keep work moving |
 | [todo-gate](practices/todo-gate.md) | on-demand | about to push after a thread of work |
-| [trim-prose](practices/trim-prose.md) | on-demand | a paragraph just got a substantial edit, or the piece is done |
 
 ## Withdrawn practices
 
-2 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
+20 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
 
 | Practice | Status | Now in force at | Why it was withdrawn |
 |---|---|---|---|
-| [bestpractice-sync](practices/bestpractice-sync.md) | deduplicated | [bestpractice-sync](practices/bestpractice-sync.md) | Migrated here by the original RepoPersonalPreferences split under that migration's own "default everything ambiguous to team" rule, without a separate check of whether it was actually team-appropriate. |
+| [brainstorm-citations](practices/brainstorm-citations.md) | deduplicated | [brainstorm-citations](practices/brainstorm-citations.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
+| [branch-links](practices/branch-links.md) | deduplicated | [branch-links](practices/branch-links.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, which recorded a gap rather than an incident. |
+| [content-subdirs](practices/content-subdirs.md) | deduplicated | [content-subdirs](practices/content-subdirs.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text. |
+| [doc-recipe](practices/doc-recipe.md) | deduplicated | [doc-recipe](practices/doc-recipe.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it rests on a drift that repo had already caught and reversed once. |
+| [draft-marker](practices/draft-marker.md) | deduplicated | [draft-marker](practices/draft-marker.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it records a real failure. |
+| [durable-list-anchors](practices/durable-list-anchors.md) | deduplicated | [durable-list-anchors](practices/durable-list-anchors.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and the incident behind it is a good one because the damage was invisible. |
+| [file-mention-links](practices/file-mention-links.md) | deduplicated | [file-mention-links](practices/file-mention-links.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and the incident is about a rule that could not survive on good intentions. |
 | [header-caps](practices/header-caps.md) | deduplicated | `headline-capitalization` — in another source; `python3 tools/precedent_show.py headline-capitalization` | Retired on 2026-09-06 as a duplicate. |
+| [list-item-parity](practices/list-item-parity.md) | deduplicated | [list-item-parity](practices/list-item-parity.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
+| [list-restraint](practices/list-restraint.md) | deduplicated | [list-restraint](practices/list-restraint.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
+| [no-stale-counts](practices/no-stale-counts.md) | deduplicated | [no-stale-counts](practices/no-stale-counts.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and this one has two concrete instances found on the same day the rule was written. |
+| [nonblocking-questions](practices/nonblocking-questions.md) | deduplicated | [nonblocking-questions](practices/nonblocking-questions.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
+| [proportional-emphasis](practices/proportional-emphasis.md) | deduplicated | [proportional-emphasis](practices/proportional-emphasis.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
+| [push-back](practices/push-back.md) | deduplicated | [push-back](practices/push-back.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
+| [quiet-checks](practices/quiet-checks.md) | deduplicated | [quiet-checks](practices/quiet-checks.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it names an observed habit rather than a single dated failure. |
+| [resolved-issue-note-updates](practices/resolved-issue-note-updates.md) | deduplicated | [resolved-issue-note-updates](practices/resolved-issue-note-updates.md) | BestPractice's spec/PHASE5_BRIEF.md named a real bug in prose: 'A known bug, found while writing this brief, not yet fixed' (precedent_candidate.py create's same-day recurrence collision). |
+| [rule-links](practices/rule-links.md) | deduplicated | [rule-links](practices/rule-links.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text. |
+| [sensitive-characterization-scrub](practices/sensitive-characterization-scrub.md) | deduplicated | [sensitive-characterization-scrub](practices/sensitive-characterization-scrub.md) | Found the hard way in a dependent repo's own brainstorm notes: a direct, off-the-cuff description of a real, named acquaintance made it into a committed document, was then shown to that person, and read back more bluntly than intended. |
+| [small-calls](practices/small-calls.md) | deduplicated | [small-calls](practices/small-calls.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
+| [trim-prose](practices/trim-prose.md) | deduplicated | [trim-prose](practices/trim-prose.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 
 ## The engine
 
