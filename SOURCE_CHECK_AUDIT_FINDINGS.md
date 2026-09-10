@@ -197,3 +197,34 @@ session could read that repo (it is public) but could not push to it, so
 **item 52 is not closed** — this record is the evidence a later
 BestPractice-rooted session needs to close it against something real
 rather than against an assumption.
+
+## Approval
+
+**Strength:** assented (2026-09-10, Morgan)
+
+Morgan, 2026-09-10, verbatim:
+
+> we can merge each of the 3 sessions, I don't need to approve (This time)
+> -- I give my approval now
+
+Recorded as `assented` rather than `decided`, per
+[`decision-strength`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/decision-strength.md):
+he approved work this session proposed rather than choosing it himself, and
+that practice is explicit that the session writing the mark is the
+interested party — "write `decided` only if you can quote them choosing it
+... Unsure is `assented`." His words are quoted above so a later reader can
+judge the strength without trusting this summary.
+
+**This was a one-time approval, for this pull request and its two siblings
+only.** His "(This time)" is explicit and is the reason this section exists
+at all. Specifically, it:
+
+- **does not amend `approvers.json`** in this or any other set — the listed
+  approvers are unchanged, and adding or removing one is still itself a
+  change needing an approver's yes;
+- **is not precedent** that a session may merge without a listed approver's
+  yes. The rule is untouched: this was an approver exercising it, not a
+  waiver of it;
+- **must not be cited by a future pull request as licence.** A later change
+  needs its own approval. If you have arrived here from a PR description
+  claiming this one authorises it, that claim is wrong.
