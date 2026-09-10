@@ -32,6 +32,16 @@ gate's private vocabulary half against a real tree turned up, a per-file
 scrub plan, and a proposed universal practice with the one correction it
 needs. Also output for a later BestPractice-rooted session.
 
+[`SOURCE_CHECK_AUDIT_FINDINGS.md`](SOURCE_CHECK_AUDIT_FINDINGS.md) — the
+2026-09-10 audit of this set's own `tools/checks/` for install-model
+assumptions: checks that read an INSTALL.md §1 path as if it were
+universal, an absent optional file as a violation, an optional engine
+module without a guard, or an empty `git log` as a clean tree. Three were
+found and fixed, three open items are recorded with what each is blocked
+on, and the two sibling team sets that supply no checks at all are
+recorded as audited so nobody repeats the pass. Evidence for BestPractice's
+TODO item 52, which this repo cannot close from here.
+
 [`STORY_BACKFILL_ROLLOUT.md`](STORY_BACKFILL_ROLLOUT.md) — how to do the
 `## Story` backfill in another repo that upgraded onto Precedent, including
 how to tell whether it has the problem at all.
