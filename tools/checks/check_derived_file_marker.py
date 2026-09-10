@@ -19,6 +19,12 @@ own Detail section: "a git grep -l ... is the index that cannot be
 wrong") -- a file only comes under this check by making the claim itself,
 via that opening line.
 
+Trees this repo MIRRORS from elsewhere are out of scope, per
+precedent_resolve.mirrored_prefixes() -- a derived file inside a vendored
+copy is the source repo's to fix, and the next sync overwrites any edit
+made here. Added 2026-09-10; before that this walked every tracked file
+with no exclusion at all.
+
 Exit 0 and print nothing when clean. Exit 1 and print the practice's own
 Rule text (never a paraphrase) plus the specific finding(s) on a violation.
 """
@@ -70,6 +76,61 @@ def rule_text() -> str:
     return m.group(1).strip() if m else "(no Rule found)"
 
 
+# --- shared:mirrored-prefixes ---
+# Which of THIS repo's own directories are copies of somebody else's tree,
+# and therefore not ours to report findings in. Answered by the engine
+# (precedent_resolve.mirrored_prefixes), never re-derived here.
+#
+# WHY IT IS NOT A LITERAL ANY MORE (2026-09-10). This was the constant
+# "process/upstream/", which is INSTALL.md section 1's layout. A section 0
+# install has no process/upstream/ AND no process/manifest.json -- section 0
+# step 5 says outright to skip the manifest -- so its vendored catalogue
+# sits wherever precedent.json declares it, e.g. precedent/universal/. The
+# literal therefore excluded nothing there and the scan walked straight back
+# into the mirror. Measured, not guessed: a section 0 fixture built exactly
+# as INSTALL.md section 0 step 1 describes made check_light_check.py report
+# 174 broken relative links inside Precedent's own vendored practices/ tree,
+# not one of them actionable -- editing a mirror is forbidden and the next
+# sync would overwrite the edit anyway. Same shape as the no-stale-counts
+# defect found the same day: a check re-deriving from private assumptions
+# something that is only true of one install model.
+#
+# mirrored_prefixes() reads precedent.json's declared source paths AS WELL
+# AS process/manifest.json, so it is authoritative in exactly the repos the
+# manifest is missing from. It never raises, and () is a valid answer -- a
+# source set mirrors nothing, which is why this changes nothing at all when
+# the check runs in place inside its own set.
+#
+# GUARDED, and deliberately NOT NotApplicable when the import fails.
+# precedent_resolve.py is in precedent_vendor_engine.py's
+# CONSUMER_ENGINE_FILES but not its ENGINE_FILES, so it is absent inside a
+# practice set. That absence must not take the check down or skip it: the
+# exclusion is a REFINEMENT of where to look, not the check's subject.
+# Falling back to the section 1 literal keeps exactly the behaviour this
+# check had before, which is the right answer for a tree with no engine to
+# ask -- and it is what keeps a source set's own process/upstream/ exempt.
+_MIRROR_FALLBACK = ("process/upstream/",)
+
+
+def _mirrored_prefixes() -> tuple:
+    engine = str(ROOT / "tools")
+    if engine not in sys.path:
+        sys.path.insert(0, engine)
+    try:
+        import precedent_resolve
+    except Exception:
+        return _MIRROR_FALLBACK
+    try:
+        return tuple(precedent_resolve.mirrored_prefixes(ROOT))
+    except Exception:
+        return _MIRROR_FALLBACK
+
+
+def _in_mirror(rel: str, prefixes: tuple) -> bool:
+    return any(rel.startswith(prefix) for prefix in prefixes)
+# --- end shared:mirrored-prefixes ---
+
+
 def tracked_files() -> list[str]:
     result = subprocess.run(
         ["git", "-C", str(ROOT), "ls-files"],
@@ -82,7 +143,17 @@ def tracked_files() -> list[str]:
 
 def find_violations() -> list[str]:
     findings = []
+    mirrors = _mirrored_prefixes()
     for rel in tracked_files():
+        # A derived file inside a MIRROR is the other repo's to fix, not
+        # this one's: the copy here is overwritten by the next sync, so a
+        # finding against it is unactionable by construction. This check
+        # walked every tracked file with no exclusion at all until
+        # 2026-09-10 -- it had never fired inside a mirror only because
+        # nothing in the vendored catalogue happened to open with a
+        # "DERIVED from" line, which is luck, not scope.
+        if _in_mirror(rel, mirrors):
+            continue
         path = ROOT / rel
         try:
             text = path.read_text(encoding="utf-8")
