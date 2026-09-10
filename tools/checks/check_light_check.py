@@ -16,11 +16,15 @@ of one -- there is no manifest here to check -- so that half doesn't
 apply to this repo's own tree and isn't implemented here; a repo that
 vendors this set would extend the check with that piece itself.
 
-The broken-relative-link check skips process/upstream/ unconditionally
-(always a vendored mirror, wherever found) and nothing else. It used to
-skip a materialized practices/ too, as a workaround for an upstream bug
-that has since been fixed -- see _link_check_exempt for the full note and
-what a finding there means now.
+The broken-relative-link check skips whatever trees this repo MIRRORS
+from elsewhere, and nothing else. Which trees those are comes from
+precedent_resolve.mirrored_prefixes(), not from a hardcoded path: it was
+"process/upstream/" until 2026-09-10, which is only INSTALL.md section 1's
+layout, so in a section 0 install the exclusion silently covered nothing
+and the scan reported inside the vendored catalogue. It used to skip a
+materialized practices/ too, as a workaround for an upstream bug that has
+since been fixed -- see _link_check_exempt for the full note and what a
+finding there means now.
 
 Exit 0 and print nothing when clean. Exit 1 and print the practice's own
 Rule text (never a paraphrase) plus the specific finding(s) on a violation.
@@ -127,12 +131,69 @@ def check_yaml_file(rel: str, text: str, findings: list[str]) -> None:
         findings.append(f"{rel}: not valid YAML ({e})")
 
 
-# process/upstream/ is ALWAYS a vendored mirror of another repo -- its tree
-# is never hand-edited here (generated-artifact-provenance, and the merge
-# runbook's own "never hand-merge" rule for it), so a link written relative
-# to that repo's own root is correct THERE, not resolvable once copied flat
-# into this tree, and would be restored identically by the next sync.
-# Reporting it every run is a permanent, unactionable backlog.
+# --- shared:mirrored-prefixes ---
+# Which of THIS repo's own directories are copies of somebody else's tree,
+# and therefore not ours to report findings in. Answered by the engine
+# (precedent_resolve.mirrored_prefixes), never re-derived here.
+#
+# WHY IT IS NOT A LITERAL ANY MORE (2026-09-10). This was the constant
+# "process/upstream/", which is INSTALL.md section 1's layout. A section 0
+# install has no process/upstream/ AND no process/manifest.json -- section 0
+# step 5 says outright to skip the manifest -- so its vendored catalogue
+# sits wherever precedent.json declares it, e.g. precedent/universal/. The
+# literal therefore excluded nothing there and the scan walked straight back
+# into the mirror. Measured, not guessed: a section 0 fixture built exactly
+# as INSTALL.md section 0 step 1 describes made check_light_check.py report
+# 174 broken relative links inside Precedent's own vendored practices/ tree,
+# not one of them actionable -- editing a mirror is forbidden and the next
+# sync would overwrite the edit anyway. Same shape as the no-stale-counts
+# defect found the same day: a check re-deriving from private assumptions
+# something that is only true of one install model.
+#
+# mirrored_prefixes() reads precedent.json's declared source paths AS WELL
+# AS process/manifest.json, so it is authoritative in exactly the repos the
+# manifest is missing from. It never raises, and () is a valid answer -- a
+# source set mirrors nothing, which is why this changes nothing at all when
+# the check runs in place inside its own set.
+#
+# GUARDED, and deliberately NOT NotApplicable when the import fails.
+# precedent_resolve.py is in precedent_vendor_engine.py's
+# CONSUMER_ENGINE_FILES but not its ENGINE_FILES, so it is absent inside a
+# practice set. That absence must not take the check down or skip it: the
+# exclusion is a REFINEMENT of where to look, not the check's subject.
+# Falling back to the section 1 literal keeps exactly the behaviour this
+# check had before, which is the right answer for a tree with no engine to
+# ask -- and it is what keeps a source set's own process/upstream/ exempt.
+_MIRROR_FALLBACK = ("process/upstream/",)
+
+
+def _mirrored_prefixes() -> tuple:
+    engine = str(ROOT / "tools")
+    if engine not in sys.path:
+        sys.path.insert(0, engine)
+    try:
+        import precedent_resolve
+    except Exception:
+        return _MIRROR_FALLBACK
+    try:
+        return tuple(precedent_resolve.mirrored_prefixes(ROOT))
+    except Exception:
+        return _MIRROR_FALLBACK
+
+
+def _in_mirror(rel: str, prefixes: tuple) -> bool:
+    return any(rel.startswith(prefix) for prefix in prefixes)
+# --- end shared:mirrored-prefixes ---
+
+
+# A MIRRORED tree is a vendored copy of another repo -- it is never
+# hand-edited here (generated-artifact-provenance, and the merge runbook's
+# own "never hand-merge" rule for it), so a link written relative to that
+# repo's own root is correct THERE, not resolvable once copied flat into
+# this tree, and would be restored identically by the next sync. Reporting
+# it every run is a permanent, unactionable backlog. WHICH directories
+# those are is the engine's question, not this file's -- see the
+# shared:mirrored-prefixes block above for why it stopped being a literal.
 #
 # MATERIALIZED practices/ USED TO BE EXEMPT HERE TOO, and is not any more
 # (2026-09-06). The exemption was a workaround for a real upstream bug: a
@@ -148,7 +209,7 @@ def check_yaml_file(rel: str, text: str, findings: list[str]) -> None:
 # knowing. If this starts firing across the whole tree, the fix is
 # `python3 tools/precedent_sync_views.py`, not a new exemption.
 def _link_check_exempt(rel: str) -> bool:
-    return rel.startswith("process/upstream/")
+    return _in_mirror(rel, _mirrored_prefixes())
 
 
 def check_md_links(rel: str, text: str, findings: list[str]) -> None:

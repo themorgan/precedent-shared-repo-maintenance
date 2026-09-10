@@ -23,6 +23,8 @@ change, not the structural act of merging one).
 
 Exit 0 and print nothing when clean. Exit 1 and print the practice's own
 Rule text (never a paraphrase) plus the specific finding(s) on a violation.
+Exit 2 -- SKIPPED, the NotApplicable convention -- when the history this
+scope needs is not all here to be walked. See truncated_history().
 """
 import os
 import pathlib
@@ -61,6 +63,47 @@ TRAILER_RE = re.compile(r"^(?:Session|Claude-Session):\s+(\S.*)$", re.MULTILINE)
 GRANDFATHERED_SHAS = {
     "61f2ed8b24020eaaedc03336e262709bb7725176",  # 2026-09-02, pre-check
 }
+
+
+class NotApplicable(Exception):
+    pass
+
+
+def truncated_history() -> str:
+    """-> a reason string when this clone does NOT hold the whole history
+    `Scope: tree` claims to audit, or "" when it does.
+
+    WHY A CLEAN RUN WAS NOT EVIDENCE (2026-09-10). find_violations() walks
+    `git log` and reports what it finds. On a SHALLOW clone the walk simply
+    stops at the graft boundary, finds nothing beyond it, and the check
+    exits 0 -- reporting "every non-merge commit reachable from HEAD carries
+    a trailer" when what actually happened is that most commits were never
+    looked at. "Nothing to report" and "could not look" produced the same
+    green, which is the failure this function exists to separate.
+
+    Measured in this repo, on the clone this session started from:
+    `git log` saw 101 commits and the check said clean; after
+    `git fetch --depth=1000 origin main` it saw 114. Thirteen commits had
+    been out of reach, and nothing said so. None of the thirteen turned out
+    to violate -- which is luck, and exactly why it is worth a guard: the
+    green looked identical either way.
+
+    Note that this is NOT the same hazard `_is_merge` documents below.
+    That one is about how git PRETTY-PRINTS a commit at the boundary; this
+    one is about which commits the traversal reaches at all. Both come from
+    shallowness and they need different answers, which is why fixing that
+    one in 2026-09-06 did not fix this one."""
+    result = subprocess.run(
+        ["git", "-C", str(ROOT), "rev-parse", "--is-shallow-repository"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0 and result.stdout.strip() == "true":
+        return ("this is a shallow clone, so `git log` reaches only part of "
+                "the history this tree-scope check is supposed to walk -- "
+                "run `git fetch --depth=1000 origin <branch>` (or a deeper "
+                "value) and re-run to get a real answer")
+    return ""
 
 
 def rule_text() -> str:
@@ -109,22 +152,41 @@ def find_violations() -> list[str]:
         check=True,
     )
     findings = []
+    examined = 0
     for entry in result.stdout.split("\x01"):
         entry = entry.strip("\n")
         if not entry.strip():
             continue
         sha, _, body = entry.partition("\x00")
+        examined += 1
         if sha in GRANDFATHERED_SHAS:
             continue
         if _is_merge(sha):
             continue  # see the module docstring
         if not TRAILER_RE.search(body):
             findings.append(f"commit {sha[:12]}: no `Session:` trailer in the commit message")
+    # An empty walk is never a pass. A repo with no commits at all, a
+    # `git log` that came back empty for any other reason -- both used to
+    # fall straight through to exit 0, indistinguishable from a history
+    # that was walked and found clean.
+    if examined == 0:
+        raise NotApplicable("`git log` reached no commits at all in "
+                            f"{ROOT}, so nothing was actually checked")
     return findings
 
 
 if __name__ == "__main__":
-    findings = find_violations()
+    try:
+        findings = find_violations()
+    except NotApplicable as e:
+        print(f"SKIPPED: {PRACTICE_FILE.stem}: {e}")
+        sys.exit(2)
+
+    # ORDER MATTERS, and this is the whole point of the 2026-09-10 change.
+    # A violation found in the part of the history that IS here is a real
+    # violation and still fails -- a partial view can only cost findings,
+    # never invent them, so what it did see is trustworthy. What a partial
+    # view must never do is report the repo CLEAN.
     if findings:
         print(f"VIOLATION: {PRACTICE_FILE.stem}")
         for f in findings:
@@ -132,4 +194,9 @@ if __name__ == "__main__":
         print("\nthe rule:")
         print("  " + rule_text().replace("\n", "\n  "))
         sys.exit(1)
+
+    reason = truncated_history()
+    if reason:
+        print(f"SKIPPED: {PRACTICE_FILE.stem}: {reason}")
+        sys.exit(2)
     sys.exit(0)
