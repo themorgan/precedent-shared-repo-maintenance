@@ -9,8 +9,16 @@
 # firing test failed against a real installing repo -- 124 planted-looking
 # but unfixable findings under practices/ and process/upstream/, links
 # written relative to another repo's own root):
-#   E. process/upstream/ is exempt unconditionally -- always a vendored
-#      mirror, never this repo's own content to fix;
+#   E. a mirrored tree is exempt -- always a vendored copy, never this
+#      repo's own content to fix. Two cases now, because WHICH tree that
+#      is stopped being a hardcoded path on 2026-09-10:
+#        E1. process/upstream/ (INSTALL.md section 1's layout) with no
+#            engine present -- the fallback path;
+#        E2. a section 0 install, where the mirror is at whatever
+#            precedent.json declares and there is NO process/manifest.json
+#            and NO process/upstream/ at all. Before the fix the exclusion
+#            covered nothing here and the check reported 174 unactionable
+#            broken links inside the vendored catalogue;
 #   F. a materialized practices/ is NOT exempt any more (2026-09-06).
 #      That exemption was a workaround for an upstream bug -- practice
 #      files were copied into a consuming repo with their links still
@@ -69,6 +77,43 @@ run_clean_case() {
   return $status
 }
 
+# Asserts the FINDING TEXT, not just a non-zero exit. A negative control
+# that only proves "exited 1" proves nothing here: every one of these cases
+# can exit 1 for an unrelated reason, and the mirror cases specifically are
+# about WHICH path appears in the output.
+run_case_expecting() {
+  local label="$1"
+  local mutate="$2"
+  local expect="$3"
+  local forbid="${4:-}"
+  local scratch
+  scratch="$(mktemp -d)"
+  git clone -q "$ROOT" "$scratch"
+  (
+    cd "$scratch"
+    eval "$mutate"
+    local out
+    if out="$(python3 tools/checks/check_light_check.py 2>&1)"; then
+      echo "FAIL: check_light_check.py did not fire on: $label" >&2
+      exit 1
+    fi
+    if ! printf '%s' "$out" | grep -qF "$expect"; then
+      echo "FAIL: $label -- fired, but no finding matched: $expect" >&2
+      printf '%s\n' "$out" >&2
+      exit 1
+    fi
+    if [ -n "$forbid" ] && printf '%s' "$out" | grep -qF "$forbid"; then
+      echo "FAIL: $label -- output contained what must be excluded: $forbid" >&2
+      printf '%s\n' "$out" >&2
+      exit 1
+    fi
+    echo "ok: fires with the expected finding ($label)"
+  )
+  local status=$?
+  rm -rf "$scratch"
+  return $status
+}
+
 run_case "conflict marker" '
 python3 -c "
 open(\"planted-conflict.md\", \"w\").write(
@@ -101,11 +146,55 @@ echo "[missing](./does/not/exist.md)" > planted-link.md
 git add planted-link.md
 '
 
-run_clean_case "process/upstream/ broken link, exempt with no MANIFEST.json at all" '
+run_clean_case "E1: process/upstream/ broken link, exempt with no MANIFEST.json at all" '
 mkdir -p process/upstream/practices
 echo "[missing](tools/doc_lint.py)" > process/upstream/practices/planted.md
 git add process/upstream/practices/planted.md
 '
+
+# E2 -- THE SECTION 0 CASE, which is the whole reason the exemption stopped
+# being a hardcoded "process/upstream/" on 2026-09-10. This scratch has no
+# process/upstream/ and no process/manifest.json (INSTALL.md section 0 step 5
+# says outright to skip the manifest); the mirror is at the path
+# precedent.json declares. Under the old literal the exclusion matched
+# nothing and the vendored tree was reported in full.
+#
+# The engine is STUBBED rather than vendored: what is under test here is
+# that this check asks precedent_resolve.mirrored_prefixes() and honours the
+# answer, not whether that function is itself correct -- upstream's
+# verify_harness.py owns that, in
+# check_mirrored_prefixes_answers_both_install_models(). A stub also keeps
+# this suite self-contained, with no clone of BestPractice required to run it.
+S0_SETUP='
+python3 - <<PYEOF
+import json, pathlib
+pathlib.Path("precedent.json").write_text(json.dumps({
+    "format_version": 1,
+    "sources": [{"name": "universal", "level": "universal",
+                 "path": "precedent/universal"}],
+}) + "\n")
+pathlib.Path("tools/precedent_resolve.py").write_text(
+    "def mirrored_prefixes(repo):\n"
+    "    return (\"precedent/universal/\",)\n"
+)
+d = pathlib.Path("precedent/universal/practices")
+d.mkdir(parents=True, exist_ok=True)
+(d / "planted.md").write_text("[missing](../tools/doc_lint.py)\n")
+PYEOF
+git add -A
+'
+
+run_clean_case "E2: section 0 mirror at a precedent.json-declared path, no manifest, no process/upstream/" "$S0_SETUP"
+
+# ...and the same broken link OUTSIDE the mirror must still be reported, or
+# E2 would be passing by having switched the link check off altogether.
+run_case_expecting "E2 control: an identical broken link outside the mirror still fires" \
+  "$S0_SETUP"'
+echo "[missing](../tools/doc_lint.py)" > own-page.md
+git add own-page.md
+' \
+  "own-page.md:1: broken relative link to '../tools/doc_lint.py'" \
+  "precedent/universal/practices/planted.md"
 
 run_case "broken link in a MATERIALIZED practices/ -- no longer exempt" '
 python3 -c "
