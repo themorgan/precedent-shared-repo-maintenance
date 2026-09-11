@@ -40,7 +40,7 @@ path", so this pass looked, deliberately, at all four classes:
 
 | Set | Checks supplied | Verdict |
 |---|---|---|
-| `precedent-team-maintainers` (this repo) | 6 | 3 defects found and fixed, 3 open items recorded below |
+| `precedent-team-repo-maintenance` (this repo) | 6 | 3 defects found and fixed, 3 open items recorded below |
 | `precedent-team-tms` | **none** | Nothing to audit — see "The Two Sets With No Checks" |
 | `precedent-team-working-style` | **none** | Nothing to audit — see "The Two Sets With No Checks" |
 

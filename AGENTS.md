@@ -1,6 +1,6 @@
 # Repository notes for agents
 
-This repo IS `precedent-team-maintainers` — the **team** source for
+This repo IS `precedent-team-repo-maintenance` — the **team** source for
 [Precedent](https://github.com/alex137/BestPractice/tree/precedent-beta-v01)'s
 maintaining team (Morgan and Alex). See [README.md](README.md) for what's
 here and how the practices in [practices/](practices/) got here.
