@@ -33,6 +33,16 @@ waiting.
 | `precedent.json` | Declares the two new team sets in BestPractice ITSELF, which was the last consumer left on the pre-split shape. Precedent binds itself, so the repo teaching the split was running without nineteen of its own rules -- and nothing reported it, which is exactly what the row above exists to stop. |
 | `TODO.md` | Closes `split-team-sets-by-subject` with what the sort found and the migration path repos on the old declaration follow. Also corrects a wrong finding from the same session — `catalogue-carries-stories`' same-slug copy in this set is load-bearing, not redundant — and attaches it to `practice-consistency-across-team-repos` as the counter-example a reconcile tool must not break. |
 
+**The patch has gone stale in one specific way, as of 2026-09-11.** This set
+was renamed from `precedent-team-maintainers` to
+`precedent-team-repo-maintenance` that day, and the rename rewrote the same
+`sources` block in BestPractice's [`precedent.json`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/precedent.json)
+that these commits edit. `git am` will conflict there. **The patch file itself
+was deliberately left carrying the old name** -- rewriting strings inside a
+patch is how you get one that applies cleanly and means something else -- so
+resolve that one hunk by hand against whatever the file says at the time, and
+take the new name. Nothing else in the seven commits is affected.
+
 ## To apply
 
 **First, the thing that cost a session on 2026-09-09: a BestPractice-rooted
