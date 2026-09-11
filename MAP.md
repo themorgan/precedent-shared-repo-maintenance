@@ -6,12 +6,11 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## The practice catalogue
 
-`practices/` holds 19 practice files (0 resident, 19 on-demand). One file per practice.
+`practices/` holds 18 practice files (0 resident, 18 on-demand). One file per practice.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
 | [automation-issues](practices/automation-issues.md) | on-demand | an unattended scheduled job hits something blocking its normal work |
-| [bestpractice-sync](practices/bestpractice-sync.md) | on-demand | a project of mine vendors a universal practice set as tracked files |
 | [blank-blocklist](practices/blank-blocklist.md) | on-demand | installing a vendored practice layer that could check in upstream |
 | [catalogue-carries-stories](practices/catalogue-carries-stories.md) | on-demand | landing practices in bulk -- a migration, an import, or a move from another set |
 | [deep-check](practices/deep-check.md) | on-demand | asked for a "deep check" by name, or after drift-inviting work |
@@ -32,10 +31,11 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## Withdrawn practices
 
-22 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
+23 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
 
 | Practice | Status | Now in force at | Why it was withdrawn |
 |---|---|---|---|
+| [bestpractice-sync](practices/bestpractice-sync.md) | retired | — (nowhere) | **Retired 2026-09-11, by Morgan**, `strength: decided` -- *"I think we should eliminate bestpractice-sync -- now that it's getting more complex, I'm more hesitant about syncing it automatically."* |
 | [brainstorm-citations](practices/brainstorm-citations.md) | deduplicated | [brainstorm-citations](practices/brainstorm-citations.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [branch-links](practices/branch-links.md) | deduplicated | [branch-links](practices/branch-links.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, which recorded a gap rather than an incident. |
 | [content-subdirs](practices/content-subdirs.md) | deduplicated | [content-subdirs](practices/content-subdirs.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text. |
