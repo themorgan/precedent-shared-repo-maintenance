@@ -38,12 +38,8 @@ When asked for a "deep check" by name, or after drift-inviting work:
   deep-check — every mechanical audit, plus a full read of the repo against itself
 When bringing a vendored practice layer into a new or existing repo:
   install — vendor the tree, weave conventions into AGENTS.md, wire checks and manifest
-When building or setting up a system that talks to an LLM:
-  llm-neutral — build LLM integrations provider-neutral; assume an OpenRouter token
 When committing anything:
   session-trailer — a Session: <url> trailer on every commit
-When counting or matching entries by name against other entries that may share a prefix:
-  match-parsed-id-not-prefix — When counting how many files or entries share a name (recurrence, a duplicat...
 When creating a file a later regeneration will overwrite:
   derived-file-marker — a regenerated file's header names its source, recipe, and command
 When installing a vendored practice layer that could check in upstream:
