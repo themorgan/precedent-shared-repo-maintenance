@@ -1,4 +1,4 @@
-# DERIVED from approvers.json (sha256 c2fc68a5e6ef) -- a hash of that
+# DERIVED from approvers.json (sha256 6cc4d729411a) -- a hash of that
 # file's own content, NOT a commit: an unchanged approver list
 # regenerates byte-identically, so --check has a stable answer.
 # Recipe: tools/build_codeowners.py

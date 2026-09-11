@@ -6,7 +6,7 @@
      form look complete. A checklist filled in mechanically looks like
      verification and isn't; that defeats the entire point of having one.
 
-     This is precedent-team-maintainers' own template, adapted to this
+     This is precedent-team-repo-maintenance' own template, adapted to this
      repo's actual gates -- approver sign-off and CODEOWNERS, not
      RepoPersonalPreferences' old process/ tree or BestPractice's own
      deep-check suite, neither of which this repo has. -->

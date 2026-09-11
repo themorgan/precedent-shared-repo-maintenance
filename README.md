@@ -1,6 +1,22 @@
-<!-- Last updated: 2026-09-05 (Buenos Aires) by Morgan F, to version 4 -->
+<!-- Last updated: 2026-09-11 (Buenos Aires) by Morgan F, to version 5 -->
 
-# precedent-team-maintainers
+# precedent-team-repo-maintenance
+
+**Renamed 2026-09-11 (Buenos Aires), from `precedent-team-maintainers`.**
+Same repository, same history, same rules -- the old URL redirects, so
+nothing that still names it is broken. The name went because it named a
+group of people, and [`source-naming`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/source-naming.md)
+says a team set is named for its **purpose**: a roster-shaped name goes stale
+the moment a third person joins, and that practice's own table records this
+as the one thing no mechanical check can see. The 2026-09-09 subject split is
+what made it obvious -- of the 21 practices left here afterwards, 19 were
+about one subject, running a repository that vendors a practice layer, and
+the set had been subject-scoped for two days under a name that said
+otherwise. **The lineage lives here rather than in each document that moved**
+([`index-remembers-past`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/index-remembers-past.md)):
+references across BestPractice, `precedent-individual` and this set were
+rewritten to the new name in the same change, so a reader who only knows the
+old one finds it in this paragraph and nowhere else.
 
 The team practice set for [Precedent](https://github.com/alex137/BestPractice/tree/precedent-beta-v01)
 — one small group's working conventions, vendored into a project repo the

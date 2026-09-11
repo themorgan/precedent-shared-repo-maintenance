@@ -12,7 +12,7 @@
     "Adding or removing an approver is itself a change to the set, so per",
     "the plan it needs the current approvers' approval like any other change."
   ],
-  "team": "precedent-team-maintainers",
+  "team": "precedent-team-repo-maintenance",
   "approvers": [
     { "name": "Morgan F", "github": "themorgan" },
     { "name": "Alex", "github": "alex137" }
