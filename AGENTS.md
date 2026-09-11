@@ -16,8 +16,6 @@ When a README or other key file just gained an operational instruction:
   mirror-into-agents — an agent-relevant instruction lands in both AGENTS.md and its human home
 When a new rule is proposed and its scope isn't obvious:
   rule-scope-ask — unclear if a new rule is repo-wide or one document? ask once
-When a project of mine vendors a universal practice set as tracked files:
-  bestpractice-sync — a scheduled workflow keeps the vendored universal copy current
 When a project repo vendors this team's own practice set, and it has moved:
   pack-sync — the team-set sync is the universal sync's sibling, against a private repo
 When a session starts in a repo that vendors a universal or team set:
