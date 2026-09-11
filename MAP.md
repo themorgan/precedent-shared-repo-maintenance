@@ -6,7 +6,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## The practice catalogue
 
-`practices/` holds 21 practice files (0 resident, 21 on-demand). One file per practice.
+`practices/` holds 19 practice files (0 resident, 19 on-demand). One file per practice.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
@@ -21,8 +21,6 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [fresh-check-escalation](practices/fresh-check-escalation.md) | on-demand | a session-start freshness check against a private source can't be reached |
 | [install](practices/install.md) | on-demand | bringing a vendored practice layer into a new or existing repo |
 | [light-check](practices/light-check.md) | on-demand | about to commit |
-| [llm-neutral](practices/llm-neutral.md) | on-demand | building or setting up a system that talks to an LLM |
-| [match-parsed-id-not-prefix](practices/match-parsed-id-not-prefix.md) | on-demand | counting or matching entries by name against other entries that may share a prefix |
 | [mirror-into-agents](practices/mirror-into-agents.md) | on-demand | a README or other key file just gained an operational instruction |
 | [new-rule-placement](practices/new-rule-placement.md) | on-demand | adding a new rule to a maintained rules document |
 | [no-duplication](practices/no-duplication.md) | on-demand | adding or reviewing a team-set rule |
@@ -34,7 +32,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## Withdrawn practices
 
-20 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
+22 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
 
 | Practice | Status | Now in force at | Why it was withdrawn |
 |---|---|---|---|
@@ -48,6 +46,8 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [header-caps](practices/header-caps.md) | deduplicated | `headline-capitalization` — in another source; `python3 tools/precedent_show.py headline-capitalization` | Retired on 2026-09-06 as a duplicate. |
 | [list-item-parity](practices/list-item-parity.md) | deduplicated | [list-item-parity](practices/list-item-parity.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [list-restraint](practices/list-restraint.md) | deduplicated | [list-restraint](practices/list-restraint.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
+| [llm-neutral](practices/llm-neutral.md) | retired | — (nowhere) | **Retired 2026-09-11, by Morgan**, `strength: decided` -- his own words, *"okay I think we can retire these"*, going further than the proposal on the table, which was to move them into a subject set for engineering craft. |
+| [match-parsed-id-not-prefix](practices/match-parsed-id-not-prefix.md) | retired | — (nowhere) | **Retired 2026-09-11, by Morgan**, `strength: decided` -- his own words, *"okay I think we can retire these"*, going further than the proposal on the table, which was to move them into a subject set for engineering craft. |
 | [no-stale-counts](practices/no-stale-counts.md) | deduplicated | [no-stale-counts](practices/no-stale-counts.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and this one has two concrete instances found on the same day the rule was written. |
 | [nonblocking-questions](practices/nonblocking-questions.md) | deduplicated | [nonblocking-questions](practices/nonblocking-questions.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [proportional-emphasis](practices/proportional-emphasis.md) | deduplicated | [proportional-emphasis](practices/proportional-emphasis.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
