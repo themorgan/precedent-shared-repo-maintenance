@@ -26,7 +26,10 @@ OpenRouter's own API is itself OpenAI-request-shaped and fronts most major model
 That keeps swapping providers, or dropping in whichever token happens to be on hand, a config change rather than a rewrite chasing call sites through the codebase.
 
 ## Story
-**Retired 2026-09-11, by Morgan.** Reviewing this set after the 2026-09-09
+**Retired 2026-09-11, by Morgan**, `strength: decided` -- his own words,
+*"okay I think we can retire these"*, going further than the proposal on
+the table, which was to move them into a subject set for engineering
+craft. Reviewing this set after the 2026-09-09
 subject split, this was one of two rules left in it that are not about
 maintaining a repository at all: it governs how you build an integration
 against a model provider, which is engineering craft. The split's own test
