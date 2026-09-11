@@ -28,8 +28,8 @@ When adding a new rule to a maintained rules document:
   new-rule-placement — place a new rule by subject, slug it, renumber, mirror, re-check
 When adding or reviewing a team-set rule:
   no-duplication — a rule that only restates universal gets dropped
-When an unattended scheduled job hits something blocking its normal work:
-  automation-issues — a blocked scheduled job opens or updates an issue, not just a log line
+When an unattended job hits something blocking its normal work, or something optional it cannot reach:
+  automation-issues — a blocked job opens or updates an issue; an optional input it cannot reach is skipped and reported, never either silently
 When asked for a "deep check" by name, or after drift-inviting work:
   deep-check — every mechanical audit, plus a full read of the repo against itself
 When bringing a vendored practice layer into a new or existing repo:
