@@ -9,7 +9,8 @@ gates:       []
 index_clause: "the team-set sync is the universal sync's sibling, against a private repo"
 checked_by:  null
 defines:     []
-status:      active
+status:      retired
+in_force_at: none
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -25,6 +26,38 @@ The one real difference: this team's own source repo is private, so both the com
 A private source needs its own credential precisely because it is private -- a public source needs none, which is the whole difference from the universal-set sync.
 
 ## Story
+**Retired 2026-09-11, by Morgan**, `strength: decided`, hours after its
+sibling and for the same reason -- *"let's get rid of pack-sync"*, once the
+question was put to him that the day's earlier decision had deliberately not
+answered.
+
+The reasoning is `bestpractice-sync`'s, unchanged: this rule required an
+unattended workflow that merged an update through its recorded adaptations,
+re-ran the gates, opened a pull request and **merged it once checks passed**.
+An unattended merge is a merge nobody read. Pointing it at a private source
+made that worse rather than better, because the auto-merged pull request is
+one nobody outside this team can even see.
+
+**What replaces it is the same thing that replaced its sibling**, and it
+already covers a team set explicitly: the universal `vendor-update-runbook`,
+triggered by saying *Update Vendors*, which is the person-initiated version
+of this exact sequence. `drift-notice` -- still in force here -- compares
+every vendored source's recorded commit against its head at session start
+and says so in the first turn, so nobody has to remember to check. The
+update still happens on the day it matters. It happens because somebody
+asked for it.
+
+**What genuinely goes with it, and is worth naming rather than glossing.**
+This rule carried one thing its sibling did not: the private source needs
+its own repository credential, and the design decision recorded above -- a
+missing credential **skips** the update rather than failing the workflow,
+but raises a tracked issue every time it skips, so a token never set or
+later revoked is noticed the same day rather than by chance. That pattern
+was the interesting part of this practice and it does not belong only to a
+sync. It survives as `automation-issues`, still in force here, which says
+the same thing for any unattended job. Nothing else here is load-bearing
+elsewhere.
+
 Migrated here from RepoPersonalPreferences by the phase-3 private-set
 migration; the Story is backfilled from that pack's own text.
 
