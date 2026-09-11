@@ -54,9 +54,11 @@ missing credential **skips** the update rather than failing the workflow,
 but raises a tracked issue every time it skips, so a token never set or
 later revoked is noticed the same day rather than by chance. That pattern
 was the interesting part of this practice and it does not belong only to a
-sync. It survives as `automation-issues`, still in force here, which says
-the same thing for any unattended job. Nothing else here is load-bearing
-elsewhere.
+sync, so it was **carried into `automation-issues` the same day** rather
+than left to be inferred from a retired file. That rule already required a
+blocked job to open a tracked issue; the skip-rather-than-fail half was only
+ever written here, and is written there now. Nothing else here is
+load-bearing elsewhere.
 
 Migrated here from RepoPersonalPreferences by the phase-3 private-set
 migration; the Story is backfilled from that pack's own text.
@@ -86,22 +88,23 @@ landing mid-workday, and offset from the universal sync so the two never
 race over the same working tree.
 
 
-**Its sibling was retired on 2026-09-11 and this one was not, which is a
-state worth reading before acting on either.** `bestpractice-sync` -- the
-same compare-then-update workflow pointed at the public universal set --
-went because Morgan is "more hesitant about syncing it automatically now
-that it's getting more complex". The reasoning does not stop at the
-repository boundary: this rule mandates the same unattended self-merging
-run against a private source, which is if anything the harder one to review
-after the fact. It stays in force only because the instruction that retired
-its sibling named that sibling, and nobody widens a decision on the person's
-behalf. **Treat this as an open question rather than a settled rule**; it is
-recorded as one in Precedent's own `TODO.md`.
+**For a few hours on 2026-09-11 this practice was in force and its sibling
+was not**, and the paragraph here said so -- that the reasoning did not stop
+at the repository boundary, that this was the harder half to review after
+the fact, and that it survived only because the instruction that retired
+`bestpractice-sync` named `bestpractice-sync`. That was the right state to
+write down and the wrong one to leave standing, so it was put to Morgan the
+same afternoon and answered in one line. Kept here in past tense because a
+practice file that only ever shows its end state teaches nothing about how
+the decision was actually reached.
 
-This practice's Rule and Install used to define themselves by pointing at
-`bestpractice-sync` as their sibling -- "same shape as", "same reason as".
-Both say it in their own words now. A rule in force must not be readable
-only through a retired one.
+This practice's Rule and Install had also defined themselves by pointing at
+`bestpractice-sync` as their sibling -- "same shape as", "same reason as" --
+and were rewritten to say it in their own words while both were still in
+force. A rule in force must not be readable only through a retired one. That
+is no longer this file's problem, and it is exactly what was done for
+`automation-issues` when this one went.
+
 ## Install
 No mechanical check: the workflow this rule requires runs in a repo that vendors this team's set, comparing against this team's own private source with its own credential. This repo is that private source, not a consumer of it -- there is no such workflow here to check.
 
