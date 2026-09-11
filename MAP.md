@@ -10,7 +10,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
-| [automation-issues](practices/automation-issues.md) | on-demand | an unattended scheduled job hits something blocking its normal work |
+| [automation-issues](practices/automation-issues.md) | on-demand | an unattended job hits something blocking its normal work, or something optional it cannot reach |
 | [blank-blocklist](practices/blank-blocklist.md) | on-demand | installing a vendored practice layer that could check in upstream |
 | [catalogue-carries-stories](practices/catalogue-carries-stories.md) | on-demand | landing practices in bulk -- a migration, an import, or a move from another set |
 | [deep-check](practices/deep-check.md) | on-demand | asked for a "deep check" by name, or after drift-inviting work |
