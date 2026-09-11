@@ -54,13 +54,12 @@ recorded commit against its actual head at session start and says so in the
 first turn. So the update still happens on the day it matters; what changed
 is that it happens because a person asked for it.
 
-**Left open deliberately: `pack-sync` is the same mechanism one level
-over** -- its own Story calls it "an unattended self-merging run" -- and it
-was not named in the instruction that retired this one, so it stays in force
-until Morgan says otherwise. Its Rule and Install both defined themselves by
-pointing at this practice as their sibling; they say it in their own words
-now, because a rule in force must not be readable only through a retired
-one.
+**`pack-sync` went the same day**, once the question was put to him. It was
+left in force for a few hours on purpose -- it is the same mechanism pointed
+at this team's own private source, and the instruction that retired this one
+named this one, so widening it was not a session's call to make. Asked
+directly, Morgan retired it too. The interval is the point worth keeping:
+the rule was raised rather than assumed, and the answer took one line.
 
 Migrated to `precedent-team-repo-maintenance` in the original RepoPersonalPreferences split, by that migration's own "default everything ambiguous to team" rule. On reflection that default was wrong for this one: unattended, auto-merging automation is a preference about how *I* want *my own* projects to behave, not a convention I get to decide Alex's projects should run just because we share a team practice set -- adopting it as team policy would apply it to his repos without his own separate say-so on that specific behavior. Moved here on 2026-09-03, following [spec/MOVING_PRACTICES.md](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/MOVING_PRACTICES.md)'s pattern (landed here first, then retired in `precedent-team-repo-maintenance` with a note pointing back). Nothing here rules out moving it to a *different* team's set later, if a future team I work with wants the same behavior and agrees to it as their own choice -- narrowest first, same as any other practice.
 

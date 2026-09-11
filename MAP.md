@@ -6,7 +6,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## The practice catalogue
 
-`practices/` holds 18 practice files (0 resident, 18 on-demand). One file per practice.
+`practices/` holds 17 practice files (0 resident, 17 on-demand). One file per practice.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
@@ -23,7 +23,6 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [mirror-into-agents](practices/mirror-into-agents.md) | on-demand | a README or other key file just gained an operational instruction |
 | [new-rule-placement](practices/new-rule-placement.md) | on-demand | adding a new rule to a maintained rules document |
 | [no-duplication](practices/no-duplication.md) | on-demand | adding or reviewing a team-set rule |
-| [pack-sync](practices/pack-sync.md) | on-demand | a project repo vendors this team's own practice set, and it has moved |
 | [private-repo-scrub](practices/private-repo-scrub.md) | on-demand | writing content that will vendor or ship into another repo |
 | [rule-scope-ask](practices/rule-scope-ask.md) | on-demand | a new rule is proposed and its scope isn't obvious |
 | [session-trailer](practices/session-trailer.md) | on-demand | committing anything |
@@ -31,7 +30,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## Withdrawn practices
 
-23 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
+24 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
 
 | Practice | Status | Now in force at | Why it was withdrawn |
 |---|---|---|---|
@@ -50,6 +49,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [match-parsed-id-not-prefix](practices/match-parsed-id-not-prefix.md) | retired | — (nowhere) | **Retired 2026-09-11, by Morgan**, `strength: decided` -- his own words, *"okay I think we can retire these"*, going further than the proposal on the table, which was to move them into a subject set for engineering craft. |
 | [no-stale-counts](practices/no-stale-counts.md) | deduplicated | [no-stale-counts](practices/no-stale-counts.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and this one has two concrete instances found on the same day the rule was written. |
 | [nonblocking-questions](practices/nonblocking-questions.md) | deduplicated | [nonblocking-questions](practices/nonblocking-questions.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
+| [pack-sync](practices/pack-sync.md) | retired | — (nowhere) | **Retired 2026-09-11, by Morgan**, `strength: decided`, hours after its sibling and for the same reason -- *"let's get rid of pack-sync"*, once the question was put to him that the day's earlier decision had deliberately not answered. |
 | [proportional-emphasis](practices/proportional-emphasis.md) | deduplicated | [proportional-emphasis](practices/proportional-emphasis.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [push-back](practices/push-back.md) | deduplicated | [push-back](practices/push-back.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [quiet-checks](practices/quiet-checks.md) | deduplicated | [quiet-checks](practices/quiet-checks.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it names an observed habit rather than a single dated failure. |
