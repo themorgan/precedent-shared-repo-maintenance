@@ -24,7 +24,10 @@ When counting how many files or entries share a name (recurrence, a duplicate ch
 Raised via Precedent's creation pipeline (Stage 1 signal: review-found-defect), promoted at individual level, approved by Morgan F on 2026-09-02.
 
 ## Story
-**Retired 2026-09-11, by Morgan.** The same review as
+**Retired 2026-09-11, by Morgan**, `strength: decided` -- his own words,
+*"okay I think we can retire these"*, going further than the proposal on
+the table, which was to move them into a subject set for engineering
+craft. The same review as
 `llm-neutral`, on the same ground: this is a rule about
 writing code that matches identifiers, not a rule about maintaining a
 repository, and it landed here in the subject split for want of anywhere
