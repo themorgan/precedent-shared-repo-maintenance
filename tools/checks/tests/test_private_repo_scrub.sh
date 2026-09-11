@@ -70,7 +70,7 @@ cd "$SCRATCH4"
 mkdir -p practices
 cat > practices/planted-foreign.md <<'MD'
 ## Rule
-This text names precedent-team-maintainers, which is a private repo.
+This text names precedent-team-repo-maintenance, which is a private repo.
 MD
 # APPEND to the manifest, never replace it. Overwriting it strips attribution
 # from every OTHER practice in practices/, so any real materialized practice
@@ -84,7 +84,7 @@ import json, pathlib
 p = pathlib.Path('MANIFEST.json')
 d = json.loads(p.read_text(encoding='utf-8')) if p.exists() else {}
 d.setdefault('practices', []).append(
-    {'slug': 'planted-foreign', 'level': 'team', 'source': 'precedent-team-maintainers'})
+    {'slug': 'planted-foreign', 'level': 'team', 'source': 'precedent-team-repo-maintenance'})
 p.write_text(json.dumps(d, indent=2, sort_keys=True) + '\n', encoding='utf-8')
 PY
 git add practices/planted-foreign.md MANIFEST.json

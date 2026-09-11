@@ -52,7 +52,7 @@ PRACTICES_DIR = ROOT / "practices"
 # account.
 #
 # WHY THE BARE NAMES CAME OFF (2026-09-06). This list used to carry
-# "precedent-individual" and "precedent-team-maintainers" on their own,
+# "precedent-individual" and "precedent-team-repo-maintenance" on their own,
 # and that was right when it was written: they were this account's private
 # repo names, and nothing else in the world used those strings. Precedent's
 # `source-naming` practice then made them the FIXED, PUBLIC names every
@@ -70,9 +70,9 @@ PRACTICES_DIR = ROOT / "practices"
 # convention name -- put the bare string back for that one.
 PRIVATE_TERMS = [
     "themorgan/precedent-individual",
-    "themorgan/precedent-team-maintainers",
+    "themorgan/precedent-team-repo-maintenance",
     "github.com/themorgan/precedent-individual",
-    "github.com/themorgan/precedent-team-maintainers",
+    "github.com/themorgan/precedent-team-repo-maintenance",
 ]
 
 
