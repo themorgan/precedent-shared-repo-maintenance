@@ -67,3 +67,18 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   stale after a practice changes.
 - **Changes to this set need an approver's yes** — see
   [`approvers.json`](approvers.json) and the README's "Approvers" section.
+- **Never try to attach a repo owned by somebody else — spawn a session
+  rooted there instead.** `add_repo` refuses a cross-owner attachment
+  outright: *"cross-tier adds are not supported in v1: requested
+  `<other>/<repo>` but session already has repos from owner(s) [`<this>`]"*.
+  So before reaching for `add_repo`, compare the owner you want against the
+  owners this session already holds. Same owner, attach it. Different owner,
+  the only route is a new session with that repo as its **initial** source,
+  and a session rooted at one owner can never gain push access to another's
+  — which also means it can never merge there, so plan who merges before
+  starting the work, not after. This is a platform limit and no amount of
+  retrying changes it; the refusal is recorded from both directions, ours on
+  2026-09-12 and upstream's own on 2026-09-08 in
+  [BestPractice's TODO](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/TODO.md).
+  Morgan, 2026-09-12: this has now been rediscovered many times and is not to
+  be rediscovered again.
