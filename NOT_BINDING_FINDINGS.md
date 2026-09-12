@@ -73,6 +73,14 @@ exemption would make an unfinished thing look settled — the specific failure
   private set's practice files. This repo's `practices/` is the public
   universal source — but its files *do* materialize into consuming repos by
   the same mechanism, which is the condition the rule actually cares about.
+  **RESOLVED 2026-09-11 — the paragraph above is the measurement that
+  preceded the decision, kept as written.** The call went the way the last
+  clause points: the rule landed in BestPractice's own `practices/` as
+  `status: active`, `approved_by: "Morgan, 2026-09-11"`, `strength:
+  assented`, and the individual copy was deduplicated the same day to
+  `in_force_at: practice-links-travel`. So it binds this repo the ordinary
+  way — as its own practice, at its own level — and there is nothing here to
+  exempt. Verified 2026-09-12 by reading both files, not this note.
 - **`content-directory`** and **`assorted-notes`** (individual, both
   `severity: advisory`). Both are conditional on a `content/` directory this
   repo does not have, and `content-directory` already yields to an
