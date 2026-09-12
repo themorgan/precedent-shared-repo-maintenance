@@ -82,3 +82,49 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   [BestPractice's TODO](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/TODO.md).
   Morgan, 2026-09-12: this has now been rediscovered many times and is not to
   be rediscovered again.
+
+## Working with other sessions
+
+Morgan's instructions, 2026-09-12, after a day that spent roughly $40 across a
+fleet of sessions and produced one pull request that had to be closed as a
+duplicate. Spawning sessions is **encouraged** — it is the only route to
+another owner's repo, and far better than pasting work for a person to carry
+between windows. What follows is about making a fleet cheap and legible, not
+about having fewer of them.
+
+- **Wake a live session before spawning a fresh one.** A trigger into an
+  existing session reuses its context and costs almost nothing; a new session
+  re-reads its repo from scratch, which is most of what a session costs
+  (measured 2026-09-12: three separate sessions in one upstream repo, $3–9
+  each, doing work one session could have done in sequence). Check
+  `list_sessions` for a live session already rooted where the work belongs.
+- **Pick the model for the job.** `create_session` takes `model`. Reading,
+  diffing, inventory and "check whether X is true" do not need the largest
+  model; judgment and writing do.
+- **Before starting, check whether it is already done.** `git fetch` and read
+  the default branch's recent commits, then check again immediately before
+  opening a pull request. On 2026-09-12 a session here wrote a change another
+  session had merged twenty minutes earlier, and it had to be closed unmerged.
+  The repository is the authoritative record of what other sessions did; their
+  own status summaries lag and describe intent rather than outcome.
+- **A spawned session reports; it does not shop for more work.** Its final
+  message says what it did and what is blocked, and stops. It never ends by
+  offering a person adjacent work: an offer read as new work becomes a
+  duplicate thread against something another session already owns, which is
+  how the closed pull request above happened. Anything it noticed goes back to
+  whoever spawned it, as an observation.
+- **Never re-ask what was already authorized.** Where the next step is obvious
+  and reversible, take it and report it; keep questions for the irreversible
+  or genuinely ambiguous. A session that sat on a green pull request asking a
+  second time for permission it had already been given cost two full context
+  loads on 2026-09-12.
+- **Make the tree visible in the one place a person looks.** A session that
+  spawns another names it — session id and subject — in its own report, and
+  titles it so the parent's subject is recognisable in a plain session list.
+  Tags can be set but **cannot be filtered on**: `list_sessions` with `tags`
+  returns *"tags filter is not currently available"* from inside a session
+  (checked 2026-09-12), so the title is what carries lineage, not the tag.
+- **Recommend compacting at task boundaries, not at a size.** When a
+  deliverable has landed and the next thing is independent, a compact costs
+  nothing because the summary carries the conclusion. Mid-investigation it
+  costs a re-read. Length is not what is expensive; re-deriving is.
