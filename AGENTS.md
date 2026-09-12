@@ -15,7 +15,7 @@ here and how the practices in [practices/](practices/) got here.
 When a README or other key file just gained an operational instruction:
   mirror-into-agents — an agent-relevant instruction lands in both AGENTS.md and its human home
 When a new rule is proposed and its scope isn't obvious:
-  rule-scope-ask — unclear if a new rule is repo-wide or one document? ask once
+  rule-scope-ask — unclear which layer a new rule belongs to -- one document, the repo, or which SET? ask once
 When a session starts in a repo that vendors a universal or team set:
   drift-notice — check source freshness at session start; raise it right away, not later
 When a session-start freshness check against a private source can't be reached:
