@@ -69,15 +69,28 @@ exemption would make an unfinished thing look settled — the specific failure
   layer's install procedure. This repo publishes that procedure rather than
   running it — but it also keeps blocklists of its own, so "never asks, never
   reminds" is not obviously inert here.
-- **`practice-links-travel`** (individual). The rule's own text names a
-  private set's practice files. This repo's `practices/` is the public
-  universal source — but its files *do* materialize into consuming repos by
-  the same mechanism, which is the condition the rule actually cares about.
 - **`content-directory`** and **`assorted-notes`** (individual, both
   `severity: advisory`). Both are conditional on a `content/` directory this
   repo does not have, and `content-directory` already yields to an
   established layout by its own text. They may be inert rather than exempt,
   and an exemption for an already-self-limiting rule is clutter.
+
+**One entry has left this list since it was written.**
+`practice-links-travel` sat here on the reading that the rule's own text
+named a private set's practice files. Both halves of that are now out of
+date. The practice was re-levelled from individual to universal on
+2026-09-11 — it is
+[`practices/practice-links-travel.md`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/practice-links-travel.md)
+there, `status: active`, and the text in force describes *kinds* of
+repository rather than naming any one of them — and the individual set's
+copy is `status: deduplicated`, `in_force_at: practice-links-travel`, with
+its check script and that script's own test gone (BestPractice's TODO item
+[`deduplicate-practice-links-travel`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/TODO.md#deduplicate-practice-links-travel),
+DONE 2026-09-11). So it binds BestPractice as a universal practice, and
+BestPractice complies: `precedent_check.py --only practice-links-travel`,
+run there, reports 1 passed, 0 violated, 0 skipped — a real pass, not a
+skip. **It is not a `not_binding` candidate in any verdict, and there is no
+call left to make.**
 
 ## Verdict 3 — Binds, and Finds a Real Problem
 
