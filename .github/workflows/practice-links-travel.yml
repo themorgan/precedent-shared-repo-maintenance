@@ -117,12 +117,21 @@ jobs:
           # through precedent_check's own reader, for the reason this workflow
           # exists at all: that file is NOT in this repo. Everywhere else in
           # this engine the failure message IS the rule, read from the file so
-          # it cannot drift. Here it cannot be, so it is quoted -- and if the
-          # upstream wording changes, this string is what goes stale. Keep it
-          # to the sentence the practice leads with.
-          RULE = ('A practice file is copied into every repository that adopts the '
-                  'catalogue, so a relative link in one is only real if the target '
-                  'is copied too.')
+          # it cannot drift. Here it cannot be, so it is quoted -- and this
+          # string is the one thing here that can go stale against upstream.
+          #
+          # So it is the upstream sentence VERBATIM, not a paraphrase of it,
+          # copied from the lead sentence of practices/practice-links-travel.md
+          # at alex137/BestPractice `precedent-beta-v01` (bold markers dropped,
+          # nothing else changed). The first version of this file paraphrased
+          # it -- "copied into ... only real if the target is copied too" --
+          # which drifted from the rule in the same breath as quoting it, and
+          # lost the word the rule turns on: TRAVELS. If upstream rewords the
+          # sentence, replace this string wholesale rather than editing toward
+          # it.
+          RULE = ('A practice file is published into every repository that adopts '
+                  'the catalogue, so a relative link in one only works if the '
+                  'target travels with it.')
 
           try:
               import precedent_check as pc
