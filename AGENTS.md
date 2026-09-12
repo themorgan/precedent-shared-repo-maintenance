@@ -81,7 +81,16 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   2026-09-12 and upstream's own on 2026-09-08 in
   [BestPractice's TODO](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/TODO.md).
   Morgan, 2026-09-12: this has now been rediscovered many times and is not to
-  be rediscovered again.
+  be rediscovered again. **This bullet re-states universal, it does not author
+  anything.** `spawn-session` at universal already requires naming the
+  repositories work must read, write or push to and comparing them against the
+  ones this session holds, before starting; and the refusal itself is recorded
+  upstream in four places -- that repo's `AGENTS.md`, `INSTALL.md`, `TODO.md`,
+  and a 2026-09-01 decision record. It is repeated here because this set
+  declares no sources and materializes nothing into itself, so universal text
+  never arrives and deleting the local copy would switch the guidance off
+  rather than defer it. Not a `no-duplication` candidate for that reason --
+  same mechanism `catalogue-carries-stories` is kept active here for.
 
 ## Working with other sessions
 
@@ -128,3 +137,36 @@ about having fewer of them.
   deliverable has landed and the next thing is independent, a compact costs
   nothing because the summary carries the conclusion. Mid-investigation it
   costs a re-read. Length is not what is expensive; re-deriving is.
+
+### Where these rules actually live
+
+Written here on 2026-09-12 as though this set owned them. It does not own most
+of them, and a reader cannot tell which by looking -- so, in three groups:
+
+- **Already universal, re-stated here only because nothing resolves into this
+  set.** The repository check before starting work, and the cross-owner refusal
+  above: both are `spawn-session` at universal, added 2026-09-11, gated on
+  every reply. Read that practice for the authoritative wording; fix any
+  disagreement *there*, not here.
+- **Canonical in the working-style team set, not here.** "A spawned session
+  reports rather than offering a person more work" is `report-up-the-chain`
+  there, and "never re-ask what was already authorized" is a clause of
+  `small-calls` there, both landed 2026-09-12. This set resolves that set no
+  more than it resolves universal, which is the only reason a copy sits here.
+- **Genuinely not upstream yet, and this is the export list.** Waking a live
+  session rather than spawning a fresh one; choosing the model for the job; the
+  cost of a cold start; naming a child session and carrying lineage in its
+  title (with the checked negative about tag filtering); compacting at a task
+  boundary; and checking the default branch before starting and again before
+  opening a pull request. Verified absent from universal on 2026-09-12. These
+  are the lines to carry upstream -- `mistakes-become-rules`' rung (c), the one
+  the session that wrote them skipped.
+
+**Why this section exists in this shape at all**, since it is the incident
+worth remembering: the session that wrote these rules had a readable clone of
+the universal set in its scratchpad the whole time and never searched its
+`practices/` before writing. It verified every factual claim against upstream
+that day and never verified a *rule* against upstream's catalogue, so it
+re-authored a universal practice one level down. The level was chosen by which
+repository it could merge in -- which `rule-scope-ask` now forbids in as many
+words.
