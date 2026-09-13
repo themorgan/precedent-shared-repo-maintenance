@@ -105,18 +105,30 @@ own blocklist over the result rather than trusting a read-through — this is
 Backfilling alone leaves the same hole open for the next migration. **In a
 repo whose engine is current, nothing needs building** — the universal
 `catalogue-carries-stories` check ships in `precedent_check.py` and runs
-wherever that practice is in force.
+wherever that practice is in force, and (since `binds_publishers`) in any repo
+that publishes a `practices/` tree whether the text is vendored there or not.
 
-**The one thing a SOURCE set must do is put the practice in force on
-itself.** A source repo consumes no catalogue, so the universal copy never
-reaches it, and `precedent_check.py` gates every check on its practice being
-in force *in that repo*. A source set therefore keeps its own
-`practices/catalogue-carries-stories.md` with `status: active` and
-`checked_by: null` — see [this set's own copy](practices/catalogue-carries-stories.md).
-That file is not a duplicate of the universal rule; it is the switch that
-turns the universal check on.
+**A SOURCE set used to have to put the practice in force on itself, and no
+longer does — do not copy that step.** The reasoning was real: a source repo
+consumes no catalogue, so the universal copy never reaches it, and
+`precedent_check.py` gated every check on its practice being in force *in that
+repo*. A source set therefore kept its own
+`practices/catalogue-carries-stories.md` at `status: active` with
+`checked_by: null`, not as a duplicate of the universal rule but as the switch
+that turned the universal check on.
 
-**Why a set-local check was needed, and why it soon will not be.** The
+**Superseded 2026-09-12 by `binds_publishers`** (BestPractice PR #261). A check
+carrying that flag binds any repo that PUBLISHES a practices/ tree, whether or
+not the practice text is vendored there, and `catalogue-carries-stories` is one
+of the three that carry it. So the switch is in the engine now. **What a source
+set has to do is refresh its vendored engine** —
+`python3 tools/precedent_vendor_engine.py refresh <bestpractice-clone>` — and
+nothing else; a set that re-declares the practice instead gets a second copy
+that will drift from universal's, which is what happened here. This set's own
+copy was deduplicated on 2026-09-13 once its engine carried the flag, and
+`--only catalogue-carries-stories` still reports `1 passed`.
+
+**Why a set-local check was needed, and why it is not any more.** The
 universal `cite-the-incident` check does demand a Story, and would have
 caught the landing commit — but it lived in `tools/precedent_check.py`,
 which was in `CONSUMER_ENGINE_FILES` but **not** in `ENGINE_FILES`. So a
@@ -127,10 +139,15 @@ right about sources, and asserted from reading one list rather than both.)
 
 **Fixed upstream on 2026-09-07** — it is in both lists now, with the four
 optional dependencies a source set lacks guarded so their checks skip by
-name instead of erroring. A set that has refreshed its engine since then
-gets the universal check for free and does not need a local copy.
+name instead of erroring. **That fix was necessary and not sufficient**, and
+the sentence that stood here saying a refreshed set "does not need a local
+copy" was wrong for five days: having the file is not the same as running the
+check, and the practice-in-force gate went on skipping it in every source set
+until `binds_publishers` landed on 2026-09-12. Both halves are needed, and
+both are in an engine refreshed after that date.
 
-Two design points worth keeping when you copy it:
+Two design points worth knowing about the check — you no longer copy anything,
+but they explain what it does and does not cover:
 
 - **Whole-tree, not changed-files.** An authorship-time gate on changed
   files is right for writing one practice and blind to thirty already
@@ -145,7 +162,7 @@ Two design points worth keeping when you copy it:
 
 ## Order of Operations
 
-Backfill first, then add the check. Adding the check to a repo that still
-has empty Stories puts its gates red immediately, which pressures the next
+Backfill first, then refresh the engine. Turning the check on in a repo that
+still has empty Stories puts its gates red immediately, which pressures the next
 session into writing filler to clear them — the precise outcome all of this
 exists to prevent.
