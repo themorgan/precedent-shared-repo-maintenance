@@ -58,6 +58,14 @@ on, and the two sibling team sets that supply no checks at all are
 recorded as audited so nobody repeats the pass. Evidence for BestPractice's
 TODO item 52, which this repo cannot close from here.
 
+[`CHECK_WORKFLOW_TEMPLATE_FINDINGS.md`](CHECK_WORKFLOW_TEMPLATE_FINDINGS.md) —
+four places where this set's `.github/workflows/precedent-check.yml` is
+stronger than the upstream template BestPractice PR #278 added, each one a
+way that template can report success on a run that verified less than it
+claims. Written after reconciling the two on 2026-09-13 and finding the
+convergence runs set → template, not the other way. Also output for a later
+BestPractice-rooted session; nothing in it has been applied upstream.
+
 [`STORY_BACKFILL_ROLLOUT.md`](STORY_BACKFILL_ROLLOUT.md) — how to do the
 `## Story` backfill in another repo that upgraded onto Precedent, including
 how to tell whether it has the problem at all.
