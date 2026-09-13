@@ -7,7 +7,7 @@ here and how the practices in [practices/](practices/) got here.
 
 <!-- BEGIN GENERATED: precedent-loader -->
 
-<!-- Regenerate with: python3 tools/build_views.py -- do not hand-edit this block; `python3 tools/build_views.py --check` exits non-zero on drift. -->
+<!-- Regenerate with: python3 tools/build_views.py -- do not hand-edit this block; `python3 tools/build_views.py --check` exits non-zero on drift. Source: practices/ -- edit the practice file, never this block. -->
 
 ## Occasion index
 
@@ -40,8 +40,6 @@ When creating a file a later regeneration will overwrite:
   derived-file-marker — a regenerated file's header names its source, recipe, and command
 When installing a vendored practice layer that could check in upstream:
   blank-blocklist — leave a check-in blocklist blank at install; don't ask, don't remind
-When landing practices in bulk -- a migration, an import, or a move from another set:
-  catalogue-carries-stories — no active practice in this set sits with an empty ## Story
 When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
 When writing content that will vendor or ship into another repo:
@@ -89,8 +87,13 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   and a 2026-09-01 decision record. It is repeated here because this set
   declares no sources and materializes nothing into itself, so universal text
   never arrives and deleting the local copy would switch the guidance off
-  rather than defer it. Not a `no-duplication` candidate for that reason --
-  same mechanism `catalogue-carries-stories` is kept active here for.
+  rather than defer it. Not a `no-duplication` candidate for that reason.
+  `catalogue-carries-stories` was the parallel case until 2026-09-13 and is
+  deliberately no longer: `binds_publishers` lets a CHECK bind this set off
+  universal's own text, so that local declaration was deduplicated. Nothing
+  does the same for prose -- a check can be taught to bind a publisher, an
+  occasion-index line cannot -- which is why this bullet stays where that
+  one went.
 
 ## Working with other sessions
 
