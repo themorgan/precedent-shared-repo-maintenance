@@ -1,4 +1,4 @@
-<!-- Last updated: 2026-09-11 (Buenos Aires) by Morgan F, to version 5 -->
+<!-- Last updated: 2026-09-13 (Buenos Aires) by Morgan F, to version 6 -->
 
 # precedent-team-repo-maintenance
 
