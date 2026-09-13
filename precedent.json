@@ -1,6 +1,38 @@
 {
   "format_version": 1,
   "base_branch": "main",
+  "sources": [
+    { "level": "universal", "name": "precedent", "path": "../BestPractice" }
+  ],
+  "_sources_comment": [
+    "Shape 3 (BestPractice spec/SOURCE_SET_PROSE_GAP.md, approved and built",
+    "2026-09-13). Until this landed, a session rooted in THIS set read this",
+    "set's own 16 occasion entries and not one of universal's 94 -- every",
+    "universal rule silently absent from every session ever run here, while",
+    "the session confidently applied the ones it could see. Declaring the",
+    "source is what lets precedent_session_practices.py render universal",
+    "into the UNTRACKED .precedent/SESSION_PRACTICES.md at session start.",
+    "",
+    "NOTHING OF UNIVERSAL'S TEXT IS COMMITTED HERE, which is the whole",
+    "difference between this shape and the two the brief rejected. The",
+    "tracked AGENTS.md block still renders this set's own practices only:",
+    "build_views.sources_for_tracked_block() defers any source whose text",
+    "lives in another tree. If AGENTS.md ever GROWS after a build_views run,",
+    "that is shape 2 by accident -- stop rather than commit it.",
+    "",
+    "A RELATIVE SIBLING, not '~/BestPractice'. Measured: $HOME is /root on",
+    "some containers and /home/user on others, so a ~ path names nothing",
+    "where the sets actually live. '../BestPractice' resolves against THIS",
+    "repo (precedent_source_bootstrap.sources_from_repo: the clone path is",
+    "repo_path / rel), which is where the session-start clone puts it.",
+    "",
+    "No URL and no credential are declared, and none are needed: universal",
+    "is PUBLIC, and the clone takes its URL and its pinned branch from this",
+    "repo's own tools/ENGINE_MANIFEST.json source_repo/source_branch -- the",
+    "repository this set already says it vendored its engine from. The",
+    "branch is pinned deliberately; a clone with no --branch asks the remote",
+    "which branch to check out, and that is a setting nothing here can see."
+  ],
   "visibility": "private",
   "_visibility_comment": [
     "Declared OUTRIGHT, and this key is why this file is safe to add at all.",
