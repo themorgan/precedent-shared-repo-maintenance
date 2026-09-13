@@ -7,3 +7,14 @@ __pycache__/
 # be retyped on every commit. It is one contributor's environment, not the
 # repository's: .claude/settings.json is the tracked, shared one.
 .claude/settings.local.json
+
+# Another repository's practice text, regenerated at session start and NEVER
+# committed here. tools/precedent_session_practices.py writes
+# .precedent/SESSION_PRACTICES.md with the rules in force from every source
+# this set declares but does not carry -- universal, whose 105 practices live
+# in BestPractice's tree, not this one. Committing it would put a second copy
+# of that catalogue in this history, which is the duplication shape 3 exists
+# to avoid (BestPractice spec/SOURCE_SET_PROSE_GAP.md, shapes 1 and 2).
+# Measured before this line existed: `git check-ignore` said not ignored, so
+# the generated file was offered to the next `git add -A`.
+.precedent/
