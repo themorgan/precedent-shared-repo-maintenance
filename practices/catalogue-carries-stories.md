@@ -9,7 +9,8 @@ gates:       ["merge"]
 index_clause: "no active practice in this set sits with an empty ## Story"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: catalogue-carries-stories
 supersedes:  []
 overrides:   null
 added:       2026-09-07
@@ -31,6 +32,10 @@ The universal catalogue already asks an author to record the failure a rule prev
 A standing invariant sees both. It fires on the landing commit, and it keeps firing every day the gap stays open, which is the property that actually makes the backlog get paid down instead of noticed once and deferred.
 
 ## Story
+**Deduplicated a second time, 2026-09-13**, once `binds_publishers` removed the mechanism the 2026-09-07 re-activation existed to work around.
+
+BestPractice PR #261 (2026-09-12) added that flag to `precedent_check.py`: a check carrying it binds any repo that PUBLISHES a practices/ tree, whether or not the practice's own text is vendored there. `catalogue-carries-stories` carries it, so the universal check now runs on this set's catalogue off universal's text, with no local declaration switching it on. Verified in this tree the same day, on the refreshed engine: with this file `status: deduplicated`, `--only catalogue-carries-stories` still reports `1 passed`, not `1 skipped`. The rule did not stop binding; only this copy of it went away. Upstream's `precedent_check.py` names this set by description as the one that "re-declared this practice locally purely to defeat the gate", and asked for the copy back once the flag landed.
+
 **Deduplicated and then re-activated the same day, 2026-09-07, and the round trip is the point.** BestPractice landed this rule at universal level under the same slug hours after this copy was written, so it was marked deduplicated as `no-duplication` asks. That turned out to be wrong for a mechanical reason nobody had written down: **a source repo consumes no catalogue**, so universal's copy never reaches this set, and `precedent_check.py` gates every check on its practice actually being in force *here*. Deduplicating it did not defer enforcement to universal — it switched enforcement off.
 
 So this file is not a restatement of the universal rule; it is the mechanism by which a source set puts that rule in force on its own catalogue. `checked_by` stays `null` because the check itself is universal's, now vendored in `ENGINE_FILES` and running here.
@@ -48,4 +53,4 @@ The actual defect was that nothing ever came back for the declared gap, and noth
 ## Install
 Checked mechanically by the universal catalogue's own `precedent_check.py`, vendored here in `ENGINE_FILES`, scope `tree`: every `practices/*.md` whose frontmatter `status:` is `active` must carry a non-empty `## Story`. `status:` is read from the frontmatter block only, never searched for anywhere in the file, since several practices here discuss the status vocabulary in their own prose. A practice a committed `MANIFEST.json` attributes to another source is skipped. It tests that the incident was recorded, never that it was the right incident.
 
-`checked_by` is `null` rather than naming a script in this set: the check is universal's, and this file's job is to put that rule in force here, which is what makes `precedent_check.py` run it at all. This set carried its own `tools/checks/check_catalogue_stories.py` until 2026-09-07, retired once the universal check reached source sets -- two implementations of one rule, which is the state `engine-plus-host-shims` exists to prevent.
+`checked_by` is `null` and always was, because the check has never been this set's to own: it is universal's, vendored here in `ENGINE_FILES`. What changed on 2026-09-13 is that it no longer needs this file to reach the catalogue -- `binds_publishers` does that -- so `checked_by: null` on a `deduplicated` file now says exactly what is true, where on an `active` one it had come to read as though this declaration were the coverage. **Nothing here is to be copied into another source set.** A set on an engine carrying `binds_publishers` needs no local declaration; a set on an older engine should refresh rather than re-declare. This set carried its own `tools/checks/check_catalogue_stories.py` until 2026-09-07, retired once the universal check reached source sets -- two implementations of one rule, which is the state `engine-plus-host-shims` exists to prevent, and a local re-declaration was the third.
