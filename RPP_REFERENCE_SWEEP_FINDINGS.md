@@ -125,40 +125,126 @@ remaining references are of two kinds, neither of them removable:
    `VoiceModelTemplateDefinition`; this copy simply has not taken the
    update. A vendored tree is never hand-edited — the fix arrives by sync.
 
-### Why that sync has never worked — a finding with a corrected diagnosis
+### Why that sync has never worked — two wrong diagnoses before the right one
 
-**All three runs** of `voicedef-pack-sync.yml` in `VoiceDefinitionOneg` have
-failed: 2026-08-31, 2026-09-07, 2026-09-14.
+**All three scheduled runs** of `voicedef-pack-sync.yml` in
+`VoiceDefinitionOneg` failed: 2026-08-31, 2026-09-07, 2026-09-14. This
+section is worth reading for the diagnostic trap more than the bug.
 
-The obvious guess was the token, since `VoiceDefinitionOneg` is absent from
-the list of repos `VoiceModelTemplateDefinition`'s TODO says the secret was
-set on. **That guess is wrong.** The run log shows `VOICEDEF_PACK_TOKEN`
-populated and the `check` job succeeding. What fails is the *update* job:
-`ANTHROPIC_API_KEY` is **empty**, so the Claude Code action cannot run.
+**Wrong guess #1 — the pack token.** `VoiceDefinitionOneg` is absent from the
+list of repos `VoiceModelTemplateDefinition`'s TODO says `PERSONAL_PACK_TOKEN`
+was set on, so the token looked missing. It is not: the run log shows
+`VOICEDEF_PACK_TOKEN` populated from it and the `check` job succeeding.
 
-That is already a known open item in `VoiceModelTemplateDefinition`'s TODO —
-*"A Claude credential needs to exist in this repo, `VoiceDefinitionMorgan`,
-and `VoiceDefinitionCelia`"* — but it does not name `VoiceDefinitionOneg`,
-and nobody had connected it to that repo's pack being weeks out of date.
-**Setting a Claude credential there is what unsticks it**, and it will pull
-in the `../personal/` link fixes as a side effect.
+**Wrong guess #2 — the Claude credential.** The failing job's environment
+dump shows `ANTHROPIC_API_KEY:` empty, which reads as "no credential, action
+cannot run", and there is even a matching open TODO item upstream about
+Claude credentials being unset. **That was reported as the answer and it was
+also wrong.** Morgan pushed back — the credential should be there, and all
+these repos name it `CLAUDE_CODE_OAUTH_TOKEN`, not `ANTHROPIC_API_KEY`.
+
+**The actual cause.** The workflow's own gate accepts *either* name
+(`if [ -n "$ANTHROPIC_API_KEY" ] || [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]`), and
+`CLAUDE_CODE_OAUTH_TOKEN` was set the whole time. Reading the full log rather
+than its tail gives the real error:
+
+```
+error: Unable to get ACTIONS_ID_TOKEN_REQUEST_URL env variable
+Action failed: Could not fetch an OIDC token. Did you remember to add
+`id-token: write` to your workflow permissions?
+```
+
+The `update` job declared `contents: write` and `pull-requests: write` but
+not `id-token: write`. No `github_token` input is passed to
+`anthropics/claude-code-action@v1`, so it mints one over OpenID Connect,
+which needs that scope.
+
+**Why both wrong guesses were so easy.** The failure lands *after* the
+credential gate has already passed, and the empty `ANTHROPIC_API_KEY` sits
+two lines above the stack trace in the log. Everything visible near the
+error points at credentials; the actual cause is a permission, and it is
+only named in the middle of the log, not at its end.
+
+### This one is estate-wide
+
+**Every workflow under `themorgan` that calls `claude-code-action` is missing
+`id-token: write`** — 14 of them across 10 repos, `bestpractice-upstream-sync.yml`
+in eight included. **No unattended sync's `update` job can ever have
+succeeded anywhere.** Fixed in `VoiceDefinitionOneg` and in
+`VoiceModelTemplateDefinition`'s template, so new installs and re-syncs carry
+it. The rest still need it — most are the five repos still running the
+retired pack, which are deliberately not being touched until they migrate.
+
+### And the fix was verified, including what it did not fix
+
+A real `workflow_dispatch` run after the fix merged
+([34896563578](https://github.com/themorgan/VoiceDefinitionOneg/actions/runs/34896563578))
+got much further: the OIDC error is gone, the GitHub App token mints and is
+revoked cleanly, Claude Code v2.1.270 installs, and the session initialises
+on `claude-sonnet-5`. **It still fails**, on a genuinely separate problem the
+permission bug had been masking:
+
+```json
+{"type":"result","subtype":"success","is_error":true,
+ "num_turns":1,"total_cost_usd":0,"modelUsage":{}}
+```
+
+One turn, zero cost, no model usage — nothing was billed, so no request was
+ever answered. That is a credential **present and rejected**, not missing;
+most likely `CLAUDE_CODE_OAUTH_TOKEN` has expired or been revoked. The action
+hides the model's own output, so the exact API error is not in the log, and
+`show_full_output: true` would print a job that handles a private-repo token.
+**Checking and rotating that token is Morgan's next step**, and doing it will
+also pull in the `../personal/` link fixes the stale vendored pack is
+missing.
 
 ## What governed the judgment calls
 
 The brief for this sweep asked for prose references in `AGENTS.md`,
 `README.md`, `GLOSSARY.md`, `TODO.md` and friends to be removed.
-`RPP_RETIREMENT_MAP.md` step 7, which is Morgan's own standing instruction
-of 2026-09-07, says the opposite: **"Leave the mentions. Provenance notes,
-decision records and backlog entries keep the name; it is not private and
-the history is worth having."**
+`RPP_RETIREMENT_MAP.md` step 7, Morgan's standing instruction of 2026-09-07,
+said the opposite: *"Leave the mentions."* The sweep ran on the standing
+instruction, then put the conflict to Morgan, who settled it on 2026-09-14:
 
-Where they conflicted, the standing instruction won. So what went in all
-three changed repos is *uses* — code that called the deleted tree, wiring
-that pointed at it, and dead **paths** that resolve to nothing. What stayed
-is every statement of where a rule came from. TodoMorgan's eight findings
-were repointed rather than deleted for exactly this reason: `"migrated from
-process/personal/README.md"` became `"migrated from the retired personal
-pack"`, which keeps the provenance and drops the dead path.
+> I think documentation should always be up to date, but historical
+> mentions should not be changed like ledgers.
+
+**Neither half of the brief was right on its own.** A ledger — a provenance
+note, a decision record, a dated backlog entry, a manifest `notes` field —
+keeps the name untouched; rewriting it to satisfy a checker falsifies the
+history it exists to hold. But **documentation is the opposite case**: an
+instructions file, a glossary, an onboarding page, a live workflow header, an
+*open* backlog item describing current state all teach a reader what is true
+*now*, and when they describe the pack, its sync or its secret's scope as
+live, they are simply wrong.
+
+The test is **what the sentence claims, not which file it sits in.** "This is
+how it works" is documentation; "this is what we did on 2026-08-29" is a
+ledger. One file usually holds both — `TODO.md`'s closed entries are ledger
+and its open items are documentation. Step 7 now says all of this, with
+Morgan quoted in place.
+
+Applied: what went from the three changed repos is *uses* — code calling the
+deleted tree, wiring pointing at it, and dead **paths** that resolve to
+nothing. TodoMorgan's eight findings were **repointed rather than deleted**
+for this reason: `"migrated from process/personal/README.md"` became
+`"migrated from the retired personal pack"`, keeping the provenance and
+dropping the dead path. Under the clarified rule a second pass then corrected
+live documentation in `VoiceDefinitionOneg` and `VoiceModelTemplateDefinition`
+that still described the retired pack's sync as a running mechanism and its
+token as needing read access to the archived repo. A sweep of every other
+migrated repo's `AGENTS.md`, `README.md`, `GLOSSARY.md`, `GETTING_STARTED.md`
+and `MAP.md` found nothing else stale — their remaining mentions all state
+correctly that the pack *is* retired.
+
+**`PERSONAL_PACK_TOKEN` is itself being retired** (Morgan, 2026-09-14),
+which reverses the "keep it, narrow its scope" decision recorded earlier in
+`VoiceModelTemplateDefinition`. The replacement is a per-repo
+`VOICEDEF_PACK_TOKEN` — already the name of the environment variable those
+workflows read. **Order matters and is written into every document that
+mentions it: create the new secret in each dependent repo first, then
+repoint the workflows.** The code half alone breaks every dependent's sync
+at once, which is why nothing was repointed in this sweep.
 
 One correction to the brief's mechanics, for whoever writes the next one:
 the audit tool is **`precedent_decommission.py`**, not `precedent_retire.py`.
@@ -185,3 +271,37 @@ Raised rather than acted on, since they are outside this sweep:
 - **Nothing enforces `file-mention-links` in `VoiceDefinitionMorgan`.**
   `tools/precedent_reply_check.py` is vendored but no hook calls it;
   `SoundHuman` wired `.claude/hooks/reply-gate.sh` to it. Opened there.
+- **`id-token: write` is missing from all 14 `claude-code-action` workflows**
+  under `themorgan`. Fixed in `VoiceDefinitionOneg` and in
+  `VoiceModelTemplateDefinition`'s template; the rest still need it, and most
+  of those are the five repos deliberately left alone.
+
+## Waiting on Morgan
+
+1. **Check and rotate `CLAUDE_CODE_OAUTH_TOKEN` in `VoiceDefinitionOneg`.**
+   It is set but being rejected, which is the only thing still blocking that
+   repo's pack sync — and therefore the `../personal/` link fixes it has been
+   missing for weeks.
+2. **Migrate the five step-0 repos**, or decide not to. Until then they keep
+   depending on an archived repository.
+3. **Create `VOICEDEF_PACK_TOKEN` in each dependent voice repo** before
+   anything is repointed off `PERSONAL_PACK_TOKEN`.
+
+## Two mistakes this sweep made, recorded on purpose
+
+Both were caught by Morgan rather than by a check, and both are the kind
+that repeat.
+
+**Reporting a diagnosis from the tail of a log.** The `ANTHROPIC_API_KEY`
+answer above was confidently wrong, and the evidence for it was real — an
+empty variable, right next to the failure, with a matching open TODO
+elsewhere. What was missing was the middle of the log, where the actual
+error names itself. *Read the whole failing job, not its last screen.*
+
+**Bumping a version header is part of editing the file.** A merged commit
+here edited `VoiceDefinitionOneg`'s `TODO.md` without bumping its
+`file-header` version, turning that check red on `main`. It passed on the
+branch beforehand because `check_file_header.py` compares the **committed
+parent**, not the working tree — so the violation only appears after the
+commit exists. Fixed in a follow-up; worth knowing before testing a doc edit
+against that gate.
