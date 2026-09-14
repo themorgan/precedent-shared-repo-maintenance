@@ -346,6 +346,64 @@ any workflow**, so those two grants are unused and can simply go.
 3. **Create `VOICEDEF_PACK_TOKEN` in `VoiceDefinitionOneg`** before
    `PERSONAL_PACK_TOKEN` is deleted. That is the only repo where the two
    steps cannot be done in either order.
+4. **Delete the branch `claude/diagnose-credential-tmp`** on
+   `VoiceDefinitionOneg`. It carried the one-line `show_full_output`
+   experiment, was never merged, and is inert; deleting it from this session
+   returned HTTP 403.
+
+## The last pass: every "reads RPP" claim is gone
+
+Morgan, 2026-09-14: *remove all mentions of reading RPP.* Six places across
+two repos said the pack token was, or had to be, scoped to read the archived
+repository — each one sending a reader after a grant that should not exist.
+
+`VoiceModelTemplateDefinition`'s copy of the voicedef pack now contains the
+string `RepoPersonalPreferences` **nowhere**: §11's scope sentence, §13 step
+9's install instruction (which also told every new install to reuse the
+retiring secret, and now says to mint its own `VOICEDEF_PACK_TOKEN`), §14's
+reason the SoundHuman token cannot be shared, the `AGENTS_ADDENDUM` template
+every dependent inherits, and the runtime `::warning::` string. The same
+warning string was fixed in `VoiceDefinitionOneg`'s installed workflow.
+
+**Two things were deliberately left**, both following the ledger rule. The
+five step-0 repos keep the claim because **there it is still true** — they
+really do use that token to read RPP, and correcting it would make their
+documentation wrong. And `VoiceDefinitionOneg`'s vendored `process/voicedef/`
+tree keeps it because that tree is mirrored wholesale and is already weeks
+stale in unrelated ways; patching only the RPP lines would leave it *looking*
+current when it is not.
+
+## The voice-file vendoring question, parked
+
+Morgan, 2026-09-14, wants to think properly about how the voice files are
+vendored rather than patch the mechanism again. Opened as a decision item in
+`VoiceModelTemplateDefinition`'s `TODO.md`, which owns the pack.
+
+The short version: **three different mechanisms do one job** — the voicedef
+pack (unattended LLM reconciliation and merge), `HUMAN_VOICE_RULES.md` (a
+wholesale byte-for-byte copy pushed straight to `main`, no model involved),
+and `voice_pack_sync.py` (a session-start re-copy into `HavrutaBrainstorm`).
+Each has its own token, freshness notion and failure mode, and only the third
+reports anything where a person would see it. The first has never once
+completed a run.
+
+## A gate that is red for a reason it does not state
+
+`VoiceModelTemplateDefinition`'s `generated-artifact-provenance` fails on
+`main`, and the finding reads *"a generated view is stale or hand-edited:
+AGENTS.md"* — which sounds like somebody edited a generated file. **Nobody
+did.** `build_views.py` refuses to run at all:
+
+```
+build_views FAIL: tools/check_file_mention_links.py exists but has no entry
+in TOOLS_DESCRIPTIONS
+```
+
+A tool that cannot start and a file that has drifted produce the same red
+check here. Worth knowing before chasing the wrong one — and it is the same
+shape as the other two traps this sweep hit, where the visible symptom named
+something other than the cause. Not fixed: the table lives in vendored engine
+code.
 
 ## Two mistakes this sweep made, recorded on purpose
 
