@@ -5,6 +5,7 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "asked for a \"deep check\" by name, or after drift-inviting work"
+index_required: true
 gates:       ["merge"]
 index_clause: "every mechanical audit, plus a full read of the repo against itself"
 checked_by:  tools/checks/check_deep_check.py
