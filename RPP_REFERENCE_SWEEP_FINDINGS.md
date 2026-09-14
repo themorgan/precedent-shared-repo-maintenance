@@ -190,13 +190,32 @@ permission bug had been masking:
 ```
 
 One turn, zero cost, no model usage — nothing was billed, so no request was
-ever answered. That is a credential **present and rejected**, not missing;
-most likely `CLAUDE_CODE_OAUTH_TOKEN` has expired or been revoked. The action
-hides the model's own output, so the exact API error is not in the log, and
-`show_full_output: true` would print a job that handles a private-repo token.
-**Checking and rotating that token is Morgan's next step**, and doing it will
-also pull in the `../personal/` link fixes the stale vendored pack is
-missing.
+ever answered. That is a credential **present and rejected**, not missing.
+
+**Rotating the token did not fix it.** Morgan rotated
+`CLAUDE_CODE_OAUTH_TOKEN` on 2026-09-14 and the next run failed identically —
+same one turn, same zero cost, same empty `modelUsage`, same ~1.9s. So
+"expired token" is the third diagnosis this failure has attracted and the
+third that does not hold up on its own.
+
+**The error cannot be read from a branch**, which is worth recording because
+it is the obvious thing to try. Putting `show_full_output: true` on a test
+branch and dispatching it produced:
+
+```
+Skipping action due to workflow validation: Workflow validation failed.
+The workflow file must exist and have identical content to the version on
+the repository's default branch.
+```
+
+`claude-code-action` refuses to run a modified workflow from a branch, and
+reports **success** when it does so — a green run that executed nothing. That
+same run did confirm `OIDC token successfully obtained`, so the `id-token`
+fix is sound.
+
+Reading the real error therefore needs one of: `show_full_output: true`
+merged to `main` briefly, or the repository variable `ACTIONS_STEP_DEBUG=true`
+with a re-run, which changes no tracked file and is the cheaper option.
 
 ## What governed the judgment calls
 
@@ -276,16 +295,57 @@ Raised rather than acted on, since they are outside this sweep:
   `VoiceModelTemplateDefinition`'s template; the rest still need it, and most
   of those are the five repos deliberately left alone.
 
+## Retiring `PERSONAL_PACK_TOKEN` — every repo that depends on it
+
+Morgan, 2026-09-14, on why it goes: *it was used to update RPP, which we're
+no longer using.* **That is true of five of its six uses.** The sixth is the
+one to handle deliberately, so here is the whole dependency list, measured
+rather than remembered.
+
+| Repo | What the token does there | What retiring it means |
+|---|---|---|
+| `WriteLike` | `personal-pack-sync.yml` → reads RPP | Dies with the pack when the repo migrates |
+| `GetEmailsFromGmail` | same | same |
+| `duads` | same | same |
+| `holiday-sync` | same | same |
+| `RepoPersonalScaffold` | same | same |
+| **`VoiceDefinitionOneg`** | **`voicedef-pack-sync.yml` → reads `VoiceModelTemplateDefinition`** | **Breaks unless a replacement exists first** |
+
+For the five, nothing needs doing: the token's only job there is the RPP
+sync, and both go together when those repos migrate. **Deleting the secret
+before they migrate would break their sync while they still depend on it**,
+which is the same ordering trap step 1 of `RPP_RETIREMENT_MAP.md` exists for.
+
+`VoiceDefinitionOneg` is the exception, and it is not an RPP use at all. The
+secret was **repurposed on 2026-08-24** — per Morgan at the time, reuse the
+token already in hand rather than mint a second one — to authenticate
+`git ls-remote` and a clone against the *private* `VoiceModelTemplateDefinition`
+for the **voicedef** pack. That pack is live. The replacement is
+`VOICEDEF_PACK_TOKEN`, already the name of the environment variable both
+jobs read, needing read access to `VoiceModelTemplateDefinition` only.
+
+One simplification the sweep turned up: `VoiceModelTemplateDefinition`'s TODO
+records the secret as also set on `VoiceDefinitionMorgan` and
+`VoiceDefinitionCelia`. **Neither has a voicedef pack or names the secret in
+any workflow**, so those two grants are unused and can simply go.
+
 ## Waiting on Morgan
 
-1. **Check and rotate `CLAUDE_CODE_OAUTH_TOKEN` in `VoiceDefinitionOneg`.**
-   It is set but being rejected, which is the only thing still blocking that
-   repo's pack sync — and therefore the `../personal/` link fixes it has been
-   missing for weeks.
+1. **Diagnose `VoiceDefinitionOneg`'s Claude credential.** Rotating
+   `CLAUDE_CODE_OAUTH_TOKEN` did not change the failure: still one turn, zero
+   cost, empty `modelUsage` at ~1.9s, so no API request is ever answered.
+   **The error cannot be read from a branch** — `claude-code-action` refuses
+   to run when the workflow file differs from the default branch's copy
+   ("Workflow validation failed"), which a test branch confirmed. Reading it
+   needs either `show_full_output: true` merged to `main` briefly, or the
+   repository variable `ACTIONS_STEP_DEBUG=true` and a re-run, which changes
+   no tracked file.
 2. **Migrate the five step-0 repos**, or decide not to. Until then they keep
-   depending on an archived repository.
-3. **Create `VOICEDEF_PACK_TOKEN` in each dependent voice repo** before
-   anything is repointed off `PERSONAL_PACK_TOKEN`.
+   depending on an archived repository — and keep needing
+   `PERSONAL_PACK_TOKEN`.
+3. **Create `VOICEDEF_PACK_TOKEN` in `VoiceDefinitionOneg`** before
+   `PERSONAL_PACK_TOKEN` is deleted. That is the only repo where the two
+   steps cannot be done in either order.
 
 ## Two mistakes this sweep made, recorded on purpose
 
