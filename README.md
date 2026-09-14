@@ -66,6 +66,17 @@ claims. Written after reconciling the two on 2026-09-13 and finding the
 convergence runs set → template, not the other way. Also output for a later
 BestPractice-rooted session; nothing in it has been applied upstream.
 
+[`RPP_REFERENCE_SWEEP_FINDINGS.md`](RPP_REFERENCE_SWEEP_FINDINGS.md) — the
+2026-09-14 sweep of every live `themorgan` repository for references to the
+retired RepoPersonalPreferences pack: which three were changed, which
+**five still run the old layout and must not be touched**, and which
+thirteen were already correct. Also corrects two stale claims in
+`precedent-individual`'s `RPP_RETIREMENT_MAP.md`, and records why
+`VoiceDefinitionOneg`'s pack sync has never succeeded — not the token, as
+everyone assumed, but a missing Claude credential. Unlike the findings
+files above, this one is not output for a BestPractice session; it is the
+record of work already done, and the open items it lists are Morgan's.
+
 [`STORY_BACKFILL_ROLLOUT.md`](STORY_BACKFILL_ROLLOUT.md) — how to do the
 `## Story` backfill in another repo that upgraded onto Precedent, including
 how to tell whether it has the problem at all.
