@@ -26,6 +26,7 @@ Rule text (never a paraphrase) plus the specific finding(s) on a violation.
 Exit 2 -- SKIPPED, the NotApplicable convention -- when the history this
 scope needs is not all here to be walked. See truncated_history().
 """
+import json
 import os
 import pathlib
 import re
@@ -63,6 +64,76 @@ TRAILER_RE = re.compile(r"^(?:Session|Claude-Session):\s+(\S.*)$", re.MULTILINE)
 GRANDFATHERED_SHAS = {
     "61f2ed8b24020eaaedc03336e262709bb7725176",  # 2026-09-02, pre-check
 }
+
+# PER-REPO exemptions, 2026-09-14. The set above is this SOURCE's own
+# history -- hardcoded, because this check was written when it only ever ran
+# against the repo it ships in. Materialized into a CONSUMER it audits
+# `ROOT`'s history instead, and no consumer can add to a set living in a file
+# precedent_materialize.py overwrites on every sync.
+#
+# check_commit_author.py and check_buenos_aires_dates.py closed exactly this
+# gap for themselves on 2026-09-07 and 2026-09-10. This check did not, and
+# nothing recorded that the three had diverged -- so a consumer could exempt
+# a pre-hook commit from two of the three sibling checks and was simply stuck
+# with the third. Found 2026-09-14 in a consumer with 21 commits predating
+# its own commit-identity wiring: 14 of them could be declared, and the 7
+# this check flags could not, for no reason either check could state.
+#
+# Same mechanism, deliberately identical rather than merely similar, so the
+# three stay comparable: {"sha": <40-hex>, "note": <why>} entries, additive
+# to the set above and never a replacement for it, read from BOTH
+# identity.json (a source repo, which is somebody's individual practice set)
+# and precedent.json (a shared consuming repo, which must not carry an
+# identity.json -- that file MEANS "this repository is somebody's individual
+# source" and would pin one person's identity onto everyone committing
+# there). A malformed entry is reported as a finding rather than silently
+# ignored: a grandfather list that drops an entry quietly is
+# indistinguishable from one that was never declared.
+IDENTITY_FILE = ROOT / "identity.json"
+
+
+def _declaration_files():
+    """(path, label) for every file that may carry a grandfather list here."""
+    return [(IDENTITY_FILE, "identity.json"),
+            (ROOT / "precedent.json", "precedent.json")]
+
+
+def _repo_grandfathered_shas() -> tuple:
+    shas = set()
+    findings = []
+    for path, label in _declaration_files():
+        # Read from the FILE, not from a resolved identity: this list is a
+        # property of the repository being audited (which of ITS commits are
+        # exempt), while a resolved identity may legitimately come from a
+        # user-level config pointing somewhere else entirely. Another
+        # person's practice source must never hand exemptions to this repo.
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            # Absent or unreadable is not a finding HERE: a repo with no
+            # precedent.json simply has no consumer-level declaration, a
+            # shared repo correctly has no identity.json at all, and a
+            # malformed one is another check's business.
+            continue
+        for entry in (data or {}).get("grandfathered_commit_shas") or []:
+            sha = entry.get("sha") if isinstance(entry, dict) else None
+            if not sha or not re.fullmatch(r"[0-9a-f]{40}", sha):
+                findings.append(
+                    f"{label}: grandfathered_commit_shas entry {entry!r} "
+                    f"is not a {{\"sha\": <40 lowercase hex chars>, \"note\": ...}} "
+                    f"object -- ignored, not exempted")
+                continue
+            if not (isinstance(entry, dict) and entry.get("note")):
+                findings.append(
+                    f"{label}: grandfathered_commit_shas entry for "
+                    f"{sha[:12]} has no \"note\" -- every exemption records why "
+                    f"(practice: cite-the-incident)")
+            shas.add(sha)
+    return shas, findings
+
+
+_REPO_GRANDFATHERED_SHAS, _REPO_GRANDFATHERED_FINDINGS = _repo_grandfathered_shas()
+EFFECTIVE_GRANDFATHERED_SHAS = GRANDFATHERED_SHAS | _REPO_GRANDFATHERED_SHAS
 
 
 class NotApplicable(Exception):
@@ -151,7 +222,7 @@ def find_violations() -> list[str]:
         text=True,
         check=True,
     )
-    findings = []
+    findings = list(_REPO_GRANDFATHERED_FINDINGS)
     examined = 0
     for entry in result.stdout.split("\x01"):
         entry = entry.strip("\n")
@@ -159,7 +230,7 @@ def find_violations() -> list[str]:
             continue
         sha, _, body = entry.partition("\x00")
         examined += 1
-        if sha in GRANDFATHERED_SHAS:
+        if sha in EFFECTIVE_GRANDFATHERED_SHAS:
             continue
         if _is_merge(sha):
             continue  # see the module docstring
