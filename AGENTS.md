@@ -12,18 +12,12 @@ here and how the practices in [practices/](practices/) got here.
 ## Occasion index
 
 ```
-When a README or other key file just gained an operational instruction:
-  mirror-into-agents — an agent-relevant instruction lands in both AGENTS.md and its human home
 When a new rule is proposed and its scope isn't obvious:
   rule-scope-ask — unclear which layer a new rule belongs to -- one document, the repo, or which SET? ask once
 When a session starts in a repo that vendors a universal or team set:
   drift-notice — check source freshness at session start; raise it right away, not later
 When a session-start freshness check against a private source can't be reached:
   fresh-check-escalation — tell "could not verify" apart from "confirmed fresh"; verify directly
-When about to commit:
-  light-check — a cheap mechanical audit runs before every commit, not just merges
-When about to push after a thread of work:
-  todo-gate — add missed ideas, check off finished ones, before every push
 When adding a new rule to a maintained rules document:
   new-rule-placement — place a new rule by subject, slug it, renumber, mirror, re-check
 When adding or reviewing a team-set rule:
@@ -42,13 +36,13 @@ When installing a vendored practice layer that could check in upstream:
   blank-blocklist — leave a check-in blocklist blank at install; don't ask, don't remind
 When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
-When writing content that will vendor or ship into another repo:
-  private-repo-scrub — name a private repo only in general terms in anything that ships elsewhere
+
+(More on-demand practices are not listed here: one whose applies_to names real paths, or which declares a gate, is reached by those channels instead -- `precedent_paths.py FILE` and `precedent_gate.py MOMENT`. A trigger a PERSON SAYS cannot be reached that way and is always listed above. `precedent_show.py --index-omitted` names the omitted ones.)
 ```
 
 ## Standing instruction
 
-Before starting work of a kind named in the occasion index above, run `python3 tools/precedent_show.py SLUG` for each listed slug to load its Rule. When editing a file, `python3 tools/precedent_paths.py FILE` prints any on-demand practice whose `applies_to` matches it, without needing the index at all. At a named moment — merging a branch, before pushing — run `python3 tools/precedent_gate.py merge|push`: some practices fire at a moment rather than in a file, and no path glob reaches those.
+Before starting work of a kind named in the occasion index above, run `python3 tools/precedent_show.py SLUG` for each listed slug to load its Rule. When editing a file, `python3 tools/precedent_paths.py FILE` prints any on-demand practice whose `applies_to` matches it, without needing the index at all. At a named moment — merging a branch, before pushing — run `python3 tools/precedent_gate.py merge|push`: some practices fire at a moment rather than in a file, and no path glob reaches those. If `.precedent/SESSION_PRACTICES.md` exists, read it too: it carries the practices in force from the other sources this repo declares, which are NOT in this block and bind work here exactly as these do. It is regenerated at session start and is deliberately untracked — never commit it or quote it into a pull request.
 
 <!-- END GENERATED -->
 
