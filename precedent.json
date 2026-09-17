@@ -2,7 +2,11 @@
   "format_version": 1,
   "base_branch": "main",
   "sources": [
-    { "level": "universal", "name": "precedent", "path": "../BestPractice" }
+    {
+      "level": "universal",
+      "name": "precedent",
+      "path": "../BestPractice"
+    }
   ],
   "_sources_comment": [
     "Shape 3 (BestPractice spec/SOURCE_SET_PROSE_GAP.md, approved and built",
@@ -84,5 +88,11 @@
     "same date: precedent-team-writing, precedent-team-working-style, the",
     "nomen-omen consuming repo (all New York), and precedent-individual",
     "(Buenos Aires -- that set IS Morgan). practice: timestamps-carry-offset."
+  ],
+  "not_binding": [
+    {
+      "slug": "todo-gotcha-stale-reference",
+      "reason": "This repo has not done BestPractice's 2026-09-16 todo/gotcha migration and keeps no TODO.md of its own (open items belong to Morgan's own lists, per README.md). The check flags bare TODO item N phrases and TODO.md#anchor references to OTHER repos (BestPractice, precedent-individual) by a pattern that assumes universal migration. Exempt until this is worth a dedicated pass across every cited repo."
+    }
   ]
 }
