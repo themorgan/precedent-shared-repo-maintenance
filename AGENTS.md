@@ -36,6 +36,8 @@ When installing a vendored practice layer that could check in upstream:
   blank-blocklist — leave a check-in blocklist blank at install; don't ask, don't remind
 When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
+When writing a hook, script, or practice-file rule in a repository this team maintains that vendors a layer out to other repos:
+  vendor-neutral-by-default — a team-maintained vendor source ships out whole -- default to provider-neutral
 
 (More on-demand practices are not listed here: one whose applies_to names real paths, or which declares a gate, is reached by those channels instead -- `precedent_paths.py FILE` and `precedent_gate.py MOMENT`. A trigger a PERSON SAYS cannot be reached that way and is always listed above. `precedent_show.py --index-omitted` names the omitted ones.)
 ```
