@@ -156,14 +156,27 @@ recorded sha256 for the sets' file (`1df3d91f148a7728485a…`) already
 predates the 2026-09-14 push-trigger change and the 2026-09-16
 concurrency/debounce additions, so it was stale before this fix touched
 anything — that document was not updated here, and shouldn't be conflated
-with this one. This file adds a **fifth** divergence from upstream, on top
-of that document's four: **the sets now run `precedent-check.yml` and
-`views-drift.yml` as one merged file with a shared debounce job**, where
-upstream (last read 2026-09-13, at BestPractice's `precedent-beta-v01`
-merge commit `21b14ca`) still ships them as two separate template files,
-each with its own per-job debounce step. Nothing here has been applied
-upstream, for the same reason nothing in the other document has: a session
-rooted in a practice set cannot gain push access to BestPractice.
+with this one.
+
+**UPDATE, same day, checked directly rather than assumed:** this file
+originally claimed a fifth divergence from upstream here (the merged-file
+design existing locally but not in BestPractice's own template) and said
+nothing here had been applied upstream, on the reasoning that a session
+rooted in a practice set can never gain push access to BestPractice. Both
+claims turned out to be wrong, not because that reasoning was faulty, but
+because a **different session had push access to BestPractice directly**
+and used it: BestPractice's `templates/github-actions/precedent-check.yml.template`
+already carries this exact design, merged there the same day via PR #476
+("Template cost discipline: consolidate + pull_request trigger, all three
+CI templates") — diffed directly against this repo's own merged file:
+mechanically identical (same three jobs, same `branches:[main]` +
+`pull_request` trigger, same 30-minute debounce default), differing only
+in header prose (upstream cites its own `spec/CI_MINUTES_PLAN.md`; these
+sets cite this document). `views-drift.yml.template` is gone upstream too.
+So there is no fifth divergence to carry upstream: it converged there on
+its own, concurrently, not because anything from these four sets was
+pushed there. New repos bootstrapped from the template from here on get
+this design automatically.
 
 ## ADDENDUM, Same Day: A Second Fix Landed Concurrently, and the Two Were Combined
 
