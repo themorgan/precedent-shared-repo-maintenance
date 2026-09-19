@@ -63,10 +63,11 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   [`approvers.json`](approvers.json) and the README's "Approvers" section.
 - **Run `python3 tools/precedent_check.py` before pushing.** What matters is
   `0 violated`; the large skipped count is normal here and is not a failure —
-  those checks belong to levels this set does not resolve. Since 2026-09-13
+  those checks belong to levels this set does not resolve. Since 2026-09-14
   [`.github/workflows/precedent-check.yml`](.github/workflows/precedent-check.yml)
-  runs the same suite on every pull request, so a violation is caught either
-  way; running it yourself is how you find out before the push rather than
+  runs the same suite on every push, on every branch (not just a pull
+  request), so a violation is caught either way; running it yourself is how
+  you find out before the push rather than
   after.
 - **Never try to attach a repo owned by somebody else — spawn a session
   rooted there instead.** `add_repo` refuses a cross-owner attachment
