@@ -1,14 +1,18 @@
 <!-- Last updated: 2026-09-13 (Buenos Aires) by Morgan F, to version 6 -->
 
-# precedent-team-repo-maintenance
+# precedent-shared-repo-maintenance
 
-**Renamed 2026-09-11 (Buenos Aires), from `precedent-team-maintainers`.**
-Same repository, same history, same rules -- the old URL redirects, so
-nothing that still names it is broken. The name went because it named a
-group of people, and [`source-naming`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/source-naming.md)
-says a team set is named for its **purpose**: a roster-shaped name goes stale
-the moment a third person joins, and that practice's own table records this
-as the one thing no mechanical check can see. The 2026-09-09 subject split is
+**Renamed 2026-09-19 (Buenos Aires), from `precedent-team-repo-maintenance`**
+— the `team` level itself was renamed `shared`, and lost its fixed
+`precedent-team-<slug>` naming requirement in the same change; see
+[`source-naming`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/source-naming.md)'s
+Story. **Renamed once before that, 2026-09-11 (Buenos Aires), from
+`precedent-team-maintainers`.** Same repository, same history, same rules
+both times -- the old URLs redirect, so nothing that still names it is
+broken. That first rename went because it named a group of people, and
+`source-naming` still says a *slug* is named for its **purpose**: a
+roster-shaped name goes stale the moment a third person joins, even though
+the level's own fixed-prefix requirement is gone. The 2026-09-09 subject split is
 what made it obvious -- of the 21 practices left here afterwards, 19 were
 about one subject, running a repository that vendors a practice layer, and
 the set had been subject-scoped for two days under a name that said
@@ -138,7 +142,7 @@ into every newly bootstrapped source too, by
 `precedent_show.py`, `split_practices.py`, a trimmed `routing_scope.json`,
 `precedent_vendor_engine.py` itself, and — since 2026-09-06 —
 `build_codeowners.py`, which this repo wrote and owned privately until
-BestPractice promoted it into the engine so that every team set it
+BestPractice promoted it into the engine so that every shared set it
 bootstraps can turn a declared approver list into real enforcement. As of
 2026-09-05 this is a real, tracked copy (`tools/ENGINE_MANIFEST.json`
 records the BestPractice commit and a sha256 per file) instead of the
