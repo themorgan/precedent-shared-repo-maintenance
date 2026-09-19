@@ -43,7 +43,10 @@ practice text is actually readable. It is output for a later
 BestPractice-rooted session to act on, and nothing in it has been applied
 upstream.
 
-[`LEAK_SCRUB_FINDINGS.md`](LEAK_SCRUB_FINDINGS.md) — what running the leak
+[`LEAK_SCRUB_FINDINGS.md`](https://github.com/themorgan/precedent-individual/blob/main/LEAK_SCRUB_FINDINGS.md)
+(moved to `precedent-individual`, private, 2026-09-19 — this repo naming a
+large number of Morgan's other private repositories in the clear did not
+belong here once this one started going public) — what running the leak
 gate's private vocabulary half against a real tree turned up, a per-file
 scrub plan, and a proposed universal practice with the one correction it
 needs. Also output for a later BestPractice-rooted session.
@@ -66,7 +69,9 @@ claims. Written after reconciling the two on 2026-09-13 and finding the
 convergence runs set → template, not the other way. Also output for a later
 BestPractice-rooted session; nothing in it has been applied upstream.
 
-[`RPP_REFERENCE_SWEEP_FINDINGS.md`](RPP_REFERENCE_SWEEP_FINDINGS.md) — the
+[`RPP_REFERENCE_SWEEP_FINDINGS.md`](https://github.com/themorgan/precedent-individual/blob/main/RPP_REFERENCE_SWEEP_FINDINGS.md)
+(moved to `precedent-individual`, private, 2026-09-19, same reason as the
+entry above) — the
 2026-09-14 sweep of every live `themorgan` repository for references to the
 retired RepoPersonalPreferences pack: which three were changed, which
 **five still run the old layout and must not be touched**, and which
