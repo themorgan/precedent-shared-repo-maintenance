@@ -70,8 +70,13 @@ PRACTICES_DIR = ROOT / "practices"
 # convention name -- put the bare string back for that one.
 PRIVATE_TERMS = [
     "themorgan/precedent-individual",
-    "themorgan/precedent-team-repo-maintenance",
+    "themorgan/precedent-shared-repo-maintenance",
     "github.com/themorgan/precedent-individual",
+    "github.com/themorgan/precedent-shared-repo-maintenance",
+    # Pre-2026-09-19 name, kept: GitHub's redirect means it still identifies
+    # this same private repo, so it still needs scrubbing wherever it
+    # appears (this file's own history, older committed prose).
+    "themorgan/precedent-team-repo-maintenance",
     "github.com/themorgan/precedent-team-repo-maintenance",
 ]
 
