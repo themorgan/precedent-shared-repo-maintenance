@@ -2,9 +2,13 @@
 
 **Addressed to whoever next looks at this account's Actions minutes, or at
 `precedent-check.yml` in any of the four practice sets, and wonders why it
-has three jobs instead of one.** Written the same day the spike was
-diagnosed and fixed, from all four sets' actual workflow files as they
-stood that day, not from the templates upstream.
+has three jobs instead of one, or why `push:` names `branches: [main]`.**
+Written the same day the spike was diagnosed and fixed, from all four
+sets' actual workflow files as they stood that day, not from the templates
+upstream. **See the ADDENDUM at the bottom, added the same day**: a second,
+independent fix landed on `main` from a different session while this one
+was still open as pull requests, and the two were combined rather than one
+overwriting the other. Read the body below as the first half of that story.
 
 **Date:** 2026-09-19.
 
@@ -81,8 +85,10 @@ comments in the merged file for why those stay as they are. Only how many
 jobs a single push unconditionally pays the one-minute floor for changed.
 
 All four sets carry the identical merged file, byte-identical (sha256
-`3078a6aad65a064efa3cc885cc6d41a30e284975bc99ca6a5f2be0ffb6cd9d39`), same
-as the two files it replaces were. `tools/ENGINE_MANIFEST.json`'s
+`237a77a6c360292decc01d61a266c5b2310e32977485e5cc6d2b17e2099eaebc` after
+the ADDENDUM below folded in the `branches: [main]` restriction; it was
+`3078a6aad65a064efa3cc885cc6d41a30e284975bc99ca6a5f2be0ffb6cd9d39` before
+that), same as the two files it replaces were. `tools/ENGINE_MANIFEST.json`'s
 `ci_workflow_files`/`ci_workflows_sha256` in each set was updated to drop
 the now-nonexistent `views-drift.yml` entry and record the merged file's
 hash — leaving the old entry in place would have had a future
@@ -114,11 +120,14 @@ names and messages, just one level deeper in the Actions UI than before.
 
 ## Do Not "Fix" These Back
 
-- **No `branches:` or `paths:` filter was added, and none should be.**
-  Either one reopens the exact gap the 2026-09-14 push-trigger change
-  closed: a session pushing straight to a source set's own branch running
-  no check at all. This spike was a job-count problem, not a coverage
-  problem, and the fix does not trade coverage for cost.
+- **No `paths:` filter was added, and none should be** — it would report
+  nothing while looking green on an input it missed; see each job's own
+  header for why. **A `branches: [main]` filter WAS added**, but not by
+  this fix — see the ADDENDUM below. As originally written, this section
+  argued against adding one at all; that argument held only until Morgan
+  made the opposite call, deliberately, in a different session the same
+  day. Don't re-litigate that call from this document's original text —
+  read the ADDENDUM for what actually shipped and why.
 - **`views-drift`'s coverage was not narrowed to "whatever
   `generated-artifact-provenance` already covers."** That check (part of
   `precedent-check`'s own suite, `binds_publishers` since BestPractice PR
@@ -131,8 +140,12 @@ names and messages, just one level deeper in the Actions UI than before.
   this was checked directly (`tools/precedent_check.py`'s own
   `_generated_artifact_provenance` docstring) before deciding to fold
   rather than delete.
-- **The debounce window (`ci_debounce_minutes`, default 360) was left
-  alone.** It was never the problem; see "What Happened" above.
+- **The debounce window itself was never the problem** — see "What
+  Happened" above; the fix in this document's original text is the
+  job-count restructuring, not a window change. Its default (`
+  ci_debounce_minutes`) WAS separately tightened, 360 → 30, by the same
+  other-session decision the branches:[main] restriction came from — see
+  the ADDENDUM.
 
 ## Relationship to `CHECK_WORKFLOW_TEMPLATE_FINDINGS.md`
 
@@ -151,3 +164,55 @@ merge commit `21b14ca`) still ships them as two separate template files,
 each with its own per-job debounce step. Nothing here has been applied
 upstream, for the same reason nothing in the other document has: a session
 rooted in a practice set cannot gain push access to BestPractice.
+
+## ADDENDUM, Same Day: A Second Fix Landed Concurrently, and the Two Were Combined
+
+While the job-count fix above sat open as four pull requests, a
+**different session** (the one that originally diagnosed this spike,
+`session_01UcMeVemrxF6xtCkKwP6z87`) pushed and merged a second, independent
+fix straight to `main` in all four sets: `precedent-check.yml`'s (and, at
+the time, `views-drift.yml`'s separate) `push:` trigger narrowed to
+`branches: [main]`, and `ci_debounce_minutes` tightened from 360 to 30.
+That session's own commit message states the tradeoff in as many words:
+*"This reopens the exact gap 2026-09-14 closed... Morgan's call, 2026-09-19,
+weighed against that gap and accepted it."*
+
+That is a **different lever** from the one this document's original text
+argues for, not a duplicate of it:
+
+- The job-count fix (above) cuts the floor cost of a push this workflow
+  still runs on. It changes nothing about which pushes trigger the
+  workflow.
+- The `branches: [main]` fix cuts how many pushes reach the workflow at
+  all, by giving up automatic verification on a branch pushed to directly
+  — the exact working-branch coverage this document's "Do Not Fix These
+  Back" section (as originally written) argued should never be traded away.
+
+Told about the conflict, Morgan's instruction was explicit: **combine
+both, keep `branches: [main]`.** The two don't fight each other
+mechanically — one is about job count per triggered run, the other is
+about which pushes trigger a run at all — so the merged workflow file now
+carries both: `push: branches: [main]` plus `ci_debounce_minutes` default
+30, alongside the single-`debounce`-job structure from earlier in this
+document. Combined sha256:
+`237a77a6c360292decc01d61a266c5b2310e32977485e5cc6d2b17e2099eaebc`.
+
+**What this means going forward, stated plainly because the rest of this
+document argues the other way:** a working branch (any `claude/*` session
+branch, the normal way work lands in these sets) again gets **zero**
+automatic CI, same as before 2026-09-14. `python3 tools/precedent_check.py`
+before pushing (already each `AGENTS.md`'s own instruction) is now the only
+check a working branch gets; a violation is caught by CI only once that
+branch reaches `main`. This is a deliberate, informed, twice-confirmed
+tradeoff of Morgan's — not a regression, and not this document's original
+author quietly losing the argument. If a future reader is tempted to
+"fix" the coverage gap back by widening `push:` again, read `AGENTS.md`
+first: this is the second time this exact tradeoff has been made in this
+account's history (2026-09-14 → widen; 2026-09-19 → narrow again, on
+purpose, for cost), and a third reversal should come from a new explicit
+decision, not from rediscovering the 2026-09-14 incident and assuming
+nobody already knew about it.
+
+`AGENTS.md` and (in `precedent-individual`) `identity.json`'s own comments
+were updated in each of the four sets to describe this combined, current
+state accurately, rather than leaving them describing only the first half.
