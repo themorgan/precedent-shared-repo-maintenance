@@ -6,6 +6,16 @@
       "level": "universal",
       "name": "precedent",
       "path": "../BestPractice"
+    },
+    {
+      "level": "shared",
+      "name": "precedent-team-writing",
+      "path": "../precedent-team-writing"
+    },
+    {
+      "level": "shared",
+      "name": "precedent-team-working-style",
+      "path": "../precedent-team-working-style"
     }
   ],
   "_sources_comment": [
