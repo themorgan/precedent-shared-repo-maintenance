@@ -106,21 +106,41 @@
     }
   ],
   "_commit_author_check_comment": [
-    "check_commit_author.py and check_buenos_aires_dates.py were vendored",
-    "into this repo (tools/checks/, practices/) on 2026-09-19. precedent-",
-    "individual is deliberately NOT added to the `sources` list above --",
-    "build_views refuses that outright: naming an individual source in a",
-    "shared repo's tracked config would leak its existence and location to",
-    "anyone who reads the repo. Identity resolves correctly anyway, via the",
-    "untracked ~/.config/precedent/config.json, a mechanism entirely",
-    "separate from this file's `sources` (which is only for practice TEXT",
-    "reaching this repo's generated views)."
+    "check_commit_author.py was vendored into this repo (tools/checks/,",
+    "practices/) on 2026-09-19. precedent-individual is deliberately NOT",
+    "added to the `sources` list above -- build_views refuses that",
+    "outright: naming an individual source in a shared repo's tracked",
+    "config would leak its existence and location to anyone who reads the",
+    "repo. Identity resolves correctly anyway, via the untracked",
+    "~/.config/precedent/config.json, a mechanism entirely separate from",
+    "this file's `sources` (which is only for practice TEXT reaching this",
+    "repo's generated views).",
+    "",
+    "check_buenos_aires_dates.py and practices/buenos-aires-dates.md were",
+    "vendored alongside it in that same 2026-09-19 pass and reverted the",
+    "same day: the fallback_timezone comment above already established,",
+    "nine days earlier, that Buenos Aires is Morgan's own zone and belongs",
+    "in his individual source, not in a set an unidentified committer",
+    "could be anyone in -- the vendoring pass copied the practice FILE",
+    "because its check script is mechanically generic (identity.json-",
+    "keyed, same shape as commit-author's), without checking whether the",
+    "practice's own prose was written for a shared audience. It was not:",
+    "the file opens 'It's my own timezone'. Landing byte-identically in",
+    "all three team sets left `buenos-aires-dates` a same-level tie no",
+    "resolver could break the moment a consumer (precedent-individual)",
+    "declared more than one of them as a source -- caught the same day it",
+    "landed, when precedent_sync_views.py refused for exactly that reason.",
+    "commit-author.md stays: its own text says the mechanism is generic",
+    "and meant to be copied into other people's individual sets, which a",
+    "shared team repo declaring it satisfies without contradiction.",
+    "",
+    "Of the 33 grandfathered SHAs this pass originally added, the 14 whose",
+    "note said the commit was correctly-authored and tripped only",
+    "check_buenos_aires_dates.py were removed with it below -- nothing",
+    "left to exempt once that check is gone. The 19 that also trip (or",
+    "trip only) check_commit_author.py stay."
   ],
   "grandfathered_commit_shas": [
-    {
-      "sha": "326175ce601b66291f655a9aac1fc9414f36f208",
-      "note": "'Bring mechanical checks to 7 of 40 team practices; fix leaks and bugs found along the way', 2026-09-01 10:36:38 +0000. Author correctly Morgan F <morgan@westegg.com>; only check_buenos_aires_dates.py trips, on a +0000 (container UTC) offset. This check was not vendored into this repo until 2026-09-19 (see _commit_author_check_comment above), so every entry in this list predates the check's own existence here rather than surfacing at the time. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
     {
       "sha": "1584b207b65b6ae03e7c51a268c5807a5fa99704",
       "note": "'Declare this team set's approvers and generate CODEOWNERS from them', 2026-09-02 01:29:35 +0000, pushed straight to main. Author `Claude <noreply@anthropic.com>`, offset +0000 -- both checks trip. First of a five-commit batch the same session made across roughly four hours (with the four entries below), none through this repo's identity hook. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
@@ -154,10 +174,6 @@
       "note": "'Migrate onto Precedent's vendored, refreshable source-repo engine', 2026-09-05 12:46:55 +0000, pushed straight to main. Last of the three-commit 2026-09-05 batch (with the two entries above). Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
     },
     {
-      "sha": "b105ef401c0fa9ec3058c44ff4eedec1bbc149f2",
-      "note": "'Retire header-caps: the universal catalogue now carries it', 2026-09-06 17:20:11 +0000. Author correctly Morgan F <morgan@westegg.com>; only check_buenos_aires_dates.py trips (+0000). First of an eleven-commit 2026-09-06 cluster (with the ten entries below) spanning engine-refresh, header-caps retirement and deep-check work -- a mix of correctly- and bot-authored commits, all under the container's UTC clock. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
       "sha": "f224c18c8cdbd649ab7b1797d156092f6a3e8b1f",
       "note": "'A blocklist entry has a shelf life: narrow the scrub to owner-qualified names', 2026-09-06 17:57:48 +0000. Author `Claude <noreply@anthropic.com>` -- both checks trip. Same 2026-09-06 cluster as the entry above. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
     },
@@ -166,20 +182,8 @@
       "note": "'Merge: narrow private-repo-scrub to owner-qualified names', 2026-09-06 17:58:04 +0000. Merge commit for the entry above, sixteen seconds later; same cause. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
     },
     {
-      "sha": "7755f8ea4e46048c83112cd9817d0d7a001f0f96",
-      "note": "'Refresh the vendored engine; repoint check_deep_check to very-deep-check', 2026-09-06 18:13:02 +0000. Author correctly Morgan F <morgan@westegg.com>; only check_buenos_aires_dates.py trips. Same 2026-09-06 cluster. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
-      "sha": "5a69864dd6a5773231a159cfe5e3406fcea740d1",
-      "note": "'Merge remote-tracking branch origin/main into claude/practice-repos-audit-migration-2l9jbz', 2026-09-06 18:13:22 +0000, twenty seconds after the entry above. Correctly authored, TZ-only. Same 2026-09-06 cluster. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
       "sha": "4c7b31bc652b00fd225ddf3451a0486ef3b342e6",
       "note": "'Refresh the vendored engine, and teach no-stale-counts what \"in force\" means', 2026-09-06 18:22:57 +0000. Author `Claude <noreply@anthropic.com>` -- both checks trip. Same 2026-09-06 cluster. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
-      "sha": "4f7d27b1ac1cec69c68a3612b830c49457b47b27",
-      "note": "'Re-refresh to da0fe84; correct header-caps' now-stale scope note', 2026-09-06 18:25:54 +0000. Correctly authored, TZ-only. Same 2026-09-06 cluster. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
     },
     {
       "sha": "604629e01f2bc72a87ed925426be86008b886443",
@@ -190,48 +194,12 @@
       "note": "'Merge: vendored engine refresh, no-stale-counts fix, and the MAP.md follow-up', 2026-09-06 18:27:12 +0000, three seconds after the entry above. Merge commit for that same change; same cause. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
     },
     {
-      "sha": "d2358ef974fa55a41f0ffba02fd3b959ce834113",
-      "note": "'Un-retire deep-check: it was retired on a premise Morgan has now rejected', 2026-09-06 18:37:42 +0000. Correctly authored, TZ-only. Last but one of the 2026-09-06 cluster. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
-      "sha": "143c74b18c423de5491527eac69c18713082d0ac",
-      "note": "'Merge origin/main; take its engine wholesale and regenerate every view', 2026-09-06 18:39:27 +0000. Correctly authored, TZ-only. Last of the eleven-commit 2026-09-06 cluster (with the ten entries above). Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
-      "sha": "4a07191aa9a6a5f6d51bd06dc7650290f0e5ead5",
-      "note": "'Bring freshness-guard.sh up to date: the long-open-tab wiring was missing', 2026-09-07 04:45:42 +0000. Correctly authored, TZ-only, a separate session from the 2026-09-06 cluster and from the entry below. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
-      "sha": "e7db4e5ab8562e628c1dd21aec9ad22b719d85dc",
-      "note": "'Merge the freshness-guard rollout from BestPractice's very deep check', 2026-09-07 08:35:42 +0000. Correctly authored, TZ-only. Merge of the branch the entry above worked on. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
       "sha": "3423b529eaf1f2bc79721da72728929e62622e7e",
       "note": "'Say what these two practices actually leave uncovered', 2026-09-07 23:47:44 +0000. Author `Claude <noreply@anthropic.com>` -- both checks trip. Same session as the entry below, a few minutes earlier. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
     },
     {
       "sha": "04e6248fa1338dd0606e44ae01c9ac10287c8275",
       "note": "'Refresh the vendored engine -- it was 200-odd commits behind', 2026-09-07 23:49:05 +0000. Author `Claude <noreply@anthropic.com>` -- both checks trip. The same change, same session and same minute as 09b053060060190aed6f15e571578d13c8f6afd3 in precedent-individual's identity.json, which has the full incident: the tree-scope commit checks are blind to the last commit of any session that does not re-run them after making it. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
-      "sha": "40346adaa042e91386dc97949f784874b54882a3",
-      "note": "'Say that making a small call is not itself a licence to commit it', 2026-09-09 11:33:06 +0000. Correctly authored, TZ-only, a standalone one-off between the 2026-09-07 and 2026-09-10 groups. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
-      "sha": "cb373ddf50721e14ca1a46afa6427c9116ae6e70",
-      "note": "'Source checks: ask the engine which trees are mirrors, and stop reading a truncated history as clean', 2026-09-10 16:22:30 -0400. Correctly authored, TZ-only, on a -0400 (US Eastern) offset rather than -0300. First of a three-commit 2026-09-10 batch (with the two entries below); the same day and the same -0400 pattern as precedent-team-writing's own 3971226d/9a21062 entries. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
-      "sha": "3a19bb274e9b4a78c472ea9ede5039d9e643c2b9",
-      "note": "'Record the 2026-09-10 source-check audit, including the two sets that supply no checks', 2026-09-10 16:24:57 -0400. Same batch, same cause as the entry above. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
-      "sha": "5c76a7fca69d9782ab6616c95f7044bd2a684f1b",
-      "note": "'Record Morgan's approval of this change, marked assented and scoped to it alone', 2026-09-10 17:22:44 -0400. Last of the three-commit 2026-09-10 batch (with the two entries above). Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
-    },
-    {
-      "sha": "0a69642afc1911d9038dc490a29bafcc76b9b6a6",
-      "note": "'Declare this repo's test driver local, so nobody reads it as what consumers run', 2026-09-12 13:15:54 +0000. Correctly authored, TZ-only. The same change, same session, as precedent-team-writing's 83b1cdf0955661e24b6b528c7dbd2974232e8dd3. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
     },
     {
       "sha": "16ba0c20fa12561a8ff2187c223211bdf0f38529",

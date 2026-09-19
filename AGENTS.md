@@ -38,8 +38,6 @@ When making the first commit in a fresh clone or session:
   commit-author — git config user.name/email to Morgan F, don't ask
 When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
-When writing a date or timestamp anywhere:
-  buenos-aires-dates — dates and commit timestamps are Buenos Aires time, not UTC
 When writing a hook, script, or practice-file rule in a repository this team maintains that vendors a layer out to other repos:
   vendor-neutral-by-default — a team-maintained vendor source ships out whole -- default to provider-neutral
 
