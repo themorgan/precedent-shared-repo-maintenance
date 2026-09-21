@@ -27,13 +27,19 @@ clear, by their real names and full URLs:**
 they are until Morgan decides what happens to them — see "Decision needed"
 below.
 
-**No comparable finding in the other two repos.** `precedent-team-writing`
-has two practice files (`practices/curly-quotes.md`,
-`practices/create-word-doc.md`) whose `approved_by`/`Story` fields name one
-private repo, `HavrutaBrainstorm`, as the practice's provenance — normal,
-low-severity, and much narrower than the finding above (one name, plus what
-its subject implies, not an inventory). `precedent-team-working-style` has
-no private-repo mentions anywhere.
+**No comparable finding in the other two repos.** `precedent-shared-writing`
+(then `precedent-team-writing`) had two practice files
+(`practices/curly-quotes.md`, `practices/create-word-doc.md`) whose
+`approved_by`/`Story` fields named one private repo as the practice's
+provenance — normal, low-severity, and much narrower than the finding above
+(one name, plus what its subject implies, not an inventory).
+`precedent-shared-working-style` has no private-repo mentions anywhere.
+
+> **RESOLVED 2026-09-21.** Those two mentions are gone: `leak_gate.py` over
+> `precedent-shared-writing`'s whole tracked tree now reports clean against
+> the blocklist that names that repo. The name itself has also been taken
+> out of the paragraph above, because this document is in a public tree and
+> naming it here republished exactly what the paragraph was flagging.
 
 ## Everything else checked, and clean
 
@@ -85,17 +91,21 @@ looking finished.
 
 ## Decision needed (Morgan's call, not a mechanical one)
 
-1. **What happens to `RPP_REFERENCE_SWEEP_FINDINGS.md` and
+1. ~~**What happens to `RPP_REFERENCE_SWEEP_FINDINGS.md` and
+   `LEAK_SCRUB_FINDINGS.md`.**~~ **Settled 2026-09-19: both were moved to
+   `precedent-individual`, which is private and stays that way** (see this
+   repo's `README.md`). Neither file is in this repo any more. The original
+   framing, kept because the options it weighed are the record of how that
+   was decided: what happens to `RPP_REFERENCE_SWEEP_FINDINGS.md` and
    `LEAK_SCRUB_FINDINGS.md`.** Options: delete outright (both record
    already-applied or informational-only findings that never landed
    upstream anyway, per their own text); move them to `precedent-individual`
    if the record is worth keeping somewhere that stays private; or rewrite
    them generically in place. Whichever is chosen, it needs the history
    rewrite above, not just a forward commit.
-2. **Whether the two `HavrutaBrainstorm` mentions in
-   `precedent-team-writing` are fine to leave.** Low severity, genuine
-   provenance information, but it's a real private repo name and the call
-   on comfort level is Morgan's, not mine.
+2. ~~**Whether the two private-repo mentions in `precedent-shared-writing`
+   are fine to leave.**~~ **Settled 2026-09-21: they are gone** — see the
+   RESOLVED note above. No decision is outstanding on this one.
 
 ## Once content and history are settled, the mechanical sequence
 
