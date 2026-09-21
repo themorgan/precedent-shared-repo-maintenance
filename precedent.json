@@ -1,4 +1,10 @@
 {
+  "leak_structural_exempt": [
+    {
+      "path": "candidates",
+      "reason": "this set's own drafting outbox -- candidates/ holds practice drafts proposed for this shared set and not yet adopted (currently resolved-issue-note-updates-2026-09-02.md); nothing leaves it without a listed approver's yes, which approvers.json already requires for any change to this set"
+    }
+  ],
   "format_version": 1,
   "base_branch": "main",
   "sources": [
