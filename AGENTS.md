@@ -61,15 +61,17 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   stale after a practice changes.
 - **Changes to this set need an approver's yes** — see
   [`approvers.json`](approvers.json) and the README's "Approvers" section.
-- **Run `python3 tools/precedent_check.py` before pushing — this is now the
-  ONLY check a working branch gets.** What matters is `0 violated`; the
-  large skipped count is normal here and is not a failure — those checks
-  belong to levels this set does not resolve.
-  [`.github/workflows/precedent-check.yml`](.github/workflows/precedent-check.yml)
-  ran on every push to every branch from 2026-09-14, but was narrowed to
-  `push: branches: [main]` on 2026-09-19 (billing; see the file's own
-  header), so a violation on a working branch is caught only if you run
-  this yourself before the push, same as before 2026-09-14.
+- **Run `python3 tools/precedent_check.py` before pushing — it is the only
+  check there is here now.** What matters is `0 violated`; the large
+  skipped count is normal here and is not a failure — those checks belong
+  to levels this set does not resolve. This repo carried a
+  `precedent-check.yml` workflow from 2026-09-14 and a `leak-gate.yml` from
+  2026-09-20; on 2026-09-21 the vendored engine deleted both on refresh,
+  because a practice source installs no CI at all — universal's
+  `source-sets-run-no-ci`, decided on a usage export in which four sets
+  running two workflows each were 127 of 143 billed minutes in one day.
+  Nothing runs after the push, on any branch: the check runs before it, or
+  it does not run.
 - **Never try to attach a repo owned by somebody else — spawn a session
   rooted there instead.** `add_repo` refuses a cross-owner attachment
   outright: *"cross-tier adds are not supported in v1: requested

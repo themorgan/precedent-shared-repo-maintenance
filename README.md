@@ -66,12 +66,15 @@ recorded as audited so nobody repeats the pass. Evidence for BestPractice's
 TODO item 52, which this repo cannot close from here.
 
 [`CHECK_WORKFLOW_TEMPLATE_FINDINGS.md`](CHECK_WORKFLOW_TEMPLATE_FINDINGS.md) —
-four places where this set's `.github/workflows/precedent-check.yml` is
-stronger than the upstream template BestPractice PR #278 added, each one a
+four places where this set's `precedent-check.yml` workflow was stronger
+than the upstream template BestPractice PR #278 added, each one a
 way that template can report success on a run that verified less than it
 claims. Written after reconciling the two on 2026-09-13 and finding the
 convergence runs set → template, not the other way. Also output for a later
-BestPractice-rooted session; nothing in it has been applied upstream.
+BestPractice-rooted session; nothing in it has been applied upstream, and
+the workflow it compares is gone from this repo as of 2026-09-21 (a
+practice source installs no CI), so it now reads as a record of what that
+template still gets wrong rather than as a live divergence here.
 
 [`RPP_REFERENCE_SWEEP_FINDINGS.md`](https://github.com/themorgan/precedent-individual/blob/main/RPP_REFERENCE_SWEEP_FINDINGS.md)
 (moved to `precedent-individual`, private, 2026-09-19, same reason as the
