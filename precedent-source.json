@@ -1,7 +1,7 @@
 {
   "name": "precedent-shared-repo-maintenance",
   "level": "shared",
-  "visibility": "private",
+  "visibility": "public",
   "subject": "running a repository that vendors a practice layer",
   "code": [],
   "_comment": [
