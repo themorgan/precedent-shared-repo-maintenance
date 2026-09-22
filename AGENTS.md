@@ -12,12 +12,16 @@ here and how the practices in [practices/](practices/) got here.
 ## Occasion index
 
 ```
+When a README or other key file just gained an operational instruction:
+  mirror-into-agents — an agent-relevant instruction lands in both AGENTS.md and its human home
 When a new rule is proposed and its scope isn't obvious:
   rule-scope-ask — unclear which layer a new rule belongs to -- one document, the repo, or which SET? ask once
 When a session starts in a repo that vendors a universal or team set:
   drift-notice — check source freshness at session start; raise it right away, not later
 When a session-start freshness check against a private source can't be reached:
   fresh-check-escalation — tell "could not verify" apart from "confirmed fresh"; verify directly
+When about to commit:
+  light-check — a cheap mechanical audit runs before every commit, not just merges
 When adding a new rule to a maintained rules document:
   new-rule-placement — place a new rule by subject, slug it, renumber, mirror, re-check
 When adding or reviewing a team-set rule:
@@ -38,6 +42,8 @@ When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
 When writing a hook, script, or practice-file rule in a repository this team maintains that vendors a layer out to other repos:
   vendor-neutral-by-default — a team-maintained vendor source ships out whole -- default to provider-neutral
+When writing content that will vendor or ship into another repo:
+  private-repo-scrub — name a private repo only in general terms in anything that ships elsewhere
 
 (More on-demand practices are not listed here: one whose applies_to names real paths, or which declares a gate, is reached by those channels instead -- `precedent_paths.py FILE` and `precedent_gate.py MOMENT`. A trigger a PERSON SAYS cannot be reached that way and is always listed above. `precedent_show.py --index-omitted` names the omitted ones.)
 ```
