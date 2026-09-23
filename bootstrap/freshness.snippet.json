@@ -1,0 +1,56 @@
+{
+  "_comment": [
+    "Merge this into the CONSUMING PROJECT's own .claude/settings.json,",
+    "the same way bootstrap/settings.snippet.json is merged (append to an",
+    "existing SessionStart / PreToolUse array rather than replacing it).",
+    "practices/fresh-before-write.md is the rule; bootstrap/freshness-guard.sh",
+    "is the script both entries call.",
+    "",
+    "The SECOND ARGUMENT is the project's BASE branch -- the branch this",
+    "work is meant to sit on top of. Replace \"main\" with whatever that is",
+    "for the project you are installing into: it is \"precedent-beta-v01\"",
+    "in BestPractice, whose configured default branch is a different,",
+    "wrong answer. It is passed explicitly here, and not detected, for",
+    "exactly that reason.",
+    "",
+    "The PreToolUse matcher includes Bash on purpose. An agent running in a",
+    "mode where file edits go through `cat`/`sed`/`python3` in Bash makes",
+    "every change without ever touching Edit or Write, and a matcher of",
+    "Edit|Write|NotebookEdit alone is perfectly blind to all of it. The",
+    "guard costs one file-existence test per call after its first run, and",
+    "never blocks a git command."
+  ],
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/bootstrap/freshness-guard.sh session-start main"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/bootstrap/freshness-guard.sh pre-write main"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/bootstrap/freshness-guard.sh user-prompt main"
+          }
+        ]
+      }
+    ]
+  }
+}
