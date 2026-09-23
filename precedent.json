@@ -5,6 +5,13 @@
       "reason": "this set's own drafting outbox -- candidates/ holds practice drafts proposed for this shared set and not yet adopted (currently resolved-issue-note-updates-2026-09-02.md); nothing leaves it without a listed approver's yes, which approvers.json already requires for any change to this set"
     }
   ],
+  "filename_separator_exempt": [
+    {
+      "path": ".",
+      "ext": ".md",
+      "reason": "the only \"-\" in the root *.md group is inside an ISO date, not a separator anybody chose here. GITHUB_ACTIONS_BILLING_2026-09-19_FINDINGS.md uses \"_\" as its actual separator throughout, same as the other seven root findings/checklist files; it trips the check because the date 2026-09-19 carries hyphens, so the one file is counted in BOTH buckets at once and a directory with a single consistent convention reads as mixed. The date's format is determined elsewhere -- ISO 8601 -- which is the exemption this check's own message asks for. Renaming to 20260919 would satisfy the check by making the date less readable, and renaming to GITHUB-ACTIONS-BILLING would change the convention to match an artefact of the date. Noted 2026-09-22, when the check first reached this repo in a vendored engine refresh -- same shape as precedent-individual's identical spec/ exemption from the same day."
+    }
+  ],
   "format_version": 1,
   "base_branch": "main",
   "sources": [
