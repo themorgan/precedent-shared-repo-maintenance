@@ -6,7 +6,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## The practice catalogue
 
-`practices/` holds 17 practice files (0 resident, 17 on-demand). One file per practice.
+`practices/` holds 19 practice files (0 resident, 19 on-demand). One file per practice.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
@@ -15,7 +15,9 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [deep-check](practices/deep-check.md) | on-demand | asked for a "deep check" by name, or after drift-inviting work |
 | [default-branch](practices/default-branch.md) | on-demand | setting up a new repo, or installing into an existing one |
 | [derived-file-marker](practices/derived-file-marker.md) | on-demand | creating a file a later regeneration will overwrite |
+| [dont-race-another-window](practices/dont-race-another-window.md) | on-demand | being asked for something another window of mine may already be working on |
 | [drift-notice](practices/drift-notice.md) | on-demand | a session starts in a repo that vendors a universal or team set |
+| [fresh-before-write](practices/fresh-before-write.md) | on-demand | setting up a project I work in, or a session reporting that its checkout is behind |
 | [fresh-check-escalation](practices/fresh-check-escalation.md) | on-demand | a session-start freshness check against a private source can't be reached |
 | [install](practices/install.md) | on-demand | bringing a vendored practice layer into a new or existing repo |
 | [light-check](practices/light-check.md) | on-demand | about to commit |

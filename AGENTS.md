@@ -26,6 +26,8 @@ When an unattended job hits something blocking its normal work, or something opt
   automation-issues — a blocked job opens or updates an issue; an optional input it cannot reach is skipped and reported, never either silently
 When asked for a "deep check" by name, or after drift-inviting work:
   deep-check — every mechanical audit, plus a full read of the repo against itself
+When being asked for something another window of mine may already be working on:
+  dont-race-another-window — say so and DECLINE — tell me to continue in the other window; flagging the collision and doing it anyway is the failure, not the fix
 When bringing a vendored practice layer into a new or existing repo:
   install — vendor the tree, weave conventions into AGENTS.md, wire checks and manifest
 When committing anything:
@@ -36,6 +38,8 @@ When installing a vendored practice layer that could check in upstream:
   blank-blocklist — leave a check-in blocklist blank at install; don't ask, don't remind
 When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
+When setting up a project I work in, or a session reporting that its checkout is behind:
+  fresh-before-write — verify and fast-forward the checkout before the session's first write, never after
 When writing a hook, script, or practice-file rule in a repository this team maintains that vendors a layer out to other repos:
   vendor-neutral-by-default — a team-maintained vendor source ships out whole -- default to provider-neutral
 
