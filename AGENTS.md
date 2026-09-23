@@ -78,111 +78,16 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   running two workflows each were 127 of 143 billed minutes in one day.
   Nothing runs after the push, on any branch: the check runs before it, or
   it does not run.
-- **Never try to attach a repo owned by somebody else — spawn a session
-  rooted there instead.** `add_repo` refuses a cross-owner attachment
-  outright: *"cross-tier adds are not supported in v1: requested
-  `<other>/<repo>` but session already has repos from owner(s) [`<this>`]"*.
-  So before reaching for `add_repo`, compare the owner you want against the
-  owners this session already holds. Same owner, attach it. Different owner,
-  the only route is a new session with that repo as its **initial** source,
-  and a session rooted at one owner can never gain push access to another's
-  — which also means it can never merge there, so plan who merges before
-  starting the work, not after. This is a platform limit and no amount of
-  retrying changes it; the refusal is recorded from both directions, ours on
-  2026-09-12 and upstream's own on 2026-09-08 in
-  [BestPractice's TODO](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/TODO.md).
-  Morgan, 2026-09-12: this has now been rediscovered many times and is not to
-  be rediscovered again. **This bullet re-states universal, it does not author
-  anything.** `spawn-session` at universal already requires naming the
-  repositories work must read, write or push to and comparing them against the
-  ones this session holds, before starting; and the refusal itself is recorded
-  upstream in four places -- that repo's `AGENTS.md`, `INSTALL.md`, `TODO.md`,
-  and a 2026-09-01 decision record. It is repeated here because this set
-  declares no sources and materializes nothing into itself, so universal text
-  never arrives and deleting the local copy would switch the guidance off
-  rather than defer it. Not a `no-duplication` candidate for that reason.
-  `catalogue-carries-stories` was the parallel case until 2026-09-13 and is
-  deliberately no longer: `binds_publishers` lets a CHECK bind this set off
-  universal's own text, so that local declaration was deduplicated. Nothing
-  does the same for prose -- a check can be taught to bind a publisher, an
-  occasion-index line cannot -- which is why this bullet stays where that
-  one went.
-
-## Working with other sessions
-
-Morgan's instructions, 2026-09-12, after a day that spent roughly $40 across a
-fleet of sessions and produced one pull request that had to be closed as a
-duplicate. Spawning sessions is **encouraged** — it is the only route to
-another owner's repo, and far better than pasting work for a person to carry
-between windows. What follows is about making a fleet cheap and legible, not
-about having fewer of them.
-
-- **Wake a live session before spawning a fresh one.** A trigger into an
-  existing session reuses its context and costs almost nothing; a new session
-  re-reads its repo from scratch, which is most of what a session costs
-  (measured 2026-09-12: three separate sessions in one upstream repo, $3–9
-  each, doing work one session could have done in sequence). Check
-  `list_sessions` for a live session already rooted where the work belongs.
-- **Pick the model for the job.** `create_session` takes `model`. Reading,
-  diffing, inventory and "check whether X is true" do not need the largest
-  model; judgment and writing do.
-- **Before starting, check whether it is already done.** `git fetch` and read
-  the default branch's recent commits, then check again immediately before
-  opening a pull request. On 2026-09-12 a session here wrote a change another
-  session had merged twenty minutes earlier, and it had to be closed unmerged.
-  The repository is the authoritative record of what other sessions did; their
-  own status summaries lag and describe intent rather than outcome.
-- **A spawned session reports; it does not shop for more work.** Its final
-  message says what it did and what is blocked, and stops. It never ends by
-  offering a person adjacent work: an offer read as new work becomes a
-  duplicate thread against something another session already owns, which is
-  how the closed pull request above happened. Anything it noticed goes back to
-  whoever spawned it, as an observation.
-- **Never re-ask what was already authorized.** Where the next step is obvious
-  and reversible, take it and report it; keep questions for the irreversible
-  or genuinely ambiguous. A session that sat on a green pull request asking a
-  second time for permission it had already been given cost two full context
-  loads on 2026-09-12.
-- **Make the tree visible in the one place a person looks.** A session that
-  spawns another names it — session id and subject — in its own report, and
-  titles it so the parent's subject is recognisable in a plain session list.
-  Tags can be set but **cannot be filtered on**: `list_sessions` with `tags`
-  returns *"tags filter is not currently available"* from inside a session
-  (checked 2026-09-12), so the title is what carries lineage, not the tag.
-- **Recommend compacting at task boundaries, not at a size.** When a
-  deliverable has landed and the next thing is independent, a compact costs
-  nothing because the summary carries the conclusion. Mid-investigation it
-  costs a re-read. Length is not what is expensive; re-deriving is.
-
-### Where these rules actually live
-
-Written here on 2026-09-12 as though this set owned them. It does not own most
-of them, and a reader cannot tell which by looking -- so, in three groups:
-
-- **Already universal, re-stated here only because nothing resolves into this
-  set.** The repository check before starting work, and the cross-owner refusal
-  above: both are `spawn-session` at universal, added 2026-09-11, gated on
-  every reply. Read that practice for the authoritative wording; fix any
-  disagreement *there*, not here.
-- **Canonical in the working-style team set, not here.** "A spawned session
-  reports rather than offering a person more work" is `report-up-the-chain`
-  there, and "never re-ask what was already authorized" is a clause of
-  `small-calls` there, both landed 2026-09-12. This set resolves that set no
-  more than it resolves universal, which is the only reason a copy sits here.
-- **Genuinely not upstream yet, and this is the export list.** Waking a live
-  session rather than spawning a fresh one; choosing the model for the job; the
-  cost of a cold start; naming a child session and carrying lineage in its
-  title (with the checked negative about tag filtering); compacting at a task
-  boundary; and checking the default branch before starting and again before
-  opening a pull request. Verified absent from universal on 2026-09-12. These
-  are the lines to carry upstream -- `mistakes-become-rules`' rung (c), the one
-  the session that wrote them skipped.
-
-**Why this section exists in this shape at all**, since it is the incident
-worth remembering: the session that wrote these rules had a readable clone of
-the universal set in its scratchpad the whole time and never searched its
-`practices/` before writing. It verified every factual claim against upstream
-that day and never verified a *rule* against upstream's catalogue, so it
-re-authored a universal practice one level down. The level was chosen by which
-repository it could merge in -- which `rule-scope-ask` now forbids in as many
-words.
+- **The hand-written half of this file describes the MECHANISM, never the
+  INVENTORY.** A rule goes in a practice file, where the loader dedupes it,
+  precedence ranks it and `supersedes` retires it. Written here as prose, it
+  is invisible to all three, and stays in force after the rule it copied
+  changes upstream. That is what happened: on 2026-09-12 this file restated
+  a set of session-handling rules because this set resolved no universal
+  practices then. From 2026-09-13 it did, through
+  `.precedent/SESSION_PRACTICES.md`, and nobody removed the copies. One of
+  them, "wake a live session before spawning a fresh one", went on
+  instructing sessions after universal's `prompt-please` told them never
+  to wake a live session to hand work over. They were removed on 2026-09-23. **Before adding a
+  rule here, check whether a practice in any declared source already says
+  it** -- `.precedent/SESSION_PRACTICES.md` is where to look.
