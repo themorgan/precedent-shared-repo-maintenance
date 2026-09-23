@@ -208,6 +208,16 @@ echo "[missing](../tools/does_not_exist.py)" > practices/planted-materialized.md
 git add MANIFEST.json practices/planted-materialized.md
 '
 
+run_clean_case "a link shown inside inline code is an example, not a link" '
+echo "Write \`[the Glossary](GLOSSARY-missing.md)\`, not the filename." > planted-code-span.md
+git add planted-code-span.md
+'
+
+run_case_expecting "code-span control: the same link outside code still fires" \
+  'echo "Write [the Glossary](GLOSSARY-missing.md) here." > planted-code-span.md
+git add planted-code-span.md' \
+  "planted-code-span.md:1: broken relative link to 'GLOSSARY-missing.md'"
+
 if ! python3 tools/checks/check_light_check.py > /dev/null; then
   echo "FAIL: check_light_check.py is not clean on the real, current repo" >&2
   exit 1
