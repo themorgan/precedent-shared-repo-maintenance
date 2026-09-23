@@ -65,6 +65,12 @@ SECRET_PATTERNS = [
 ]
 FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 MD_LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
+# An inline code span shows markdown; it is never a link a reader can click.
+# Blanked before the link scan, 2026-09-23: precedent-shared-writing's
+# doc-link-text quotes `[the Glossary](GLOSSARY.md)` as an EXAMPLE of how to
+# write a link, and every repo that materialized it failed this check on
+# example text, with nothing in its own tree to fix.
+CODE_SPAN_RE = re.compile(r"(`+)(?:(?!\1).)+?\1")
 
 
 def rule_text() -> str:
@@ -217,7 +223,7 @@ def check_md_links(rel: str, text: str, findings: list[str]) -> None:
         return
     base = (ROOT / rel).parent
     for lineno, line in enumerate(text.splitlines(), start=1):
-        for target in MD_LINK_RE.findall(line):
+        for target in MD_LINK_RE.findall(CODE_SPAN_RE.sub("", line)):
             target = target.split(" ", 1)[0].strip()  # drop an optional "title"
             if not target or target.startswith(("http://", "https://", "mailto:", "#")):
                 continue
