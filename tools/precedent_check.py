@@ -2584,13 +2584,14 @@ def _declared_hooks_exist(ctx):
     return found
 
 
-# This repo dogfoods its own Claude Code template: these three hooks under
+# This repo dogfoods its own Claude Code template: these hooks under
 # .claude/hooks/ carry no BestPractice-specific content, so the installed
 # copy is meant to BE templates/harness/claude-code/hooks/<name>, verbatim.
-# session-start.sh, stop-git-check.sh and reply-gate.sh are deliberately
-# NOT here -- each carries real repo-specific content (session-start.sh's
-# own package list, stop-git-check.sh's own tool-path story) and is
-# correctly expected to differ from its generic template counterpart.
+# session-start.sh, stop-git-check.sh, stop-reply-check.sh and reply-gate.sh
+# are deliberately NOT here -- each carries real repo-specific content
+# (session-start.sh's own package list, stop-git-check.sh's and
+# stop-reply-check.sh's own tool-path story) and is correctly expected to
+# differ from its generic template counterpart.
 @check('shipped-hook-carries-its-script', 'tree',
        "every tools/ script a shipped hook actually RUNS is in the engine "
        "file list for each kind that hook reaches -- so a repo receiving "
@@ -2773,6 +2774,7 @@ DOGFOODED_HOOKS_MATCH_TEMPLATE = (
     'doc-lint-gate.sh',
     'freshness-guard.sh',
     'precedent-paths.sh',
+    'seeded-prompt-gate.sh',
 )
 
 
@@ -2780,9 +2782,10 @@ DOGFOODED_HOOKS_MATCH_TEMPLATE = (
        'each hook in DOGFOODED_HOOKS_MATCH_TEMPLATE is byte-identical '
        'between .claude/hooks/ and templates/harness/claude-code/hooks/',
        'a hook this repo deliberately customizes (session-start.sh, '
-       'stop-git-check.sh, reply-gate.sh -- each carries real repo-'
-       'specific content and is correctly not in the list); whether '
-       'either copy is actually correct, only that the two agree',
+       'stop-git-check.sh, stop-reply-check.sh, reply-gate.sh -- each '
+       'carries real repo-specific content and is correctly not in the '
+       'list); whether either copy is actually correct, only that the '
+       'two agree',
        practice_backed=False,
        # Both sides of every pair it compares. Touch either copy of a
        # dogfooded hook and this runs, instead of waiting for its rotation
@@ -3411,6 +3414,19 @@ def _engine_plus_host_shims(ctx):
     # failure this rule is about), and stops firing on a manifest-recorded
     # engine.
     vendored_engine = _vendored_engine_files()
+    # A check script the SYNC wrote is recorded the same way, in the
+    # materialized tree's MANIFEST.json, and `precedent_sync_views.py
+    # --check` reports the moment one differs -- so the argument above
+    # holds for it too. Found 2026-09-23, the first sync in a consumer after
+    # the universal tree began carrying tools/checks/: the individual set's
+    # materialized commit checks were reported as forks of the universal
+    # tree's scrubbed copies of the very same checks.
+    try:
+        _mf = json.loads((ROOT / 'MANIFEST.json').read_text(encoding='utf-8'))
+        vendored_engine = vendored_engine | frozenset(
+            c['path'] for c in _mf.get('checks') or [] if isinstance(c, dict) and c.get('path'))
+    except (OSError, ValueError, TypeError):
+        pass
 
     RUN = 8
 
@@ -3434,10 +3450,19 @@ def _engine_plus_host_shims(ctx):
     # template correctly matches that copy too, and excluding only
     # templates/ just moves the false finding rather than removing it.
     # Neither directory holds engine mechanism a host could shim.
+    #
+    # tools/bootstrap.sh is the same case as a single file: it is the
+    # upstream repo's own instantiation of templates/bootstrap.sh, so a host
+    # whose tools/bootstrap.sh came from that template matches it line for
+    # line by construction. Found 2026-09-23, migrating a classic install
+    # onto the loader: the first precedent_check run there reported the
+    # host's bootstrap as a fork of the upstream's, for having been
+    # installed exactly as INSTALL.md says.
     not_engine = (vendored / 'templates', vendored / '.claude')
+    not_engine_files = {vendored / 'tools' / 'bootstrap.sh'}
     upstream = {}
     for p in sorted(vendored.rglob('*')):
-        if any(d in p.parents for d in not_engine):
+        if any(d in p.parents for d in not_engine) or p in not_engine_files:
             continue
         if p.is_file() and p.suffix in ('.py', '.sh'):
             for r in runs(p):
@@ -6932,6 +6957,133 @@ def _decision_strength(ctx):
                                           f'is not "YYYY-MM-DD, who"'))
     return sorted(out, key=lambda f: f.where)
 
+
+# --- a dated list runs forward (practice: dated-list-runs-forward) ---------
+
+# The opt-in mark. A dated list is checked only where somebody put this
+# directly above the first entry -- see that practice's Rule for why
+# guessing which dated lists are date-ordered would fire on correct work.
+DATED_LIST_MARK = '<!--dated-list-->'
+DATED_LIST_FILE_GLOBS = ('practices/*.md', 'local/practices/*.md',
+                         'decisions/*.md')
+# The entry's OWN date: the first YYYY-MM-DD inside its leading bold run.
+# Deliberately not "the first date anywhere in the entry" -- that is the bug
+# this practice exists for. very-deep-check's own history had an entry whose
+# body ran on into a clause carrying a later date than the change the entry
+# recorded, and keying on it filed that entry a day late.
+DATED_LIST_LEAD_RE = re.compile(r'^-\s+\*\*(?P<lead>.+?)\*\*', re.S)
+DATED_LIST_DATE_RE = re.compile(r'\b(\d{4}-\d{2}-\d{2})\b')
+
+
+def _dated_list_blocks(text):
+    """-> [(mark_line_no, [(line_no, entry_text), ...]), ...]
+
+    An entry is a `- ` bullet plus any continuation lines under it, so a
+    wrapped entry is one entry rather than several. The block ends at the
+    first line that is neither.
+    """
+    lines = text.splitlines()
+    blocks = []
+    fenced = False
+    for i, line in enumerate(lines):
+        if line.lstrip().startswith('```'):
+            fenced = not fenced
+            continue
+        # Column 0 and outside a fence, both deliberately. A mark shown as an
+        # EXAMPLE sits in an indented or fenced code block, and the first run
+        # of this check flagged its own practice file's example as a mark with
+        # no list under it (practice: checkable-gets-checked -- a check that
+        # fires on correct work teaches the next session to ignore the gate).
+        if fenced or line != DATED_LIST_MARK:
+            continue
+        entries, j = [], i + 1
+        while j < len(lines) and not lines[j].strip():
+            j += 1
+        while j < len(lines):
+            s = lines[j]
+            if s.startswith('- '):
+                entries.append([j + 1, s])
+            elif entries and (s.startswith(('  ', '\t')) or not s.strip()):
+                entries[-1][1] += '\n' + s
+            else:
+                break
+            j += 1
+        blocks.append((i + 1, [(n, e) for n, e in entries]))
+    return blocks
+
+
+def _dated_list_entry_date(entry):
+    """-> the entry's own date, or None. Reads the leading bold run only."""
+    m = DATED_LIST_LEAD_RE.match(entry.strip())
+    if not m:
+        return None
+    d = DATED_LIST_DATE_RE.search(m.group('lead'))
+    return d.group(1) if d else None
+
+
+@check('dated-list-runs-forward', 'tree',
+       'every list marked `<!--dated-list-->` runs oldest first, and no '
+       'entry after the first dated one is missing a date of its own',
+       'whether a date is the RIGHT one, and every list nobody marked. '
+       'Nothing mechanical can read the conversation an entry records, so '
+       'an entry dated plausibly and wrongly passes cleanly; and the mark '
+       'is opt-in, so a dated list somebody forgot to mark is not checked '
+       'at all. That is the deliberate cost of never firing on a list that '
+       'is correctly ordered by something other than date.',
+       # Reads practice files, which a source set has and every consumer of
+       # it receives.
+       binds_publishers=True)
+def _dated_list_runs_forward(ctx):
+    files = []
+    for glob in DATED_LIST_FILE_GLOBS:
+        for path in sorted(ROOT.glob(glob)):
+            rel = path.relative_to(ROOT).as_posix()
+            if rel not in files and not _foreign_practice(rel):
+                files.append(rel)
+    if not files:
+        raise NotApplicable('this repository has no practice files or '
+                            'decision records to check')
+
+    out, marked = [], 0
+    for rel in sorted(files):
+        try:
+            text = (ROOT / rel).read_text(encoding='utf-8')
+        except (UnicodeDecodeError, OSError) as e:
+            out.append(Finding(rel, f'could not be read ({e})'))
+            continue
+        for mark_line, entries in _dated_list_blocks(text):
+            marked += 1
+            if not entries:
+                out.append(Finding(f'{rel}:{mark_line}',
+                                   'carries a `<!--dated-list-->` mark with '
+                                   'no list under it'))
+                continue
+            prev_date = prev_line = None
+            for line_no, entry in entries:
+                date = _dated_list_entry_date(entry)
+                if date is None:
+                    # Legal only before the first dated entry -- the state a
+                    # list starts in, where there is no date to give.
+                    if prev_date is not None:
+                        out.append(Finding(
+                            f'{rel}:{line_no}',
+                            'dated-list entry carries no date of its own. An '
+                            'entry dated by pointing at another one ("same '
+                            'day", "in the same turn") is unreadable alone '
+                            'and repoints when anything moves -- give it a '
+                            'real date'))
+                    continue
+                if prev_date is not None and date < prev_date:
+                    out.append(Finding(
+                        f'{rel}:{line_no}',
+                        f'dated list runs backwards here: {date} follows '
+                        f'{prev_date} (line {prev_line}). A new entry is '
+                        f'appended at the BOTTOM'))
+                prev_date, prev_line = date, line_no
+    if not marked:
+        raise NotApplicable('no `<!--dated-list-->` mark in this tree, so no '
+                            'list has opted in to being checked')
+    return sorted(out, key=lambda f: f.where)
 
 
 # --------------------------------------------------------------------------
