@@ -71,8 +71,8 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   stale after a practice changes.
 - **Changes to this set need an approver's yes** — see
   [`approvers.json`](approvers.json) and the README's "Approvers" section.
-- **Run `python3 tools/precedent_check.py` before pushing — it is the only
-  check there is here now.** What matters is `0 violated`; the large
+- **Run `python3 tools/precedent_check.py --full-sweep` before pushing — it
+  is the only check there is here now.** What matters is `0 violated`; the large
   skipped count is normal here and is not a failure — those checks belong
   to levels this set does not resolve. This repo carried a
   `precedent-check.yml` workflow from 2026-09-14 and a `leak-gate.yml` from
@@ -82,6 +82,12 @@ Before starting work of a kind named in the occasion index above, run `python3 t
   running two workflows each were 127 of 143 billed minutes in one day.
   Nothing runs after the push, on any branch: the check runs before it, or
   it does not run.
+  **Run it with `--full-sweep`; the bare command is a trap.** Bare, it runs
+  only the checks this diff routes to plus a one-in-ten rotation, and a
+  check whose practice applies to `**` -- most of this set's -- is reached
+  only by the rotation. That is how two links to a private repo, added
+  2026-09-23, sat on `main` past a clean bare run until a sweep found them
+  on 2026-09-24. The sweep takes about five seconds.
 - **The hand-written half of this file describes the MECHANISM, never the
   INVENTORY.** A rule goes in a practice file, where the loader dedupes it,
   precedence ranks it and `supersedes` retires it. Written here as prose, it
