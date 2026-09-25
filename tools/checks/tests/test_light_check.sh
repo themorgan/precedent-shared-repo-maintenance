@@ -57,18 +57,40 @@ run_case() {
   return $status
 }
 
+# The clean cases assert on what they PLANTED, never on the exit code of
+# the whole tree. This test ships into every repo that installs this set,
+# and the scratch is a clone of THAT repo, so "exit 0" asks about content no
+# fixture here created. E2 is where that bit (2026-09-25): its stubbed
+# resolver names only its own mirror, so in a repo that also vendors
+# process/upstream/ the stub stopped exempting that tree, the check reported
+# the links inside it, and E2 failed with nothing wrong in the check. The
+# host tree's own cleanliness is still asserted -- once, by the last line of
+# this file, where it is the actual question.
+#
+# A non-zero exit is accepted only with the check's own VIOLATION header,
+# so a crash can never pass as "the planted path was not reported".
 run_clean_case() {
   local label="$1"
   local mutate="$2"
+  local planted="$3"
   local scratch
   scratch="$(mktemp -d)"
   git clone -q "$ROOT" "$scratch"
   (
     cd "$scratch"
     eval "$mutate"
-    if ! python3 tools/checks/check_light_check.py > /dev/null; then
-      echo "FAIL: check_light_check.py fired on a non-violation: $label (false positive)" >&2
-      exit 1
+    local out
+    if ! out="$(python3 tools/checks/check_light_check.py 2>&1)"; then
+      if ! printf '%s\n' "$out" | head -n 1 | grep -q '^VIOLATION: '; then
+        echo "FAIL: check_light_check.py did not run cleanly on: $label" >&2
+        printf '%s\n' "$out" >&2
+        exit 1
+      fi
+      if printf '%s' "$out" | grep -qF "$planted"; then
+        echo "FAIL: check_light_check.py fired on a non-violation: $label (false positive)" >&2
+        printf '%s\n' "$out" | grep -F "$planted" >&2
+        exit 1
+      fi
     fi
     echo "ok: stays clean on planted non-violation ($label)"
   )
@@ -150,7 +172,8 @@ run_clean_case "E1: process/upstream/ broken link, exempt with no MANIFEST.json 
 mkdir -p process/upstream/practices
 echo "[missing](tools/doc_lint.py)" > process/upstream/practices/planted.md
 git add process/upstream/practices/planted.md
-'
+' \
+  "process/upstream/practices/planted.md"
 
 # E2 -- THE SECTION 0 CASE, which is the whole reason the exemption stopped
 # being a hardcoded "process/upstream/" on 2026-09-10. This scratch has no
@@ -184,7 +207,9 @@ PYEOF
 git add -A
 '
 
-run_clean_case "E2: section 0 mirror at a precedent.json-declared path, no manifest, no process/upstream/" "$S0_SETUP"
+run_clean_case "E2: section 0 mirror at a precedent.json-declared path, no manifest, no process/upstream/" \
+  "$S0_SETUP" \
+  "precedent/universal/practices/planted.md"
 
 # ...and the same broken link OUTSIDE the mirror must still be reported, or
 # E2 would be passing by having switched the link check off altogether.
@@ -211,7 +236,8 @@ git add MANIFEST.json practices/planted-materialized.md
 run_clean_case "a link shown inside inline code is an example, not a link" '
 echo "Write \`[the Glossary](GLOSSARY-missing.md)\`, not the filename." > planted-code-span.md
 git add planted-code-span.md
-'
+' \
+  "planted-code-span.md"
 
 run_case_expecting "code-span control: the same link outside code still fires" \
   'echo "Write [the Glossary](GLOSSARY-missing.md) here." > planted-code-span.md
