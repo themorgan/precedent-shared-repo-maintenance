@@ -208,7 +208,7 @@ Morgan, 2026-09-10, verbatim:
 > -- I give my approval now
 
 Recorded as `assented` rather than `decided`, per
-[`decision-strength`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/decision-strength.md):
+[`decision-strength`](https://github.com/alex137/BestPractice/blob/staging/practices/decision-strength.md):
 he approved work this session proposed rather than choosing it himself, and
 that practice is explicit that the session writing the mark is the
 interested party — "write `decided` only if you can quote them choosing it

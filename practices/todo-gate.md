@@ -20,7 +20,7 @@ approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set
 Before pushing, check the thread's discussion against the repo's own backlog document (`TODO.md` or equivalent): add any idea that came up but never got a line, remove or check off anything this branch just implemented.
 
 ## Detail
-**How this differs from the universal [`second-pass-capture`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/second-pass-capture.md)**, whose clause (d) also asks whether open decisions were queued in the TODO (stated 2026-09-07, after a redundancy audit across all four sources found the two overlapping and could not tell from either file whether that was deliberate):
+**How this differs from the universal [`second-pass-capture`](https://github.com/alex137/BestPractice/blob/staging/practices/second-pass-capture.md)**, whose clause (d) also asks whether open decisions were queued in the TODO (stated 2026-09-07, after a redundancy audit across all four sources found the two overlapping and could not tell from either file whether that was deliberate):
 
 - **It fires at a different moment.** `second-pass-capture` runs once, after a substantial work-product, before the merge-time capture gate. This one runs before **every push**, including pushes that produced no work-product worth a second pass -- a one-line fix, a doc correction, a merge. That is where a backlog drifts.
 - **It reconciles in both directions.** `second-pass-capture` clause (d) only asks whether things got *queued*. This one also requires removing or checking off what the branch just **implemented**. A backlog that only ever grows is the more common of the two failures and the one nobody notices, because nothing about it looks wrong.

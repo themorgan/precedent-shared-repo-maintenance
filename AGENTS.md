@@ -1,7 +1,7 @@
 # Repository notes for agents
 
 This repo IS `precedent-shared-repo-maintenance` — the **shared** source for
-[Precedent](https://github.com/alex137/BestPractice/tree/precedent-beta-v01)'s
+[Precedent](https://github.com/alex137/BestPractice/tree/staging)'s
 maintaining team (Morgan and Alex). See [README.md](README.md) for what's
 here and how the practices in [practices/](practices/) got here.
 
@@ -61,7 +61,7 @@ Before starting work of a kind named in the occasion index above, run `python3 t
 ## Working in this repo
 
 - **Practices are in [practices/](practices/)**, one file per practice, in
-  the format [`spec/PRACTICE_FORMAT.md`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/PRACTICE_FORMAT.md)
+  the format [`spec/PRACTICE_FORMAT.md`](https://github.com/alex137/BestPractice/blob/staging/spec/PRACTICE_FORMAT.md)
   documents.
 - **The loader block above is generated** — regenerate with
   `python3 tools/build_views.py`; hand-editing it is pointless, the next

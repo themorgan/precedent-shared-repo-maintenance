@@ -2,7 +2,7 @@
 
 **This file is output for a later BestPractice-rooted session**, not a
 practice and not a decision. It closes the measurement half of BestPractice's
-TODO item [`unreachable-practices`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/TODO.md#unreachable-practices),
+TODO item [`unreachable-practices`](https://github.com/alex137/BestPractice/blob/staging/TODO.md#unreachable-practices),
 which was blocked on a session that could actually read the private practice
 text. This session could: rooted in this set, with `precedent-individual` and
 `precedent-team-tms` alongside it and a public clone of BestPractice as a
@@ -80,12 +80,12 @@ exemption would make an unfinished thing look settled — the specific failure
 named a private set's practice files. Both halves of that are now out of
 date. The practice was re-levelled from individual to universal on
 2026-09-11 — it is
-[`practices/practice-links-travel.md`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/practice-links-travel.md)
+[`practices/practice-links-travel.md`](https://github.com/alex137/BestPractice/blob/staging/practices/practice-links-travel.md)
 there, `status: active`, and the text in force describes *kinds* of
 repository rather than naming any one of them — and the individual set's
 copy is `status: deduplicated`, `in_force_at: practice-links-travel`, with
 its check script and that script's own test gone (BestPractice's TODO item
-[`deduplicate-practice-links-travel`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/TODO.md#deduplicate-practice-links-travel),
+[`deduplicate-practice-links-travel`](https://github.com/alex137/BestPractice/blob/staging/TODO.md#deduplicate-practice-links-travel),
 DONE 2026-09-11). So it binds BestPractice as a universal practice, and
 BestPractice complies: `precedent_check.py --only practice-links-travel`,
 run there, reports 1 passed, 0 violated, 0 skipped — a real pass, not a

@@ -31,15 +31,15 @@ The named default exists only so the question does not have to be re-decided per
 
 ## Story
 Retired on 2026-09-06 as a duplicate. BestPractice landed
-[`headline-capitalization`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/headline-capitalization.md)
+[`headline-capitalization`](https://github.com/alex137/BestPractice/blob/staging/practices/headline-capitalization.md)
 at the universal level the same day, with the schema itself defined once in
-[tools/title_case.py](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/tools/title_case.py)
+[tools/title_case.py](https://github.com/alex137/BestPractice/blob/staging/tools/title_case.py)
 rather than restated in prose. A repo consuming both this team source and
 the universal source would otherwise carry two practices asking for the same
 NY Times headline capitalization, which is exactly what
 [`no-duplication`](no-duplication.md) says to drop. Retired here rather than
 moved, per
-[spec/MOVING_PRACTICES.md](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/spec/MOVING_PRACTICES.md)'s
+[spec/MOVING_PRACTICES.md](https://github.com/alex137/BestPractice/blob/staging/spec/MOVING_PRACTICES.md)'s
 step 2 -- the universal practice had already landed, so there was no
 *timing* gap: no window in which neither rule was in force. That is the
 only sense in which nothing was lost, and it is a narrower claim than it
@@ -56,7 +56,7 @@ happened, not what a session believed at lunchtime):
 
 - **Heading-level consistency** -- "sibling headers at the same rank also
   share the same heading level." Rebuilt at the universal level as
-  [`heading-outline`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/heading-outline.md),
+  [`heading-outline`](https://github.com/alex137/BestPractice/blob/staging/practices/heading-outline.md),
   scoped to `**/*.md` and mechanically checked, but narrowed to the half
   that is decidable: no heading is more than one level deeper than the one
   before it. "Siblings share a rank" was dropped on purpose -- a section
@@ -85,9 +85,9 @@ per-repo alternative -- a tightening, not an omission.
 ## Install
 Nothing to install: this practice is retired. Its rule is carried at the
 universal level by
-[`headline-capitalization`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/headline-capitalization.md),
+[`headline-capitalization`](https://github.com/alex137/BestPractice/blob/staging/practices/headline-capitalization.md),
 whose own Install section describes running
-[tools/title_case.py](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/tools/title_case.py).
+[tools/title_case.py](https://github.com/alex137/BestPractice/blob/staging/tools/title_case.py).
 
 While active, this practice was checked mechanically but only half of it, by
 a `check_header_caps.py` (scope `tree`, over tracked markdown files) that
