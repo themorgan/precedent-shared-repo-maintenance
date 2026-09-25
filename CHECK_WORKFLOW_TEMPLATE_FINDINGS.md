@@ -3,7 +3,7 @@
 **This file is output for a later BestPractice-rooted session**, not a
 practice and not a decision. It records four places where the copy of
 `precedent-check.yml` now installed in this set is stronger than
-[`templates/github-actions/precedent-check.yml.template`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/templates/github-actions/precedent-check.yml.template)
+[`templates/github-actions/precedent-check.yml.template`](https://github.com/alex137/BestPractice/blob/staging/templates/github-actions/precedent-check.yml.template)
 upstream (added there by BestPractice PR #278), so the template can learn
 them instead of overwriting them at the next bootstrap.
 

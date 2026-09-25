@@ -81,7 +81,7 @@ assumption gets baked in without anyone deciding to bake it in.
 ## Story
 Coined 2026-09-16 in `alex137/BestPractice`, mid-implementation of that
 repo's own Provider Portability plan's Phase 3, as
-[`local/practices/vendor-neutral-by-default`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/local/practices/vendor-neutral-by-default.md)
+[`local/practices/vendor-neutral-by-default`](https://github.com/alex137/BestPractice/blob/staging/local/practices/vendor-neutral-by-default.md)
 — filed repo-local there, since its own text described only itself:
 "this repo ships out whole." A session drafting that phase had held back
 from editing a file every dependent repo vendors, out of caution that
@@ -108,11 +108,11 @@ a citation to BestPractice's own text.
 
 ## Install
 **No mechanical check, and this is a considered gap, not an unexamined
-one** (per [`checkable-gets-checked`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/checkable-gets-checked.md)).
+one** (per [`checkable-gets-checked`](https://github.com/alex137/BestPractice/blob/staging/practices/checkable-gets-checked.md)).
 "Does this code assume Claude Code" is a judgment call over arbitrary new
 code, not a fixed pattern a script can grep for reliably — the concrete
 tool names that make a dependency real
-([`session-text`](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/session-text.md)'s
+([`session-text`](https://github.com/alex137/BestPractice/blob/staging/practices/session-text.md)'s
 own inventory: `ListAgents`, `SendMessage`, `create_trigger`,
 `fire_trigger`, `add_repo`, plus Claude Code's specific hook JSON fields
 and its default bot identity) drift over time and a stale list gives

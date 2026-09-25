@@ -1,5 +1,5 @@
 <!-- practices/pr-template-honest-gates.md (BestPractice/Precedent, universal --
-     https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/pr-template-honest-gates.md):
+     https://github.com/alex137/BestPractice/blob/staging/practices/pr-template-honest-gates.md):
      fill this in from the actual diff, every time. An unchecked gate, or a
      "not applicable" note, is a normal and expected outcome of a real PR --
      never check a box, or write N/A across every field, just to make the

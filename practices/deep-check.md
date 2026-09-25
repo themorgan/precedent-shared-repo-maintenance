@@ -37,7 +37,7 @@ migration.
 
 **Retired 2026-09-05, un-retired 2026-09-06.** The retirement rested on a
 single premise: that BestPractice's universal
-[very-deep-check](https://github.com/alex137/BestPractice/blob/precedent-beta-v01/practices/very-deep-check.md)
+[very-deep-check](https://github.com/alex137/BestPractice/blob/staging/practices/very-deep-check.md)
 was this practice under another name. That premise came from
 `very-deep-check`'s own Story, which describes this practice as
 "generalized ... but otherwise the same enumeration as here," and it is
