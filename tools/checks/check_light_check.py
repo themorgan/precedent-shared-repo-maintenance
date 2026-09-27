@@ -71,6 +71,14 @@ MD_LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
 # write a link, and every repo that materialized it failed this check on
 # example text, with nothing in its own tree to fix.
 CODE_SPAN_RE = re.compile(r"(`+)(?:(?!\1).)+?\1")
+# A fenced code block shows markdown the same way, over whole lines, so it is
+# skipped entirely. Added 2026-09-27: a consuming repo's skill file
+# shows a `[title](url)` output template inside a four-backtick fence, and the
+# code-span blanking above never saw it -- a span cannot cross lines. Fences
+# follow CommonMark: three or more backticks or tildes, indented at most three
+# spaces; the block closes on a run of the SAME character at least as long,
+# with nothing after it. An unclosed fence runs to the end of the file.
+FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 
 
 def rule_text() -> str:
@@ -222,7 +230,20 @@ def check_md_links(rel: str, text: str, findings: list[str]) -> None:
     if _link_check_exempt(rel):
         return
     base = (ROOT / rel).parent
+    fence = None
     for lineno, line in enumerate(text.splitlines(), start=1):
+        m = FENCE_RE.match(line)
+        if fence is None:
+            # A backtick fence's info string may not itself hold a backtick,
+            # or the line is an inline code span, not a fence.
+            if m and not (m.group(1)[0] == "`" and "`" in m.group(2)):
+                fence = m.group(1)
+                continue
+        else:
+            if (m and m.group(1)[0] == fence[0]
+                    and len(m.group(1)) >= len(fence) and not m.group(2).strip()):
+                fence = None
+            continue
         for target in MD_LINK_RE.findall(CODE_SPAN_RE.sub("", line)):
             target = target.split(" ", 1)[0].strip()  # drop an optional "title"
             if not target or target.startswith(("http://", "https://", "mailto:", "#")):
