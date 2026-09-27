@@ -3,7 +3,8 @@
 #   A. an unresolved conflict marker;
 #   B. invalid frontmatter YAML;
 #   C. a secret-shaped string (AWS-style key ID);
-#   D. a broken relative markdown link.
+#   D. a broken relative markdown link -- but not one shown inside inline
+#      code or a fenced code block, which is an example, not a link.
 # Plus the derived-tree exemption, which is now ONE prefix, not two
 # (real incident: this check had no exemption at all, and its own
 # firing test failed against a real installing repo -- 124 planted-looking
@@ -243,6 +244,44 @@ run_case_expecting "code-span control: the same link outside code still fires" \
   'echo "Write [the Glossary](GLOSSARY-missing.md) here." > planted-code-span.md
 git add planted-code-span.md' \
   "planted-code-span.md:1: broken relative link to 'GLOSSARY-missing.md'"
+
+# A fenced code block is the multi-line form of the same thing (2026-09-27):
+# a consuming repo's skill file shows a [title](url) template inside
+# a FOUR-backtick fence that itself contains a three-backtick one, and this
+# check reported it as a broken link. The fixture is that shape, plus a tilde
+# fence. Written from Python, because a backtick inside an eval'd heredoc is
+# command substitution.
+FENCE_SETUP='
+python3 - <<PYEOF
+t = chr(96)
+open("planted-fence.md", "w").write(
+    "Reply with:\n\n"
+    + t * 4 + "markdown\n"
+    + "- [title](url-missing.md)\n"
+    + t * 3 + "\n"
+    + "[inner](inner-missing.md)\n"
+    + t * 3 + "\n"
+    + "[still inside](four-missing.md)\n"
+    + t * 4 + "\n\n"
+    + "~~~\n[tilde](tilde-missing.md)\n~~~\n"
+)
+PYEOF
+git add planted-fence.md
+'
+
+run_clean_case "a link shown inside a fenced code block is an example, not a link" \
+  "$FENCE_SETUP" \
+  "planted-fence.md"
+
+# ...and a fence must CLOSE: the same link after it still fires, or the case
+# above would pass by skipping the rest of the file.
+run_case_expecting "fence control: a broken link after the fence closes still fires" \
+  "$FENCE_SETUP"'
+echo "[after](after-missing.md)" >> planted-fence.md
+git add planted-fence.md
+' \
+  "planted-fence.md:14: broken relative link to 'after-missing.md'" \
+  "url-missing.md"
 
 if ! python3 tools/checks/check_light_check.py > /dev/null; then
   echo "FAIL: check_light_check.py is not clean on the real, current repo" >&2
