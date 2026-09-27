@@ -112,7 +112,7 @@ one** (per [`checkable-gets-checked`](https://github.com/alex137/BestPractice/bl
 "Does this code assume Claude Code" is a judgment call over arbitrary new
 code, not a fixed pattern a script can grep for reliably — the concrete
 tool names that make a dependency real
-([`session-text`](https://github.com/alex137/BestPractice/blob/staging/practices/session-text.md)'s
+(the retired `session-text` practice's
 own inventory: `ListAgents`, `SendMessage`, `create_trigger`,
 `fire_trigger`, `add_repo`, plus Claude Code's specific hook JSON fields
 and its default bot identity) drift over time and a stale list gives
