@@ -25,7 +25,7 @@ If I ask you for something that another window of mine is already working on, **
 Here's something else you can do: if I ask you to do something that is being worked on in another window, you can tell me, 'Let's not do this, and instead you should continue in the other window'
 ```
 
-**"Another window of mine" includes the ones I never opened.** This was written for tabs I opened by hand, and that is no longer the only way they appear: a session spawns a session, which spawns another, and by 2026-09-13 four sessions were live against one repository with only a `parent_session_id` chain connecting them to anything I did. A window I did not open is still my window and still collides, so it counts here. **And the window you are about to CREATE counts too** -- see `handoff-only-when-blocked`, which puts the check before the spawn, because a duplicate nobody has started yet is the one collision that is free to avoid.
+**"Another window of mine" includes the ones I never opened.** This was written for tabs I opened by hand, and that is no longer the only way they appear: a session spawns a session, which spawns another, and by 2026-09-13 four sessions were live against one repository with only a `parent_session_id` chain connecting them to anything I did. A window I did not open is still my window and still collides, so it counts here. **And the window you are about to CREATE counts too** -- check for a collision before spawning or handing off to a new session, because a duplicate nobody has started yet is the one collision that is free to avoid.
 
 **Noticing is not complying.** Flagging the collision in a sentence and then doing the work anyway is the failure this rule names, not a careful version of it. The deliverable is the decline.
 

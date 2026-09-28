@@ -2,6 +2,15 @@
 
 # precedent-shared-repo-maintenance
 
+A shared practice set for [Precedent](https://github.com/alex137/BestPractice/tree/staging)
+about **running a repository that vendors a practice layer**. A project
+declares it in its `precedent.json` `sources`, and it is cloned beside the
+project, never copied into it. Where it applies it is the **strongest** of
+the four sources: shared beats repo-local beats individual beats universal
+by default
+([PRACTICE_ENGINE_PLAN.md](https://github.com/alex137/BestPractice/blob/staging/spec/PRACTICE_ENGINE_PLAN.md#precedence-and-the-one-case-precedence-alone-does-not-decide),
+"Precedence, and the One Case Precedence Alone Does Not Decide").
+
 **Renamed 2026-09-19 (Buenos Aires), from `precedent-team-repo-maintenance`**
 — the `team` level itself was renamed `shared`, and lost its fixed
 `precedent-team-<slug>` naming requirement in the same change; see
@@ -21,14 +30,6 @@ otherwise. **The lineage lives here rather than in each document that moved**
 references across BestPractice, `precedent-individual` and this set were
 rewritten to the new name in the same change, so a reader who only knows the
 old one finds it in this paragraph and nowhere else.
-
-A shared practice set for [Precedent](https://github.com/alex137/BestPractice/tree/staging)
-— one small group's working conventions, vendored into a project repo the
-same way universal practices are, and (as of the 2026-09-03 precedence
-reorder) the **strongest** of the four sources: shared beats repo-local beats
-individual beats universal by default
-([PRACTICE_ENGINE_PLAN.md](https://github.com/alex137/BestPractice/blob/staging/spec/PRACTICE_ENGINE_PLAN.md#precedence-and-the-one-case-precedence-alone-does-not-decide),
-"Precedence, and the One Case Precedence Alone Does Not Decide").
 
 ## What's here
 
