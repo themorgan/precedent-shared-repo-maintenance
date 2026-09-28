@@ -27,6 +27,11 @@
 #      precedent_materialize.py repoints them now, so a broken link there
 #      is a real finding again: a stale sync, or a rewrite that failed.
 #      Case F plants exactly that and requires it to fire.
+#   G. a directory the audited repo's own tools/doc_lint.py declares
+#      link-exempt (LINK_CHECK_EXEMPT_DIRS) or path-exempt
+#      (ANCHOR_CHECKED_EXEMPT_DIRS) is exempt here too, with a control;
+#   H. an install placeholder target (`<upstream-docs>/...`) is not a
+#      broken link, with a control.
 # Then: the real, current, unplanted repo must stay clean.
 #
 # NOTE, because it costs an hour every time: run_case does `git clone` of
@@ -370,6 +375,62 @@ git add planted-fence.md
 ' \
   "planted-fence.md:14: broken relative link to 'after-missing.md'" \
   "url-missing.md"
+
+# G. The audited repo's own link-exempt directories (2026-09-28). The
+# engine's repository declares evals/ and deck/ exempt in its
+# tools/doc_lint.py (LINK_CHECK_EXEMPT_DIRS), and templates/ path-exempt
+# (ANCHOR_CHECKED_EXEMPT_DIRS); this check reported dozens of links there
+# that doc_lint.py itself, in the same repo, called fine. The fixture writes
+# its own doc_lint.py naming two planted directories, so whatever the host's
+# copy declares cannot decide the outcome; the control is the same link in a
+# directory neither list names.
+DOC_LINT_EXEMPT_SETUP='
+mkdir -p tools planted-exempt planted-anchor-exempt planted-not-exempt
+cat > tools/doc_lint.py <<PYEOF
+LINK_CHECK_EXEMPT_DIRS = ("planted-exempt/",)
+ANCHOR_CHECKED_EXEMPT_DIRS = ("planted-anchor-exempt/",)
+PYEOF
+echo "[missing](does/not/exist.md)" > planted-exempt/page.md
+echo "[missing](does/not/exist.md)" > planted-anchor-exempt/page.md
+git add -A
+'
+
+run_clean_case "G: a directory the audited repo doc_lint.py declares link-exempt" \
+  "$DOC_LINT_EXEMPT_SETUP" \
+  "planted-exempt/page.md"
+
+run_clean_case "G: a directory the audited repo doc_lint.py declares path-exempt" \
+  "$DOC_LINT_EXEMPT_SETUP" \
+  "planted-anchor-exempt/page.md"
+
+run_case_expecting "G control: the same link in a directory neither list names still fires" \
+  "$DOC_LINT_EXEMPT_SETUP"'
+echo "[missing](does/not/exist.md)" > planted-not-exempt/page.md
+git add -A
+' \
+  "planted-not-exempt/page.md:1: broken relative link to 'does/not/exist.md'" \
+  "planted-exempt/page.md"
+
+# H. An install placeholder is not a path (2026-09-28): the engine's own
+# GETTING_STARTED template links `<upstream-docs>/documentation/...`, filled
+# in when the template is instantiated. The control is an ordinary broken
+# link on the next line of the same file, which must still fire.
+PLACEHOLDER_SETUP='
+printf "%s\n" "[setup](<upstream-docs>/documentation/SETUP.md)" > planted-placeholder.md
+git add planted-placeholder.md
+'
+
+run_clean_case "H: a <placeholder> link target is an install blank, not a broken link" \
+  "$PLACEHOLDER_SETUP" \
+  "planted-placeholder.md"
+
+run_case_expecting "H control: an ordinary broken link beside it still fires" \
+  "$PLACEHOLDER_SETUP"'
+echo "[missing](upstream-docs/documentation/SETUP.md)" >> planted-placeholder.md
+git add planted-placeholder.md
+' \
+  "planted-placeholder.md:2: broken relative link to 'upstream-docs/documentation/SETUP.md'" \
+  "planted-placeholder.md:1:"
 
 if ! python3 tools/checks/check_light_check.py > /dev/null; then
   echo "FAIL: check_light_check.py is not clean on the real, current repo" >&2
