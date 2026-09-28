@@ -28,6 +28,14 @@ finding there means now.
 
 Exit 0 and print nothing when clean. Exit 1 and print the practice's own
 Rule text (never a paraphrase) plus the specific finding(s) on a violation.
+
+PyYAML is optional, as it is in the engine's frontmatter_yaml.py. A
+consumer's GitHub light check runs on a bare runner with no PyYAML, and a
+hard `import yaml` crashed this whole script there (holiday-sync's pull
+request into main, 2026-09-28), losing the conflict-marker, secret, JSON
+and link checks with it. Without PyYAML only the two YAML-syntax checks
+stand aside, and say so on stderr; the local push check, where PyYAML is
+installed, still runs them.
 """
 import json
 import os
@@ -36,7 +44,10 @@ import re
 import subprocess
 import sys
 
-import yaml
+try:
+    import yaml
+except ImportError:
+    yaml = None
 
 # TWO different questions, which used to share one name -- and that is exactly
 # how a practice file went missing. SOURCE_ROOT is the practice set this script
@@ -123,7 +134,7 @@ def check_secrets(rel: str, text: str, findings: list[str]) -> None:
 
 def check_frontmatter_yaml(rel: str, text: str, findings: list[str]) -> None:
     m = FRONTMATTER_RE.match(text)
-    if not m:
+    if not m or yaml is None:
         return
     try:
         yaml.safe_load(m.group(1))
@@ -139,6 +150,8 @@ def check_json(rel: str, text: str, findings: list[str]) -> None:
 
 
 def check_yaml_file(rel: str, text: str, findings: list[str]) -> None:
+    if yaml is None:
+        return
     try:
         yaml.safe_load(text)
     except yaml.YAMLError as e:
@@ -339,6 +352,10 @@ def find_violations() -> list[str]:
 
 
 if __name__ == "__main__":
+    if yaml is None:
+        print("light-check: PyYAML is not installed, so YAML syntax was not "
+              "checked here (pip install pyyaml); everything else was.",
+              file=sys.stderr)
     findings = find_violations()
     if findings:
         print(f"VIOLATION: {PRACTICE_FILE.stem}")
