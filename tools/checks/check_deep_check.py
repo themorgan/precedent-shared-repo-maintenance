@@ -59,6 +59,11 @@ PRACTICE_FILE = SOURCE_ROOT / "practices" / "deep-check.md"
 CHECKS_DIR = ROOT / "tools" / "checks"
 TESTS_DIR = CHECKS_DIR / "tests"
 RUN_ALL = TESTS_DIR / "run_all.sh"
+# The two lines a finding tells the author to write -- the same two above.
+SOURCE_ROOT_LINES = (
+    '`SOURCE_ROOT = pathlib.Path(__file__).resolve().parent.parent.parent` '
+    'and `ROOT = pathlib.Path(os.environ.get("PRECEDENT_CHECK_ROOT") or '
+    'SOURCE_ROOT)`')
 
 
 def rule_text() -> str:
@@ -101,7 +106,10 @@ def find_violations() -> list[str]:
             findings.append(
                 f"tools/checks/{slug}.py has no tests/test_{name}.sh -- "
                 f"run_all.sh's test_*.sh glob will never exercise it, so "
-                f"'every audit script, run together' silently skips it")
+                f"'every audit script, run together' silently skips it. Add "
+                f"tools/checks/tests/test_{name}.sh beside the check where it "
+                f"is written (a repo-local check: local/tools/checks/tests/), "
+                f"invoking {slug}.py by name")
             continue
         test_text = test_path.read_text(encoding="utf-8")
         if f"{slug}.py" not in test_text:
@@ -148,7 +156,9 @@ def find_violations() -> list[str]:
                 f"tools/checks/{slug}.py does not define SOURCE_ROOT -- it "
                 f"cannot tell the repo it audits apart from the set its own "
                 f"rule text lives in, so its rule text goes missing the "
-                f"moment it runs anywhere but in place")
+                f"moment it runs anywhere but in place. Define, at column 0: "
+                f"{SOURCE_ROOT_LINES}, and resolve PRACTICE_FILE against "
+                f"SOURCE_ROOT")
             continue
         if ASSIGNS_PRACTICE_TO_ROOT.search(text):
             findings.append(
@@ -159,7 +169,8 @@ def find_violations() -> list[str]:
             findings.append(
                 f"tools/checks/{slug}.py ignores PRECEDENT_CHECK_ROOT -- a "
                 f"repo that declares this source without materializing it "
-                f"has no way to point the check at itself")
+                f"has no way to point the check at itself. Define, at "
+                f"column 0: {SOURCE_ROOT_LINES}")
 
     return findings
 
