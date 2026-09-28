@@ -17,7 +17,9 @@ apply to this repo's own tree and isn't implemented here; a repo that
 vendors this set would extend the check with that piece itself.
 
 The broken-relative-link check skips whatever trees this repo MIRRORS
-from elsewhere, and nothing else. Which trees those are comes from
+from elsewhere, the directories the audited repo's own tools/doc_lint.py
+declares link-exempt (see _doc_lint_exempt_dirs), and a target that is an
+install placeholder (`<...>`), and nothing else. Which mirrored trees those are comes from
 precedent_resolve.mirrored_prefixes(), not from a hardcoded path: it was
 "process/upstream/" until 2026-09-10, which is only INSTALL.md section 1's
 layout, so in a section 0 install the exclusion silently covered nothing
@@ -236,7 +238,66 @@ def _in_mirror(rel: str, prefixes: tuple) -> bool:
 # knowing. If this starts firing across the whole tree, the fix is
 # `python3 tools/precedent_sync_views.py`, not a new exemption.
 def _link_check_exempt(rel: str) -> bool:
-    return _in_mirror(rel, _mirrored_prefixes())
+    return _in_mirror(rel, _mirrored_prefixes()) \
+        or rel.startswith(_doc_lint_exempt_dirs())
+
+
+# The directories the audited repo's OWN link check has already declared
+# unresolvable on purpose, read from its tools/doc_lint.py -- guarded the same
+# way _mirrored_prefixes() is, and for the same reason: the list is the repo's
+# answer, never re-derived here, and a tree with no doc_lint.py to ask simply
+# has no such directories.
+#
+# WHY (2026-09-28). The engine's own repository declares evals/ and deck/
+# exempt (an eval fixture is a frozen record of what a model was shown; a
+# slide's asset paths resolve from the deck root) and templates/ path-exempt
+# (a template's links name files in the repo it is instantiated into). This
+# check did not know, and reported every one of those links -- dozens, none
+# fixable without rewriting evidence -- in the engine's own very deep check,
+# where doc_lint.py itself was clean. Two gates disagreeing about the same
+# link in the same repo is the finding; one of them has to be the authority,
+# and it is the one the repo wrote.
+#
+# LINK_CHECK_EXEMPT_DIRS is wholly exempt there. ANCHOR_CHECKED_EXEMPT_DIRS is
+# exempt for the PATH half only -- doc_lint.py still checks a fragment when
+# the target resolves -- and path existence is all this check tests, so both
+# lists mean the same thing here.
+_DOC_LINT_EXEMPT_NAMES = ("LINK_CHECK_EXEMPT_DIRS", "ANCHOR_CHECKED_EXEMPT_DIRS")
+_doc_lint_exempt_cache: list = []
+
+
+def _doc_lint_exempt_dirs() -> tuple:
+    if _doc_lint_exempt_cache:
+        return _doc_lint_exempt_cache[0]
+    dirs: tuple = ()
+    source = ROOT / "tools" / "doc_lint.py"
+    if source.is_file():
+        import importlib.util
+        # doc_lint.py imports its engine siblings (frontmatter_yaml, ...) at
+        # module level, so their directory goes on the path first, exactly as
+        # _mirrored_prefixes() does for precedent_resolve. The file itself is
+        # loaded by path, so it is the AUDITED repo's copy even where this
+        # set's own tools/doc_lint.py is also importable.
+        engine = str(ROOT / "tools")
+        if engine not in sys.path:
+            sys.path.insert(0, engine)
+        try:
+            spec = importlib.util.spec_from_file_location(
+                "_audited_doc_lint", source)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            for name in _DOC_LINT_EXEMPT_NAMES:
+                value = getattr(module, name, ())
+                if isinstance(value, str):
+                    value = (value,)
+                dirs += tuple(str(v) for v in value if v)
+        except Exception:
+            # An unimportable doc_lint.py (a missing dependency, a syntax
+            # error mid-edit) exempts nothing: the check reports more, never
+            # less, which is the honest way for a refinement to degrade.
+            dirs = ()
+    _doc_lint_exempt_cache.append(dirs)
+    return dirs
 
 
 def check_md_links(rel: str, text: str, findings: list[str]) -> None:
@@ -260,6 +321,12 @@ def check_md_links(rel: str, text: str, findings: list[str]) -> None:
         for target in MD_LINK_RE.findall(CODE_SPAN_RE.sub("", line)):
             target = target.split(" ", 1)[0].strip()  # drop an optional "title"
             if not target or target.startswith(("http://", "https://", "mailto:", "#")):
+                continue
+            # `<upstream-docs>/...` is an install placeholder, filled in when
+            # the template is instantiated: no file is named `<...`, and the
+            # link is right once the blank is. The engine's own template
+            # carries four of them (2026-09-28).
+            if target.startswith("<"):
                 continue
             path_part = target.split("#", 1)[0]
             if not path_part:

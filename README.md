@@ -2,6 +2,15 @@
 
 # precedent-shared-repo-maintenance
 
+A shared practice set for [Precedent](https://github.com/alex137/BestPractice/tree/staging)
+about **running a repository that vendors a practice layer**. A project
+declares it in its `precedent.json` `sources`, and it is cloned beside the
+project, never copied into it. Where it applies it is the **strongest** of
+the four sources: shared beats repo-local beats individual beats universal
+by default
+([PRACTICE_ENGINE_PLAN.md](https://github.com/alex137/BestPractice/blob/staging/spec/PRACTICE_ENGINE_PLAN.md#precedence-and-the-one-case-precedence-alone-does-not-decide),
+"Precedence, and the One Case Precedence Alone Does Not Decide").
+
 **Renamed 2026-09-19 (Buenos Aires), from `precedent-team-repo-maintenance`**
 — the `team` level itself was renamed `shared`, and lost its fixed
 `precedent-team-<slug>` naming requirement in the same change; see
@@ -21,14 +30,6 @@ otherwise. **The lineage lives here rather than in each document that moved**
 references across BestPractice, `precedent-individual` and this set were
 rewritten to the new name in the same change, so a reader who only knows the
 old one finds it in this paragraph and nowhere else.
-
-The team practice set for [Precedent](https://github.com/alex137/BestPractice/tree/staging)
-— one small group's working conventions, vendored into a project repo the
-same way universal practices are, and (as of the 2026-09-03 precedence
-reorder) the **strongest** of the four sources: team beats repo-local beats
-individual beats universal by default
-([PRACTICE_ENGINE_PLAN.md](https://github.com/alex137/BestPractice/blob/staging/PRACTICE_ENGINE_PLAN.md),
-"Precedence, and the One Case Precedence Alone Does Not Decide").
 
 ## What's here
 
@@ -111,9 +112,9 @@ approval step; demoting a universal practice means undoing something
 already published to every Precedent user. Promote individually, as the
 team decides each one is ready.
 
-Two practices are marked `severity: blocking`
-(`sensitive-characterization-scrub`, `private-repo-scrub`) — real
-information-leak guards. This predates the precedence reorder above, from
+One practice is marked `severity: blocking` (`private-repo-scrub`; its
+former sibling `sensitive-characterization-scrub` now lives in
+precedent-shared-writing) — a real information-leak guard. This predates the precedence reorder above, from
 when team ranked below individual and `blocking` was the only thing stopping
 a personal override; team now already outranks individual by plain
 precedence, so the marking is redundant rather than load-bearing for these
@@ -121,12 +122,9 @@ two specifically — left in place since it's harmless and still correct
 (nothing above team can override a blocking team practice either way), not
 re-litigated here.
 
-`rule-links` and `go-merge` (the latter in `precedent-individual`) each
-carry `overrides:` against a universal practice they specialize
-(`doc-references-are-links`, `merge-authorization-keyword`).
-
-`.claude/` holds two session hooks and their wiring, added 2026-09-06 from
-BestPractice's Claude Code adapter. `freshness-guard.sh` stops a session
+`.claude/` holds the session hooks the engine wires for a practice set
+(the list is in `.claude/settings.json`), first added 2026-09-06 from
+BestPractice's Claude Code adapter. Two of them: `freshness-guard.sh` stops a session
 working on, or writing to, a stale checkout — it fetches and fast-forwards
 where that is provably lossless, and refuses the session's first tool call
 on a checkout it cannot vouch for, measuring staleness against the base
