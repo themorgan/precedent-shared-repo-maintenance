@@ -106,6 +106,8 @@ team maintains that vendors a layer out," to hold for this repo and for
 any future one shaped the same way, rather than staying readable only as
 a citation to BestPractice's own text.
 
+**Reviewed on 2026-09-28 for a merge into universal, and left here.** Universal has no practice by this name: BestPractice's `vendor-neutral-by-default` is repo-local (`local/practices/`), true only of that repository, and this copy is its generalization to any repository that vendors a layer out -- which is maintaining practice sets and their engine, this set's subject. Merging would have meant promoting it to universal, which the reach test does not support: a repository that ships nothing out has no use for it.
+
 ## Install
 **No mechanical check, and this is a considered gap, not an unexamined
 one** (per [`checkable-gets-checked`](https://github.com/alex137/BestPractice/blob/staging/practices/checkable-gets-checked.md)).
