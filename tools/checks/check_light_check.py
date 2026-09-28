@@ -31,7 +31,7 @@ Rule text (never a paraphrase) plus the specific finding(s) on a violation.
 
 PyYAML is optional, as it is in the engine's frontmatter_yaml.py. A
 consumer's GitHub light check runs on a bare runner with no PyYAML, and a
-hard `import yaml` crashed this whole script there (holiday-sync's pull
+hard `import yaml` crashed this whole script there (a consuming repo's pull
 request into main, 2026-09-28), losing the conflict-marker, secret, JSON
 and link checks with it. Without PyYAML only the two YAML-syntax checks
 stand aside, and say so on stderr; the local push check, where PyYAML is
