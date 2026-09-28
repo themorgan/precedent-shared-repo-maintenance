@@ -17,7 +17,7 @@ added:       2026-08-31
 approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session"
 ---
 ## Rule
-Before pushing, check the thread's discussion against the repo's own backlog document (`TODO.md` or equivalent): add any idea that came up but never got a line, remove or check off anything this branch just implemented.
+Before pushing, check the thread's discussion against the repo's own backlog document (`TODO.md` or equivalent): add any idea that came up but never got a line, as a `todo/` item carrying its blocked-on or out-of-scope reason (universal [`todo-is-a-handoff`](https://github.com/alex137/BestPractice/blob/staging/practices/todo-is-a-handoff.md)), or do it now if this session can; close (`status: done`) any item this branch met the closing condition of.
 
 ## Detail
 **How this differs from the universal [`second-pass-capture`](https://github.com/alex137/BestPractice/blob/staging/practices/second-pass-capture.md)**, whose clause (d) also asks whether open decisions were queued in the TODO (stated 2026-09-07, after a redundancy audit across all four sources found the two overlapping and could not tell from either file whether that was deliberate):
