@@ -70,6 +70,18 @@ run_case() {
 #
 # A non-zero exit is accepted only with the check's own VIOLATION header,
 # so a crash can never pass as "the planted path was not reported".
+#
+# STDOUT AND STDERR ARE READ SEPARATELY (2026-09-28). This used to be one
+# `2>&1` stream whose FIRST LINE had to be the header. But stdout is
+# block-buffered into a pipe and stderr is not, so anything at all on stderr
+# -- the PyYAML-missing note the check has printed since 2026-09-28, a
+# warning -- lands above the header, and the case failed as "did not run
+# cleanly" with the findings printed underneath. A consuming repo saw that
+# once inside its full push check on 2026-09-27 and never again on the same
+# tree, and the failure message could not say what the extra line was,
+# because it only ever printed the merged stream. Now the header is looked
+# for on stdout, a traceback on stderr is a crash, any other stderr line is
+# allowed, and every FAIL prints both streams, labelled.
 run_clean_case() {
   local label="$1"
   local mutate="$2"
@@ -80,11 +92,17 @@ run_clean_case() {
   (
     cd "$scratch"
     eval "$mutate"
-    local out
-    if ! out="$(python3 tools/checks/check_light_check.py 2>&1)"; then
+    local out err
+    if ! out="$(python3 tools/checks/check_light_check.py 2>check-stderr.txt)"; then
+      err="$(cat check-stderr.txt)"
+      if printf '%s' "$err" | grep -q '^Traceback'; then
+        echo "FAIL: check_light_check.py crashed on: $label" >&2
+        printf -- '--- stderr ---\n%s\n--- stdout ---\n%s\n' "$err" "$out" >&2
+        exit 1
+      fi
       if ! printf '%s\n' "$out" | head -n 1 | grep -q '^VIOLATION: '; then
         echo "FAIL: check_light_check.py did not run cleanly on: $label" >&2
-        printf '%s\n' "$out" >&2
+        printf -- '--- stderr ---\n%s\n--- stdout ---\n%s\n' "$err" "$out" >&2
         exit 1
       fi
       if printf '%s' "$out" | grep -qF "$planted"; then
@@ -189,6 +207,19 @@ git add process/upstream/practices/planted.md
 # verify_harness.py owns that, in
 # check_mirrored_prefixes_answers_both_install_models(). A stub also keeps
 # this suite self-contained, with no clone of BestPractice required to run it.
+#
+# E2 OWNS ITS STATE (2026-09-28): it runs in a repository built from
+# nothing, not a clone of whichever repo runs this suite. Every other case
+# clones the host, and for them that is fine -- each plants one thing and
+# asks about that one thing. E2 cannot: its stub resolver names only its own
+# mirror, so everything the host carries that the real resolver would have
+# exempted becomes part of E2's output. A consuming repo installed by
+# section 1 has a process/upstream/ (the vendored templates/harness/ links
+# in its 2026-09-27 failure came from there), and deleting that tree in the
+# scratch only moved the problem: the host's own AGENTS.md links into it.
+# So the fixture holds the committed check, its practice file, and what E2
+# plants, and nothing else -- and that lets E2 ask for an exact exit 0, a
+# stronger claim than "no finding named the planted path".
 S0_SETUP='
 python3 - <<PYEOF
 import json, pathlib
@@ -208,14 +239,71 @@ PYEOF
 git add -A
 '
 
-run_clean_case "E2: section 0 mirror at a precedent.json-declared path, no manifest, no process/upstream/" \
-  "$S0_SETUP" \
-  "precedent/universal/practices/planted.md"
+# run_s0_case LABEL EXTRA [EXPECT [FORBID]]: E2's fixture, built from nothing,
+# plus EXTRA. With no EXPECT the check must exit 0; with one it must exit 1,
+# with the VIOLATION header first on stdout and EXPECT among the findings.
+# Streams read separately, for the reason given at run_clean_case.
+run_s0_case() {
+  local label="$1"
+  local extra="$2"
+  local expect="${3:-}"
+  local forbid="${4:-}"
+  local scratch
+  scratch="$(mktemp -d)"
+  (
+    cd "$scratch"
+    git init -q .
+    mkdir -p tools/checks practices
+    git -C "$ROOT" show HEAD:tools/checks/check_light_check.py > tools/checks/check_light_check.py
+    git -C "$ROOT" show HEAD:practices/light-check.md > practices/light-check.md 2>/dev/null \
+      || rm -f practices/light-check.md
+    # Read for the rule text, never audited: its own links point into the
+    # repo it ships from, which this fixture deliberately is not.
+    echo practices/ >> .git/info/exclude
+    eval "$S0_SETUP"
+    eval "$extra"
+    local out err code=0
+    out="$(python3 tools/checks/check_light_check.py 2>check-stderr.txt)" || code=$?
+    err="$(cat check-stderr.txt)"
+    # A crash after the findings were printed still exits 1 with the header
+    # first, so without this the control below would pass on a traceback.
+    if printf '%s' "$err" | grep -q '^Traceback'; then
+      echo "FAIL: check_light_check.py crashed on: $label" >&2
+      printf -- '--- stderr ---\n%s\n--- stdout ---\n%s\n' "$err" "$out" >&2
+      exit 1
+    fi
+    if [ -z "$expect" ]; then
+      if [ "$code" -ne 0 ]; then
+        echo "FAIL: check_light_check.py did not stay clean on: $label (exit $code)" >&2
+        printf -- '--- stderr ---\n%s\n--- stdout ---\n%s\n' "$err" "$out" >&2
+        exit 1
+      fi
+      echo "ok: stays clean on planted non-violation ($label)"
+    else
+      if [ "$code" -ne 1 ] || ! printf '%s\n' "$out" | head -n 1 | grep -q '^VIOLATION: ' \
+          || ! printf '%s' "$out" | grep -qF "$expect"; then
+        echo "FAIL: $label -- expected exit 1 with a finding matching: $expect (exit $code)" >&2
+        printf -- '--- stderr ---\n%s\n--- stdout ---\n%s\n' "$err" "$out" >&2
+        exit 1
+      fi
+      if [ -n "$forbid" ] && printf '%s' "$out" | grep -qF "$forbid"; then
+        echo "FAIL: $label -- output contained what must be excluded: $forbid" >&2
+        printf '%s\n' "$out" >&2
+        exit 1
+      fi
+      echo "ok: fires with the expected finding ($label)"
+    fi
+  )
+  local status=$?
+  rm -rf "$scratch"
+  return $status
+}
+
+run_s0_case "E2: section 0 mirror at a precedent.json-declared path, no manifest, no process/upstream/" ''
 
 # ...and the same broken link OUTSIDE the mirror must still be reported, or
 # E2 would be passing by having switched the link check off altogether.
-run_case_expecting "E2 control: an identical broken link outside the mirror still fires" \
-  "$S0_SETUP"'
+run_s0_case "E2 control: an identical broken link outside the mirror still fires" '
 echo "[missing](../tools/doc_lint.py)" > own-page.md
 git add own-page.md
 ' \
