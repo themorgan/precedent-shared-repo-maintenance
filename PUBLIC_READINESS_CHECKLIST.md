@@ -1,3 +1,13 @@
+---
+title:         "Public Readiness Checklist — precedent-team-writing, precedent-team-repo-maintenance, precedent-team-working-style"
+kind:          record
+status:        closed
+opened:        2026-09-19
+supersedes:    []
+audience:      session
+summary:       "The 2026-09-19 audit of what had to change before the three shared sets could go public."
+---
+
 # Public Readiness Checklist — precedent-team-writing, precedent-team-repo-maintenance, precedent-team-working-style
 
 **Morgan decided 2026-09-19 to make these three repos public**, excluding

@@ -16,7 +16,7 @@ by default
 `precedent-team-<slug>` naming requirement in the same change; see
 [`source-naming`](https://github.com/alex137/BestPractice/blob/staging/practices/source-naming.md)'s
 Story. **Renamed once before that, 2026-09-11 (Buenos Aires), from
-`precedent-team-maintainers`.** Same repository, same history, same rules
+its old name `precedent-team-maintainers`.** Same repository, same history, same rules
 both times -- the old URLs redirect, so nothing that still names it is
 broken. That first rename went because it named a group of people, and
 `source-naming` still says a *slug* is named for its **purpose**: a

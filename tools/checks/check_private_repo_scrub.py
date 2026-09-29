@@ -84,7 +84,7 @@ PRIVATE_TERMS = [
 
 # practices/ is MATERIALIZED output in a consuming repo: precedent_materialize.py
 # rewrites it from every declared source on each sync. A practice that came from
-# the team or individual set is that set's text, not the consuming repo's -- it
+# the shared or individual set is that set's text, not the consuming repo's -- it
 # cannot be fixed there, and the next sync would overwrite the edit anyway. In
 # THIS repo (a source, with no MANIFEST.json) the lookup finds nothing and every
 # practice is checked exactly as before, which is the intended asymmetry.
@@ -94,7 +94,7 @@ PRIVATE_TERMS = [
 # private user-level config, so "did not resolve here" is not "owned here".
 #
 # 2026-09-06: a consuming repo reported this check against practices/deep-check.md
-# -- a shared-set practice that names the team repo in its own Install section,
+# -- a shared-set practice that names the shared-set repo in its own Install section,
 # entirely correctly, since that text never leaves the private sets.
 def _foreign_practice(path: pathlib.Path) -> bool:
     manifest = ROOT / "MANIFEST.json"
