@@ -109,7 +109,7 @@
     "their identity.json, while the answer for a person this project could",
     "not identify is the repository's to choose.",
     "",
-    "New York, not Buenos Aires. This is a TEAM set: shared by level, and the",
+    "New York, not Buenos Aires. This is a SHARED set: shared by level, and the",
     "one with more than one approver. Buenos Aires is Morgan's own zone and",
     "belongs in his individual source, not in a set an unidentified committer",
     "could be anyone in. Morgan, 2026-09-10: the Buenos Aires fallback is just",
@@ -159,11 +159,11 @@
   "grandfathered_commit_shas": [
     {
       "sha": "326175ce601b66291f655a9aac1fc9414f36f208",
-      "note": "'Bring mechanical checks to 7 of 40 team practices; fix leaks and bugs found along the way', 2026-09-01 10:36:38 +0000. Author correctly Morgan F <morgan@westegg.com>; only check_buenos_aires_dates.py trips, on a +0000 (container UTC) offset. This check was not vendored into this repo until 2026-09-19 (see _commit_author_check_comment above), so every entry in this list predates the check's own existence here rather than surfacing at the time. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
+      "note": "'Bring mechanical checks to 7 of 40 shared practices; fix leaks and bugs found along the way', 2026-09-01 10:36:38 +0000. Author correctly Morgan F <morgan@westegg.com>; only check_buenos_aires_dates.py trips, on a +0000 (container UTC) offset. This check was not vendored into this repo until 2026-09-19 (see _commit_author_check_comment above), so every entry in this list predates the check's own existence here rather than surfacing at the time. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
     },
     {
       "sha": "1584b207b65b6ae03e7c51a268c5807a5fa99704",
-      "note": "'Declare this team set's approvers and generate CODEOWNERS from them', 2026-09-02 01:29:35 +0000, pushed straight to main. Author `Claude <noreply@anthropic.com>`, offset +0000 -- both checks trip. First of a five-commit batch the same session made across roughly four hours (with the four entries below), none through this repo's identity hook. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
+      "note": "'Declare this shared set's approvers and generate CODEOWNERS from them', 2026-09-02 01:29:35 +0000, pushed straight to main. Author `Claude <noreply@anthropic.com>`, offset +0000 -- both checks trip. First of a five-commit batch the same session made across roughly four hours (with the four entries below), none through this repo's identity hook. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
     },
     {
       "sha": "feb91de04790261255902d6b4eb01f67f86258dc",
@@ -187,7 +187,7 @@
     },
     {
       "sha": "d2155507b1b94ce2d557fdab602e8c290ced8645",
-      "note": "'Retire the team-level deep-check practice -- superseded by universal very-deep-check', 2026-09-05 10:37:19 +0000, pushed straight to main. Same batch, same cause, same session as the entry above. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
+      "note": "'Retire the shared-level deep-check practice -- superseded by universal very-deep-check', 2026-09-05 10:37:19 +0000, pushed straight to main. Same batch, same cause, same session as the entry above. Already on main; exempted rather than rewritten (no-rewrite-for-warnings)."
     },
     {
       "sha": "a4a77590a9623e52b369519100d9b10cbb210fe0",

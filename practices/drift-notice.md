@@ -4,7 +4,7 @@ title:       A session-start notice asks about drift immediately, not at the end
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "a session starts in a repo that vendors a universal or team set"
+occasion:    "a session starts in a repo that vendors a universal or shared set"
 gates:       []
 index_clause: "check source freshness at session start; raise it right away, not later"
 checked_by:  null
