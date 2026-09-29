@@ -1,3 +1,13 @@
+---
+title:         "`not_binding` Findings for BestPractice — Measurement Output"
+kind:          record
+status:        closed
+opened:        2026-09-06
+supersedes:    []
+audience:      session
+summary:       "Measurement output from 2026-09-06: which practices did not bind BestPractice, for the unreachable-practices item."
+---
+
 # `not_binding` Findings for BestPractice — Measurement Output
 
 **This file is output for a later BestPractice-rooted session**, not a

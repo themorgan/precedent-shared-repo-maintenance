@@ -1,3 +1,13 @@
+---
+title:         "Source-Supplied Check Audit — Install-Model Assumptions"
+kind:          record
+status:        closed
+opened:        2026-09-10
+supersedes:    []
+audience:      session
+summary:       "A 2026-09-10 audit of the checks this set supplies, against the install model's assumptions."
+---
+
 # Source-Supplied Check Audit — Install-Model Assumptions
 
 **This file is the record of an audit, not a practice and not a decision.**
