@@ -1,3 +1,13 @@
+---
+title:         "The 2026-09-19 Actions Billing Spike — What It Was and What Changed"
+kind:          record
+status:        closed
+opened:        2026-09-19
+supersedes:    []
+audience:      session
+summary:       "The 2026-09-19 GitHub Actions billing spike across the four practice sets, its cause, and what changed."
+---
+
 # The 2026-09-19 Actions Billing Spike — What It Was and What Changed
 
 **Addressed to whoever next looks at this account's Actions minutes, or at

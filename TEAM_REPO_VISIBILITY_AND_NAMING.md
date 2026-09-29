@@ -1,3 +1,13 @@
+---
+title:         "Team Repo Visibility and Naming — Analysis, Not Yet Decided"
+kind:          brief
+status:        closed
+opened:        2026-09-19
+supersedes:    []
+audience:      session
+summary:       "A 2026-09-19 analysis of making the three sets public and renaming them precedent-shared-*; both were then decided."
+---
+
 # Team Repo Visibility and Naming — Analysis, Not Yet Decided
 
 **This file is a recommendation, not a decision.** Morgan asked for thoughts
