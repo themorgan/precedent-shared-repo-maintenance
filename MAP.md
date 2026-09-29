@@ -28,7 +28,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [rule-scope-ask](practices/rule-scope-ask.md) | on-demand | a new rule is proposed and its scope isn't obvious |
 | [session-trailer](practices/session-trailer.md) | on-demand | committing anything |
 | [todo-gate](practices/todo-gate.md) | on-demand | about to push after a thread of work |
-| [vendor-neutral-by-default](practices/vendor-neutral-by-default.md) | on-demand | writing a hook, script, or practice-file rule in a repository this team maintains that vendors a layer out to other repos |
+| [vendor-neutral-by-default](practices/vendor-neutral-by-default.md) | on-demand | writing a hook, script or rule in a repo that vendors a layer out to others |
 
 ## Withdrawn practices
 
@@ -40,7 +40,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [brainstorm-citations](practices/brainstorm-citations.md) | deduplicated | [brainstorm-citations](practices/brainstorm-citations.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [branch-links](practices/branch-links.md) | deduplicated | [branch-links](practices/branch-links.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, which recorded a gap rather than an incident. |
 | [catalogue-carries-stories](practices/catalogue-carries-stories.md) | deduplicated | [catalogue-carries-stories](practices/catalogue-carries-stories.md) | **Deduplicated a second time, 2026-09-13**, once `binds_publishers` removed the mechanism the 2026-09-07 re-activation existed to work around. |
-| [content-subdirs](practices/content-subdirs.md) | deduplicated | [content-subdirs](practices/content-subdirs.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text. |
+| [content-subdirs](practices/content-subdirs.md) | retired | — (nowhere) | **Retired 2026-09-29** (Morgan: *"Let's eliminate that one also"*, of this rule, beside the retired `content-directory`). |
 | [doc-recipe](practices/doc-recipe.md) | deduplicated | [doc-recipe](practices/doc-recipe.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it rests on a drift that repo had already caught and reversed once. |
 | [draft-marker](practices/draft-marker.md) | deduplicated | [draft-marker](practices/draft-marker.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it records a real failure. |
 | [durable-list-anchors](practices/durable-list-anchors.md) | deduplicated | [durable-list-anchors](practices/durable-list-anchors.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and the incident behind it is a good one because the damage was invisible. |
