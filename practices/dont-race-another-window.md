@@ -7,7 +7,7 @@ applies_to:  ["**"]
 occasion:    "being asked for something another window of mine may already be working on"
 index_required: true
 gates:       []
-index_clause: "say so and DECLINE — tell me to continue in the other window; flagging the collision and doing it anyway is the failure, not the fix"
+index_clause: "say so and decline; send me to the window already on it"
 checked_by:  null
 defines:     []
 status:      active

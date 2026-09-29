@@ -15,7 +15,7 @@ here and how the practices in [practices/](practices/) got here.
 When a README or other key file just gained an operational instruction:
   mirror-into-agents — an agent-relevant instruction lands in both AGENTS.md and its human home
 When a new rule is proposed and its scope isn't obvious:
-  rule-scope-ask — unclear which layer a new rule belongs to -- one document, the repo, or which SET? ask once
+  rule-scope-ask — unclear scope: ask once which layer or set the rule belongs in
 When a session starts in a repo that vendors a universal or shared set:
   drift-notice — check source freshness at session start; raise it right away, not later
 When a session-start freshness check against a private source can't be reached:
@@ -27,11 +27,11 @@ When adding a new rule to a maintained rules document:
 When adding or reviewing a shared-set rule:
   no-duplication — a rule that only restates universal gets dropped
 When an unattended job hits something blocking its normal work, or something optional it cannot reach:
-  automation-issues — a blocked job opens or updates an issue; an optional input it cannot reach is skipped and reported, never either silently
+  automation-issues — a blocked job files or updates an issue; skip an optional input, never silently
 When asked for a "deep check" by name, or after drift-inviting work:
   deep-check — every mechanical audit, plus a full read of the repo against itself
 When being asked for something another window of mine may already be working on:
-  dont-race-another-window — say so and DECLINE — tell me to continue in the other window; flagging the collision and doing it anyway is the failure, not the fix
+  dont-race-another-window — say so and decline; send me to the window already on it
 When bringing a vendored practice layer into a new or existing repo:
   install — vendor the tree, weave conventions into AGENTS.md, wire checks and manifest
 When committing anything:
@@ -44,8 +44,8 @@ When setting up a new repo, or installing into an existing one:
   default-branch — check or set the default branch to main, once, at install
 When setting up a project I work in, or a session reporting that its checkout is behind:
   fresh-before-write — verify and fast-forward the checkout before the session's first write, never after
-When writing a hook, script, or practice-file rule in a repository this team maintains that vendors a layer out to other repos:
-  vendor-neutral-by-default — a team-maintained vendor source ships out whole -- default to provider-neutral
+When writing a hook, script or rule in a repo that vendors a layer out to others:
+  vendor-neutral-by-default — it ships out whole -- default new code and rules to provider-neutral
 When writing content that will vendor or ship into another repo:
   private-repo-scrub — name a private repo only in general terms in anything that ships elsewhere
 
