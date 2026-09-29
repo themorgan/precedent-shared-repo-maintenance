@@ -6,7 +6,7 @@ severity:    default
 applies_to:  ["**"]
 occasion:    "a new rule is proposed and its scope isn't obvious"
 gates:       []
-index_clause: "unclear which layer a new rule belongs to -- one document, the repo, or which SET? ask once"
+index_clause: "unclear scope: ask once which layer or set the rule belongs in"
 checked_by:  null
 defines:     []
 status:      active

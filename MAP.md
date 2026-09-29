@@ -28,7 +28,7 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 | [rule-scope-ask](practices/rule-scope-ask.md) | on-demand | a new rule is proposed and its scope isn't obvious |
 | [session-trailer](practices/session-trailer.md) | on-demand | committing anything |
 | [todo-gate](practices/todo-gate.md) | on-demand | about to push after a thread of work |
-| [vendor-neutral-by-default](practices/vendor-neutral-by-default.md) | on-demand | writing a hook, script, or practice-file rule in a repository this team maintains that vendors a layer out to other repos |
+| [vendor-neutral-by-default](practices/vendor-neutral-by-default.md) | on-demand | writing a hook, script or rule in a repo that vendors a layer out to others |
 
 ## Withdrawn practices
 
