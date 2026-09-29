@@ -62,7 +62,7 @@ assumptions: checks that read an INSTALL.md §1 path as if it were
 universal, an absent optional file as a violation, an optional engine
 module without a guard, or an empty `git log` as a clean tree. Three were
 found and fixed, three open items are recorded with what each is blocked
-on, and the two sibling team sets that supply no checks at all are
+on, and the two sibling shared sets that supply no checks at all are
 recorded as audited so nobody repeats the pass. Evidence for BestPractice's
 TODO item 52, which this repo cannot close from here.
 
@@ -119,7 +119,7 @@ when team ranked below individual and `blocking` was the only thing stopping
 a personal override; team now already outranks individual by plain
 precedence, so the marking is redundant rather than load-bearing for these
 two specifically — left in place since it's harmless and still correct
-(nothing above team can override a blocking team practice either way), not
+(nothing above team can override a blocking shared practice either way), not
 re-litigated here.
 
 `.claude/` holds the session hooks the engine wires for a practice set

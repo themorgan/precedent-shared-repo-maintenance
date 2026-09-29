@@ -94,7 +94,7 @@ PRIVATE_TERMS = [
 # private user-level config, so "did not resolve here" is not "owned here".
 #
 # 2026-09-06: a consuming repo reported this check against practices/deep-check.md
-# -- a team-set practice that names the team repo in its own Install section,
+# -- a shared-set practice that names the team repo in its own Install section,
 # entirely correctly, since that text never leaves the private sets.
 def _foreign_practice(path: pathlib.Path) -> bool:
     manifest = ROOT / "MANIFEST.json"

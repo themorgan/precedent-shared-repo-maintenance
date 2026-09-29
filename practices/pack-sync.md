@@ -1,12 +1,12 @@
 ---
 slug:        pack-sync
-title:       A sync keeps a vendored team set current, the same way, against a private source
+title:       A sync keeps a vendored shared set current, the same way, against a private source
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "a project repo vendors this team's own practice set, and it has moved"
 gates:       []
-index_clause: "the team-set sync is the universal sync's sibling, against a private repo"
+index_clause: "the shared-set sync is the universal sync's sibling, against a private repo"
 checked_by:  null
 defines:     []
 status:      retired

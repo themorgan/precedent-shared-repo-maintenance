@@ -16,7 +16,7 @@ When a README or other key file just gained an operational instruction:
   mirror-into-agents — an agent-relevant instruction lands in both AGENTS.md and its human home
 When a new rule is proposed and its scope isn't obvious:
   rule-scope-ask — unclear which layer a new rule belongs to -- one document, the repo, or which SET? ask once
-When a session starts in a repo that vendors a universal or team set:
+When a session starts in a repo that vendors a universal or shared set:
   drift-notice — check source freshness at session start; raise it right away, not later
 When a session-start freshness check against a private source can't be reached:
   fresh-check-escalation — tell "could not verify" apart from "confirmed fresh"; verify directly
@@ -24,7 +24,7 @@ When about to commit:
   light-check — a cheap mechanical audit runs before every commit, not just merges
 When adding a new rule to a maintained rules document:
   new-rule-placement — place a new rule by subject, slug it, renumber, mirror, re-check
-When adding or reviewing a team-set rule:
+When adding or reviewing a shared-set rule:
   no-duplication — a rule that only restates universal gets dropped
 When an unattended job hits something blocking its normal work, or something optional it cannot reach:
   automation-issues — a blocked job opens or updates an issue; an optional input it cannot reach is skipped and reported, never either silently
