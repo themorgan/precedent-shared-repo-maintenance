@@ -6,7 +6,7 @@ severity:    default
 applies_to:  ["**"]
 occasion:    "an unattended job hits something blocking its normal work, or something optional it cannot reach"
 gates:       []
-index_clause: "a blocked job opens or updates an issue; an optional input it cannot reach is skipped and reported, never either silently"
+index_clause: "a blocked job files or updates an issue; skip an optional input, never silently"
 checked_by:  null
 defines:     []
 status:      active

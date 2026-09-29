@@ -4,8 +4,9 @@ practices/session-trailer.md.
 
 # practice: session-trailer
 
-Scope: tree. Every non-merge commit reachable from HEAD in this repo must
-carry a session trailer line -- `Session: <url>`, `Claude-Session: <url>`
+Scope: tree, judged on what a push would carry. Every non-merge commit
+reachable from HEAD that origin does not have yet must carry a session
+trailer line -- `Session: <url>`, `Claude-Session: <url>`
 (the trailer key Claude Code Remote's own harness actually emits as of
 2026-09; functionally the same trailer the practice's Rule describes,
 under a different key), or the explicit `Session: none available (<tool>)`
@@ -20,6 +21,26 @@ trailer at all -- checking them would fail on every single PR merge,
 forever, for a reason that has nothing to do with this practice's actual
 intent ("committing anything" in the occasion sense means authoring a
 change, not the structural act of merging one).
+
+WHICH COMMITS (2026-09-29, Morgan, strength: decided). This walked every
+commit reachable from HEAD, so a commit that reached main before this check
+ran anywhere failed every later full sweep -- a consumer's Promote refused
+over one such commit already on main, which nothing a session could do
+would fix without rewriting published history. It now judges only what is
+not on origin yet (`HEAD --not --remotes=origin`): each commit is judged at
+the first push that carries it -- Booked into pre-staging included -- the
+same way the author and date checks judge only what a push brings. Nothing
+already on origin needs grandfathering. `--range A..B` (or the
+PRECEDENT_CHECK_RANGE environment variable) judges exactly that range, and
+`--all-history` restores the whole walk for a deliberate audit.
+
+Two kinds of commit are exempt besides merges:
+  - one GitHub made with its own buttons (committer `noreply@github.com`:
+    a merge, squash or revert button, a web edit) -- no session wrote it,
+    and there is nowhere to add a trailer;
+  - a revert (`Revert "..."` / `This reverts commit <sha>.`), but only where
+    the working-style set's `revert-needs-no-trailer` practice is in force.
+    A repository that does not declare it still requires the trailer.
 
 Exit 0 and print nothing when clean. Exit 1 and print the practice's own
 Rule text (never a paraphrase) plus the specific finding(s) on a violation.
@@ -215,40 +236,99 @@ def _is_merge(sha: str) -> bool:
     return sum(1 for line in result.stdout.splitlines() if line.startswith("parent ")) >= 2
 
 
-def find_violations() -> list[str]:
+WEB_FLOW_COMMITTER = "noreply@github.com"
+REVERT_RE = re.compile(r"^Revert \"|^This reverts commit [0-9a-f]{7,40}\b", re.M)
+REVERT_PRACTICE = "revert-needs-no-trailer"
+
+
+def revert_exemption_in_force() -> bool:
+    """True when `revert-needs-no-trailer` resolves in force for ROOT.
+
+    Asked through the engine's own resolver, which every repository this
+    script runs in carries under tools/, so "in force" means exactly what it
+    means to every other tool: declared by a source this repo resolves, and
+    `status: active` there. Anything that goes wrong asking is False -- the
+    exemption is opt-in, so failing to confirm it keeps the stricter rule."""
+    import contextlib
+    import io
+    for tools in (ROOT / "tools", SOURCE_ROOT / "tools"):
+        if not (tools / "precedent_resolve.py").is_file():
+            continue
+        sys.path.insert(0, str(tools))
+        try:
+            with contextlib.redirect_stdout(io.StringIO()), \
+                    contextlib.redirect_stderr(io.StringIO()):
+                import precedent_resolve as pr
+                res = pr.resolve(pr.load_config(str(ROOT)))
+            return REVERT_PRACTICE in (res.get("practices") or {})
+        except (Exception, SystemExit):
+            return False
+        finally:
+            sys.path.pop(0)
+    return False
+
+
+def _walk_args(argv) -> tuple:
+    """-> (git log revision arguments, mode). Modes: 'range', 'all',
+    'unpushed' (the default)."""
+    rng = None
+    if "--range" in argv:
+        i = argv.index("--range")
+        rng = argv[i + 1] if i + 1 < len(argv) else None
+    rng = rng or os.environ.get("PRECEDENT_CHECK_RANGE") or None
+    if rng:
+        # A symmetric `A...B` would also list A's side; a push carries B's.
+        return [rng.replace("...", "..")], "range"
+    if "--all-history" in argv:
+        return ["HEAD"], "all"
+    return ["HEAD", "--not", "--remotes=origin"], "unpushed"
+
+
+def find_violations(argv=()) -> list[str]:
+    revs, mode = _walk_args(list(argv))
     result = subprocess.run(
-        ["git", "-C", str(ROOT), "log", "--format=%H%x00%B%x01"],
+        ["git", "-C", str(ROOT), "log", "--format=%H%x00%ce%x00%B%x01", *revs],
         capture_output=True,
         text=True,
         check=True,
     )
     findings = list(_REPO_GRANDFATHERED_FINDINGS)
     examined = 0
+    reverts_ok = None
     for entry in result.stdout.split("\x01"):
         entry = entry.strip("\n")
         if not entry.strip():
             continue
-        sha, _, body = entry.partition("\x00")
+        sha, _, rest = entry.partition("\x00")
+        committer, _, body = rest.partition("\x00")
         examined += 1
         if sha in EFFECTIVE_GRANDFATHERED_SHAS:
             continue
         if _is_merge(sha):
             continue  # see the module docstring
-        if not TRAILER_RE.search(body):
-            findings.append(f"commit {sha[:12]}: no `Session:` trailer in the commit message")
-    # An empty walk is never a pass. A repo with no commits at all, a
-    # `git log` that came back empty for any other reason -- both used to
-    # fall straight through to exit 0, indistinguishable from a history
-    # that was walked and found clean.
-    if examined == 0:
+        if committer.strip().lower() == WEB_FLOW_COMMITTER:
+            continue  # made with GitHub's own buttons; see the docstring
+        if TRAILER_RE.search(body):
+            continue
+        if REVERT_RE.search(body):
+            if reverts_ok is None:
+                reverts_ok = revert_exemption_in_force()
+            if reverts_ok:
+                continue
+        findings.append(f"commit {sha[:12]}: no `Session:` trailer in the commit message")
+    # An empty walk of the WHOLE history is never a pass: a repo with no
+    # commits, or a `git log` that came back empty for any other reason,
+    # used to fall straight through to exit 0. An empty walk of what a push
+    # carries is the ordinary case -- everything is already on origin.
+    if examined == 0 and mode == "all":
         raise NotApplicable("`git log` reached no commits at all in "
                             f"{ROOT}, so nothing was actually checked")
-    return findings
+    return findings, mode
 
 
 if __name__ == "__main__":
     try:
-        findings = find_violations()
+        findings, mode = find_violations(sys.argv[1:])
     except NotApplicable as e:
         print(f"SKIPPED: {PRACTICE_FILE.stem}: {e}")
         sys.exit(2)
@@ -266,7 +346,10 @@ if __name__ == "__main__":
         print("  " + rule_text().replace("\n", "\n  "))
         sys.exit(1)
 
-    reason = truncated_history()
+    # Only a walk of the whole history can be cut short by a shallow clone:
+    # what a push carries is local by definition, and an explicit range
+    # names its own ends.
+    reason = truncated_history() if mode == "all" else ""
     if reason:
         print(f"SKIPPED: {PRACTICE_FILE.stem}: {reason}")
         sys.exit(2)
