@@ -18,7 +18,7 @@ approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set
 ## Rule
 When a rule is proposed and it's genuinely unclear whether it governs one document or the whole repo, ask -- once, in the moment, with a guess and the reason for it, so confirming costs a word rather than a paragraph.
 
-**There are two axes, and this rule covers both.** Inside a repo: one document or all of them. Across a layered catalogue: which **set** -- repo-local, a team set, an individual set, or universal. The second is the one with the longer reach, because a set decides which repositories ever see the rule at all.
+**There are two axes, and this rule covers both.** Inside a repo: one document or all of them. Across a layered catalogue: which **set** -- repo-local, a shared set, an individual set, or universal. The second is the one with the longer reach, because a set decides which repositories ever see the rule at all.
 
 **Decide the set by subject and reach, never by which repository the session can currently write to.** Access is not an argument about where a rule belongs, and treating it as one produces a rule filed where it happens to be landable rather than where it binds. The test parallels the document one: would the rule still be true for a different team? For a different person? For a repo whose subject is nothing like this one's? True for all of them, it is universal. True only given this team's subject, it is that team's. A statement about one person's own preference is theirs, in their own set. Where the answer is genuinely not obvious, ask -- with the guess and its reason, same as above.
 

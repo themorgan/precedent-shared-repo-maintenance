@@ -4,7 +4,7 @@ title:       Don't duplicate a lower-precedence source
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "adding or reviewing a team-set rule"
+occasion:    "adding or reviewing a shared-set rule"
 gates:       []
 index_clause: "a rule that only restates universal gets dropped"
 checked_by:  null
@@ -22,7 +22,7 @@ This set exists to add to the universal catalogue or override it, not to restate
 
 
 ## Why
-Precedence already lets a team rule override a universal one by slug; there is no separate need to also copy the universal rule's own text into the team set just to have it nearby.
+Precedence already lets a team rule override a universal one by slug; there is no separate need to also copy the universal rule's own text into the shared set just to have it nearby.
 
 ## Story
 Migrated here from RepoPersonalPreferences by the phase-3 private-set
