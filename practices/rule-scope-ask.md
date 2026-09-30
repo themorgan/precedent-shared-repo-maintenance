@@ -4,9 +4,9 @@ title:       When a proposed rule's scope is ambiguous, ask which layer it belon
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "a new rule is proposed and its scope isn't obvious"
+occasion:    "a new rule's scope isn't obvious"
 gates:       []
-index_clause: "unclear scope: ask once which layer or set the rule belongs in"
+index_clause: "ask once which layer or set it belongs in"
 checked_by:  null
 defines:     []
 status:      active

@@ -4,9 +4,9 @@ title:       A public check-in scrub blocklist stays blank at install, never ask
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "installing a vendored practice layer that could check in upstream"
+occasion:    "installing a layer that could check in upstream"
 gates:       []
-index_clause: "leave a check-in blocklist blank at install; don't ask, don't remind"
+index_clause: "leave the check-in blocklist blank; don't ask or remind"
 checked_by:  null
 defines:     []
 status:      active

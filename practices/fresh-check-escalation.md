@@ -4,7 +4,7 @@ title:       When the freshness check can't reach the source, say so -- then ver
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "a session-start freshness check against a private source can't be reached"
+occasion:    "a session-start check can't reach a private source"
 gates:       []
 index_clause: "tell \"could not verify\" apart from \"confirmed fresh\"; verify directly"
 checked_by:  null
