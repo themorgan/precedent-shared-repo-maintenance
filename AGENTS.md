@@ -12,42 +12,42 @@ here and how the practices in [practices/](practices/) got here.
 ## Occasion index
 
 ```
-When a README or other key file just gained an operational instruction:
-  mirror-into-agents — an agent-relevant instruction lands in both AGENTS.md and its human home
-When a new rule is proposed and its scope isn't obvious:
-  rule-scope-ask — unclear scope: ask once which layer or set the rule belongs in
-When a session starts in a repo that vendors a universal or shared set:
-  drift-notice — check source freshness at session start; raise it right away, not later
-When a session-start freshness check against a private source can't be reached:
+When a key file gains an operational instruction:
+  mirror-into-agents — it lands in both AGENTS.md and its human home
+When a new rule's scope isn't obvious:
+  rule-scope-ask — ask once which layer or set it belongs in
+When a session starts in a repo that vendors a set:
+  drift-notice — check source freshness at session start; raise it at once
+When a session-start check can't reach a private source:
   fresh-check-escalation — tell "could not verify" apart from "confirmed fresh"; verify directly
 When about to commit:
   light-check — a cheap mechanical audit runs before every commit, not just merges
-When adding a new rule to a maintained rules document:
+When adding a rule to a rules document:
   new-rule-placement — place a new rule by subject, slug it, renumber, mirror, re-check
 When adding or reviewing a shared-set rule:
   no-duplication — a rule that only restates universal gets dropped
-When an unattended job hits something blocking its normal work, or something optional it cannot reach:
+When an unattended job is blocked, or can't reach an optional input:
   automation-issues — a blocked job files or updates an issue; skip an optional input, never silently
-When asked for a "deep check" by name, or after drift-inviting work:
+When asked for a "deep check", or after drift-inviting work:
   deep-check — every mechanical audit, plus a full read of the repo against itself
-When being asked for something another window of mine may already be working on:
+When asked for something another window may already be doing:
   dont-race-another-window — say so and decline; send me to the window already on it
-When bringing a vendored practice layer into a new or existing repo:
-  install — vendor the tree, weave conventions into AGENTS.md, wire checks and manifest
 When committing anything:
   session-trailer — a Session: <url> trailer on every commit
-When creating a file a later regeneration will overwrite:
+When creating a file regeneration will overwrite:
   derived-file-marker — a regenerated file's header names its source, recipe, and command
-When installing a vendored practice layer that could check in upstream:
-  blank-blocklist — leave a check-in blocklist blank at install; don't ask, don't remind
-When setting up a new repo, or installing into an existing one:
+When installing a layer that could check in upstream:
+  blank-blocklist — leave the check-in blocklist blank; don't ask or remind
+When installing a vendored practice layer in a repo:
+  install — vendor the tree, weave conventions into AGENTS.md, wire checks and manifest
+When setting up a project, or a session reporting its checkout is behind:
+  fresh-before-write — verify and fast-forward the checkout before the first write
+When setting up or installing into a repo:
   default-branch — check or set the default branch to main, once, at install
-When setting up a project I work in, or a session reporting that its checkout is behind:
-  fresh-before-write — verify and fast-forward the checkout before the session's first write, never after
-When writing a hook, script or rule in a repo that vendors a layer out to others:
-  vendor-neutral-by-default — it ships out whole -- default new code and rules to provider-neutral
-When writing content that will vendor or ship into another repo:
-  private-repo-scrub — name a private repo only in general terms in anything that ships elsewhere
+When writing a hook, script or rule another repo will vendor:
+  vendor-neutral-by-default — default new code and rules to provider-neutral
+When writing content that ships into another repo:
+  private-repo-scrub — name a private repo only in general terms
 
 (More on-demand practices are not listed here: one whose applies_to names real paths, or which declares a gate, is reached by those channels instead -- `precedent_paths.py FILE` and `precedent_gate.py MOMENT`. A trigger a PERSON SAYS cannot be reached that way and is always listed above. `precedent_show.py --index-omitted` names the omitted ones.)
 ```

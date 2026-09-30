@@ -4,9 +4,9 @@ title:       New code and rules default to provider-neutral, in any repo this te
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "writing a hook, script or rule in a repo that vendors a layer out to others"
+occasion:    "writing a hook, script or rule another repo will vendor"
 gates:       []
-index_clause: "it ships out whole -- default new code and rules to provider-neutral"
+index_clause: "default new code and rules to provider-neutral"
 checked_by:  null
 defines:     []
 status:      active

@@ -4,7 +4,7 @@ title:       Don't race a window that is already on it
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "being asked for something another window of mine may already be working on"
+occasion:    "asked for something another window may already be doing"
 index_required: true
 gates:       []
 index_clause: "say so and decline; send me to the window already on it"

@@ -4,9 +4,9 @@ title:       A session proves its checkout is current before it changes anything
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "setting up a project I work in, or a session reporting that its checkout is behind"
+occasion:    "setting up a project, or a session reporting its checkout is behind"
 gates:       []
-index_clause: "verify and fast-forward the checkout before the session's first write, never after"
+index_clause: "verify and fast-forward the checkout before the first write"
 checked_by:  tools/checks/check_fresh_before_write.py
 defines:     []
 status:      active

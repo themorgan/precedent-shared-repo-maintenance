@@ -4,7 +4,7 @@ title:       "The deep check: every audit, plus an open-ended coherence review"
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "asked for a \"deep check\" by name, or after drift-inviting work"
+occasion:    "asked for a \"deep check\", or after drift-inviting work"
 index_required: true
 gates:       ["merge"]
 index_clause: "every mechanical audit, plus a full read of the repo against itself"

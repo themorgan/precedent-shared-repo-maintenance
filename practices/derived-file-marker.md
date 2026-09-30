@@ -4,7 +4,7 @@ title:       A derived file is marked by a header naming what replaces it
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "creating a file a later regeneration will overwrite"
+occasion:    "creating a file regeneration will overwrite"
 gates:       []
 index_clause: "a regenerated file's header names its source, recipe, and command"
 checked_by:  tools/checks/check_derived_file_marker.py
