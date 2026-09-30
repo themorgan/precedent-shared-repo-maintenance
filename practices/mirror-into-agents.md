@@ -4,10 +4,10 @@ title:       Agent-relevant instructions in a README or other key file also go i
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "a README or other key file just gained an operational instruction"
+occasion:    "a key file gains an operational instruction"
 gates:       ["merge"]
 index_required: true
-index_clause: "an agent-relevant instruction lands in both AGENTS.md and its human home"
+index_clause: "it lands in both AGENTS.md and its human home"
 checked_by:  null
 defines:     []
 status:      active

@@ -4,7 +4,7 @@ title:       A new repo's default branch is main, set once
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "setting up a new repo, or installing into an existing one"
+occasion:    "setting up or installing into a repo"
 gates:       []
 index_clause: "check or set the default branch to main, once, at install"
 checked_by:  tools/checks/check_default_branch.py

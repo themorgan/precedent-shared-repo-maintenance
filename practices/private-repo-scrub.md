@@ -4,10 +4,10 @@ title:       Private repo names and specifics get scrubbed before anything vendo
 tier:        on-demand
 severity:    blocking
 applies_to:  ["**"]
-occasion:    "writing content that will vendor or ship into another repo"
+occasion:    "writing content that ships into another repo"
 gates:       ["merge", "push"]
 index_required: true
-index_clause: "name a private repo only in general terms in anything that ships elsewhere"
+index_clause: "name a private repo only in general terms"
 checked_by:  tools/checks/check_private_repo_scrub.py
 defines:     []
 status:      active

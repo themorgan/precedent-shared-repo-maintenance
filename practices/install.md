@@ -4,7 +4,7 @@ title:       Installing a vendored practice set into a repo
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "bringing a vendored practice layer into a new or existing repo"
+occasion:    "installing a vendored practice layer in a repo"
 gates:       []
 index_clause: "vendor the tree, weave conventions into AGENTS.md, wire checks and manifest"
 checked_by:  null

@@ -4,7 +4,7 @@ title:       Unattended automation reports its own blockers as a tracked issue
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "an unattended job hits something blocking its normal work, or something optional it cannot reach"
+occasion:    "an unattended job is blocked, or can't reach an optional input"
 gates:       []
 index_clause: "a blocked job files or updates an issue; skip an optional input, never silently"
 checked_by:  null

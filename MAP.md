@@ -14,25 +14,25 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
-| [automation-issues](practices/automation-issues.md) | on-demand | an unattended job hits something blocking its normal work, or something optional it cannot reach |
-| [blank-blocklist](practices/blank-blocklist.md) | on-demand | installing a vendored practice layer that could check in upstream |
-| [deep-check](practices/deep-check.md) | on-demand | asked for a "deep check" by name, or after drift-inviting work |
-| [default-branch](practices/default-branch.md) | on-demand | setting up a new repo, or installing into an existing one |
-| [derived-file-marker](practices/derived-file-marker.md) | on-demand | creating a file a later regeneration will overwrite |
-| [dont-race-another-window](practices/dont-race-another-window.md) | on-demand | being asked for something another window of mine may already be working on |
-| [drift-notice](practices/drift-notice.md) | on-demand | a session starts in a repo that vendors a universal or shared set |
-| [fresh-before-write](practices/fresh-before-write.md) | on-demand | setting up a project I work in, or a session reporting that its checkout is behind |
-| [fresh-check-escalation](practices/fresh-check-escalation.md) | on-demand | a session-start freshness check against a private source can't be reached |
-| [install](practices/install.md) | on-demand | bringing a vendored practice layer into a new or existing repo |
+| [automation-issues](practices/automation-issues.md) | on-demand | an unattended job is blocked, or can't reach an optional input |
+| [blank-blocklist](practices/blank-blocklist.md) | on-demand | installing a layer that could check in upstream |
+| [deep-check](practices/deep-check.md) | on-demand | asked for a "deep check", or after drift-inviting work |
+| [default-branch](practices/default-branch.md) | on-demand | setting up or installing into a repo |
+| [derived-file-marker](practices/derived-file-marker.md) | on-demand | creating a file regeneration will overwrite |
+| [dont-race-another-window](practices/dont-race-another-window.md) | on-demand | asked for something another window may already be doing |
+| [drift-notice](practices/drift-notice.md) | on-demand | a session starts in a repo that vendors a set |
+| [fresh-before-write](practices/fresh-before-write.md) | on-demand | setting up a project, or a session reporting its checkout is behind |
+| [fresh-check-escalation](practices/fresh-check-escalation.md) | on-demand | a session-start check can't reach a private source |
+| [install](practices/install.md) | on-demand | installing a vendored practice layer in a repo |
 | [light-check](practices/light-check.md) | on-demand | about to commit |
-| [mirror-into-agents](practices/mirror-into-agents.md) | on-demand | a README or other key file just gained an operational instruction |
-| [new-rule-placement](practices/new-rule-placement.md) | on-demand | adding a new rule to a maintained rules document |
+| [mirror-into-agents](practices/mirror-into-agents.md) | on-demand | a key file gains an operational instruction |
+| [new-rule-placement](practices/new-rule-placement.md) | on-demand | adding a rule to a rules document |
 | [no-duplication](practices/no-duplication.md) | on-demand | adding or reviewing a shared-set rule |
-| [private-repo-scrub](practices/private-repo-scrub.md) | on-demand | writing content that will vendor or ship into another repo |
-| [rule-scope-ask](practices/rule-scope-ask.md) | on-demand | a new rule is proposed and its scope isn't obvious |
+| [private-repo-scrub](practices/private-repo-scrub.md) | on-demand | writing content that ships into another repo |
+| [rule-scope-ask](practices/rule-scope-ask.md) | on-demand | a new rule's scope isn't obvious |
 | [session-trailer](practices/session-trailer.md) | on-demand | committing anything |
 | [todo-gate](practices/todo-gate.md) | on-demand | about to push after a thread of work |
-| [vendor-neutral-by-default](practices/vendor-neutral-by-default.md) | on-demand | writing a hook, script or rule in a repo that vendors a layer out to others |
+| [vendor-neutral-by-default](practices/vendor-neutral-by-default.md) | on-demand | writing a hook, script or rule another repo will vendor |
 
 ## Withdrawn practices
 
