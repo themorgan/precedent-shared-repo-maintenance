@@ -91,10 +91,20 @@ echo "ok: a revert is exempt only where revert-needs-no-trailer is in force"
 # Cases 3-5. Cloned with file:// on purpose -- git ignores --depth for a
 # plain local path clone and hardlinks the whole object store instead, so a
 # path clone would silently not be shallow and case 3 would prove nothing.
-SHALLOW="$(mktemp -d)"
-FULL="$(mktemp -d)"
-rmdir "$SHALLOW" "$FULL"
-trap 'rm -rf "$SCRATCH" "$SHALLOW" "$FULL"' EXIT
+#
+# Beside the repository, not in /tmp (2026-09-29). The check asks the
+# resolver whether revert-needs-no-trailer is in force for the clone it
+# judges, and a consumer's sources are relative paths (../precedent-shared-*)
+# that only resolve from where the repository really lives. From /tmp none
+# resolved, the exemption read as not in force, and case 4 flagged a
+# consuming repo's real trailer-less revert -- a failure of the fixture's
+# placement, not of the history. Case 1d's scratch clone stays in /tmp on
+# purpose: it needs a clone that resolves no working-style set.
+PARENT="$(dirname "$ROOT")"
+SHALLOW="$PARENT/.trailer-test-$$-shallow"
+FULL="$PARENT/.trailer-test-$$-full"
+SRC="$PARENT/.trailer-test-$$-src"
+trap 'rm -rf "$SCRATCH" "$SHALLOW" "$FULL" "$SRC"' EXIT
 (
   set -e
   git clone -q --depth 1 "file://$ROOT" "$SHALLOW" 2>/dev/null
@@ -156,6 +166,54 @@ trap 'rm -rf "$SCRATCH" "$SHALLOW" "$FULL"' EXIT
     exit 1
   fi
   echo "ok: a violation visible in a shallow slice still fires (1), not skipped"
+
+  # 6. a trailer-less revert, judged through the real resolver: flagged in
+  #    the full clone as it stands, and passed once that clone declares a
+  #    source where revert-needs-no-trailer is active. Case 1e stubs the
+  #    answer; this asks the resolver the way a consuming repo does.
+  (
+    cd "$FULL"
+    touch reverted-here.txt
+    git add reverted-here.txt
+    git -c user.name="Test" -c user.email="test@example.com" commit -q \
+      -m "a change that will be reverted" -m "Session: https://example.invalid/session"
+    git -c user.name="Test" -c user.email="test@example.com" revert --no-edit HEAD >/dev/null
+  )
+  mkdir -p "$SRC/practices"
+  printf '%s\n' '---' 'slug:        revert-needs-no-trailer' 'status:      active' \
+    '---' '## Rule' 'A revert commit may leave out the Session: trailer.' \
+    > "$SRC/practices/revert-needs-no-trailer.md"
+  printf '{"name": "zzz-trailer-test", "level": "shared"}\n' > "$SRC/precedent-source.json"
+  in_force () {
+    (cd "$ROOT" && PRECEDENT_CHECK_ROOT="$FULL" python3 -c '
+import sys; sys.path.insert(0, "tools/checks")
+import check_session_trailer as c
+sys.exit(0 if c.revert_exemption_in_force() else 1)')
+  }
+  if ! in_force; then
+    # The control: not in force, the same revert is flagged.
+    if (cd "$ROOT" && PRECEDENT_CHECK_ROOT="$FULL" python3 tools/checks/check_session_trailer.py > /dev/null 2>&1); then
+      echo "FAIL: a trailer-less revert passed while revert-needs-no-trailer was not in force" >&2
+      exit 1
+    fi
+    python3 - "$FULL/precedent.json" "$(basename "$SRC")" <<'PY'
+import json, pathlib, sys
+p = pathlib.Path(sys.argv[1])
+d = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {"format_version": 1}
+d.setdefault("sources", []).append(
+    {"level": "shared", "name": "zzz-trailer-test", "path": "../" + sys.argv[2]})
+p.write_text(json.dumps(d, indent=2) + "\n", encoding="utf-8")
+PY
+  fi
+  if ! in_force; then
+    echo "FAIL: case 6 could not put revert-needs-no-trailer in force through the resolver -- it would prove nothing" >&2
+    exit 1
+  fi
+  if ! (cd "$ROOT" && PRECEDENT_CHECK_ROOT="$FULL" python3 tools/checks/check_session_trailer.py > /dev/null); then
+    echo "FAIL: a trailer-less revert was flagged although revert-needs-no-trailer is in force through the resolver" >&2
+    exit 1
+  fi
+  echo "ok: a trailer-less revert passes where the resolver puts revert-needs-no-trailer in force"
 )
 
 cd "$ROOT"
