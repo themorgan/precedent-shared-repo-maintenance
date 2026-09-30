@@ -100,7 +100,14 @@ echo "ok: a revert is exempt only where revert-needs-no-trailer is in force"
 # consuming repo's real trailer-less revert -- a failure of the fixture's
 # placement, not of the history. Case 1d's scratch clone stays in /tmp on
 # purpose: it needs a clone that resolves no working-style set.
-PARENT="$(dirname "$ROOT")"
+#
+# Beside the MAIN checkout, not beside ROOT: the merge check runs this test
+# from a worktree it makes under /tmp, where "beside ROOT" is /tmp again
+# (found the same day, in a consuming repo's merge check). Git records the
+# main checkout of a linked worktree; in an ordinary checkout it is ROOT.
+COMMON="$(cd "$ROOT" && cd "$(git rev-parse --git-common-dir)" && pwd)"
+if [ "$(basename "$COMMON")" = ".git" ]; then MAIN="$(dirname "$COMMON")"; else MAIN="$ROOT"; fi
+PARENT="$(dirname "$MAIN")"
 SHALLOW="$PARENT/.trailer-test-$$-shallow"
 FULL="$PARENT/.trailer-test-$$-full"
 SRC="$PARENT/.trailer-test-$$-src"
@@ -142,6 +149,29 @@ trap 'rm -rf "$SCRATCH" "$SHALLOW" "$FULL" "$SRC"' EXIT
     exit 1
   fi
   echo "ok: a full clone of the same history is still clean"
+
+  # 4b. ...and the clone resolves every source the real checkout resolves,
+  #     so an exemption in force there is in force here. This is the
+  #     property case 4 silently lost from /tmp.
+  missing () {
+    python3 - "$1" "$ROOT/tools" <<'PY'
+import contextlib, io, json, sys
+sys.path.insert(0, sys.argv[2])
+with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+    import precedent_resolve as pr
+    try:
+        res = pr.resolve(pr.load_config(sys.argv[1]))
+        out = sorted(m["name"] for m in res.get("missing") or [])
+    except (Exception, SystemExit):
+        out = ["<could not resolve>"]
+print(json.dumps(out))
+PY
+  }
+  if [ -f "$ROOT/tools/precedent_resolve.py" ] && [ "$(missing "$FULL")" != "$(missing "$MAIN")" ]; then
+    echo "FAIL: the full clone resolves fewer sources than the real checkout ($(missing "$FULL") vs $(missing "$MAIN")) -- case 4 is judging a different set of practices" >&2
+    exit 1
+  fi
+  echo "ok: the full clone resolves the same sources as the real checkout"
 
   # 5. shallow, but the violation is inside the visible slice -> still fires.
   (
@@ -222,3 +252,24 @@ if ! python3 tools/checks/check_session_trailer.py > /dev/null; then
   exit 1
 fi
 echo "ok: clean on real content"
+
+# 7. The whole test again, from a worktree under /tmp -- the shape the merge
+#    check runs it in. Once, never recursively.
+if [ -z "${TRAILER_TEST_IN_WORKTREE:-}" ]; then
+  WT_PARENT="$(mktemp -d)"
+  WT="$WT_PARENT/tree"
+  git -C "$ROOT" worktree add -q --detach "$WT" HEAD
+  cleanup_wt () { git -C "$ROOT" worktree remove --force "$WT" >/dev/null 2>&1; git -C "$ROOT" worktree prune; rm -rf "$WT_PARENT"; }
+  # The worktree holds HEAD; carry the files under test over, so an
+  # uncommitted edit is what runs (as the rest of this test does).
+  cp "$ROOT/tools/checks/check_session_trailer.py" "$WT/tools/checks/"
+  cp "$ROOT/tools/checks/tests/test_session_trailer.sh" "$WT/tools/checks/tests/"
+  if ! (cd "$WT" && TRAILER_TEST_IN_WORKTREE=1 bash tools/checks/tests/test_session_trailer.sh > "$WT_PARENT/out" 2>&1); then
+    sed 's/^/    /' "$WT_PARENT/out" >&2
+    cleanup_wt
+    echo "FAIL: the test does not pass from a worktree under /tmp, as the merge check runs it" >&2
+    exit 1
+  fi
+  cleanup_wt
+  echo "ok: the whole test passes from a worktree under /tmp, as the merge check runs it"
+fi
