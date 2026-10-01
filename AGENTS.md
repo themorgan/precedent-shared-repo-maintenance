@@ -16,19 +16,13 @@ When a key file gains an operational instruction:
   mirror-into-agents — it lands in both AGENTS.md and its human home
 When a new rule's scope isn't obvious:
   rule-scope-ask — ask once which layer or set it belongs in
-When a session starts in a repo that vendors a set:
-  drift-notice — check source freshness at session start; raise it at once
-When a session-start check can't reach a private source:
-  fresh-check-escalation — tell "could not verify" apart from "confirmed fresh"; verify directly
 When about to commit:
   light-check — a cheap mechanical audit runs before every commit, not just merges
-When adding a rule to a rules document:
-  new-rule-placement — place a new rule by subject, slug it, renumber, mirror, re-check
 When adding or reviewing a shared-set rule:
   no-duplication — a rule that only restates universal gets dropped
 When an unattended job is blocked, or can't reach an optional input:
   automation-issues — a blocked job files or updates an issue; skip an optional input, never silently
-When asked for a "deep check", or after drift-inviting work:
+When asked for a "deep check":
   deep-check — every mechanical audit, plus a full read of the repo against itself
 When asked for something another window may already be doing:
   dont-race-another-window — say so and decline; send me to the window already on it
@@ -36,14 +30,12 @@ When committing anything:
   session-trailer — a Session: <url> trailer on every commit
 When creating a file regeneration will overwrite:
   derived-file-marker — a regenerated file's header names its source, recipe, and command
-When installing a layer that could check in upstream:
-  blank-blocklist — leave the check-in blocklist blank; don't ask or remind
-When installing a vendored practice layer in a repo:
-  install — vendor the tree, weave conventions into AGENTS.md, wire checks and manifest
+When installing Precedent or a shared set into a repo:
+  install — precedent_install.py, declare the set, wire the individual set, main as default
+When session start reports a source BEHIND or NOT VERIFIED:
+  drift-notice — raise it at once and file it; not verified is not current -- verify directly
 When setting up a project, or a session reporting its checkout is behind:
   fresh-before-write — verify and fast-forward the checkout before the first write
-When setting up or installing into a repo:
-  default-branch — check or set the default branch to main, once, at install
 When writing a hook, script or rule another repo will vendor:
   vendor-neutral-by-default — default new code and rules to provider-neutral
 When writing content that ships into another repo:

@@ -9,11 +9,12 @@ gates:       []
 index_clause: "place a new rule by subject, slug it, renumber, mirror, re-check"
 checked_by:  null
 defines:     []
-status:      active
+status:      retired
+in_force_at: none
 supersedes:  []
 overrides:   null
 added:       2026-08-31
-approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session"
+approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; retired 2026-10-01 (Morgan, in the reduction pass: \"Question 3 - all are great, approved\", strength: decided)"
 ---
 ## Rule
 When adding a new rule to a maintained rules document: pick where it belongs by subject among the existing groups, not at the end of the file; assign it a permanent slug and anchor, never renumbered later; renumber every rule after the insertion point so the reading order stays one unbroken sequence; mirror the new rule everywhere else it's required to live, in the same reading-order position; then re-run the light check and record the addition in the backlog document.
@@ -43,6 +44,18 @@ broken slug citation or a stray positional reference; nothing checks that a
 new rule landed in the right group, or that every mirror picked it up. That
 residue is deliberately left to `deep-check`'s review half, and adding a
 rule is already one of the drift-inviting triggers that names.
+
+**Retired 2026-10-01** (Morgan, in the reduction pass: *"Question 3 - all
+are great, approved"*, strength: decided). The rule is written for a single
+numbered rules document: pick a position among its groups, renumber
+everything after it, mirror it in the same position elsewhere. No repo here
+keeps one any more. Since the phase 1 split every practice is its own
+`practices/<slug>.md` file, named by slug, with no position to choose and
+no number to renumber; the generated views and the index are rebuilt from
+the files by [`build_views.py`](../tools/build_views.py), so there is no mirror to keep by hand either.
+The 2026-09-28 very deep check (BestPractice's
+todo/todo-2026-09-28-very-deep-check-pass-4-findings.md) recommended
+retiring it. This file stays as the record.
 
 ## Install
 No mechanical check, and the practice says so itself: its own Detail section states "nothing mechanically checks that a new rule actually landed in the right group, or that every mirror picked it up -- that gap is exactly what the deep check's review exists to catch." A slug/anchor uniqueness check and a stray-positional-reference check are the parts it names as checkable in principle, but neither is what this rule is actually about.

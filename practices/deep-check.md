@@ -4,7 +4,7 @@ title:       "The deep check: every audit, plus an open-ended coherence review"
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "asked for a \"deep check\", or after drift-inviting work"
+occasion:    "asked for a \"deep check\""
 index_required: true
 gates:       ["merge"]
 index_clause: "every mechanical audit, plus a full read of the repo against itself"
@@ -81,6 +81,13 @@ Nothing was pointed at via `overrides:`, per Morgan's ruling above that the
 two are unrelated rules: there is nothing here to override.
 
 **Reviewed again on 2026-09-28, against universal's `two-check-levels` and `very-deep-check`, and left here.** Morgan had approved merging overlaps into universal where they were true duplicates, and this is not one. `very-deep-check` is the rare, cross-repo audit Morgan ruled on 2026-09-06 to be an unrelated rule. `two-check-levels` names the two levels and says the full one gates a merge; it does not say what a deep check contains. The coherence read, the what-to-look-for list and mechanical-before-human are this practice's own.
+
+**2026-10-01: occasion shortened to the spoken trigger** (Morgan, in the
+reduction pass: *"Question 3 - all are great, approved"*, strength:
+decided). It used to add "or after drift-inviting work", which contradicts
+the Rule's own line that the review half runs only when a person asks for a
+deep check by name. The mechanical half needs no index line for that: it
+runs at every merge through this practice's merge gate and the push check.
 
 ## Install
 Checked mechanically, but only half of it: [`tools/checks/check_deep_check.py`](../tools/checks/check_deep_check.py), scope `tree`, verifies the mechanical half's own claim is actually true -- that `tools/checks/tests/run_all.sh` really does run every audit script the repo maintains. It catches a check script added with no matching test (so `run_all.sh`'s `test_*.sh` glob would silently never exercise it) and a stale test left behind after its check script was removed. The review half -- reading the repo's own rules against each other for contradiction, drift, or disproportion -- is explicitly the part no audit can catch (per this file's own Rule: "the audits catch broken links and bad syntax; they can't catch a rule that now contradicts another rule"); that's a judgment call by design, not a gap to close. Two-direction tested in [`tools/checks/tests/test_deep_check.sh`](../tools/checks/tests/test_deep_check.sh).
