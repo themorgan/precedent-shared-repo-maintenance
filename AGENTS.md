@@ -20,12 +20,8 @@ When about to commit:
   light-check — a cheap mechanical audit runs before every commit, not just merges
 When adding or reviewing a shared-set rule:
   no-duplication — a rule that only restates universal gets dropped
-When an unattended job is blocked, or can't reach an optional input:
-  automation-issues — a blocked job files or updates an issue; skip an optional input, never silently
 When asked for a "deep check":
   deep-check — every mechanical audit, plus a full read of the repo against itself
-When asked for something another window may already be doing:
-  dont-race-another-window — say so and decline; send me to the window already on it
 When creating a file regeneration will overwrite:
   derived-file-marker — a regenerated file's header names its source, recipe, and command
 When installing Precedent or a shared set into a repo:

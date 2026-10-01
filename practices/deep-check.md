@@ -26,7 +26,7 @@ What to look for -- a starting point, not a specification: contradictions betwee
 
 Fix what the review turns up in the same pass, then re-run the mechanical half, since the fixes break links of their own. Anything deliberately left alone gets a line in the backlog document.
 
-When it runs: the mechanical half on every merge, per the runbook. Both halves whenever asked for by name, and after work that invites drift -- rules added or reordered, a rule that changed shape, an install into a new repo, or a merge that resolved conflicts across several shared files.
+When it runs: the mechanical half on every merge, per the runbook. The review half only when a person asks for a deep check by name. After work that invites drift -- rules added or reordered, a rule that changed shape, an install into a new repo, or a merge that resolved conflicts across several shared files -- say that a deep check would be worth asking for; don't run the review half unasked.
 
 ## Why
 It is deliberately not a per-commit gate: the review half costs a careful read of the whole repo, which is exactly why the light check exists to carry the cheap checks on every commit instead.
