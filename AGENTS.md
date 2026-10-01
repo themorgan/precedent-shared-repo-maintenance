@@ -26,8 +26,6 @@ When asked for a "deep check":
   deep-check — every mechanical audit, plus a full read of the repo against itself
 When asked for something another window may already be doing:
   dont-race-another-window — say so and decline; send me to the window already on it
-When committing anything:
-  session-trailer — a Session: <url> trailer on every commit
 When creating a file regeneration will overwrite:
   derived-file-marker — a regenerated file's header names its source, recipe, and command
 When installing Precedent or a shared set into a repo:
