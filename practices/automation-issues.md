@@ -9,7 +9,8 @@ gates:       []
 index_clause: "a blocked job files or updates an issue; skip an optional input, never silently"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: automation-issues
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -65,6 +66,8 @@ recorded adaptations, self-merging once checks pass -- did not, and is not
 here. It went with the rule, on purpose.
 
 **Drafted into the universal catalogue on 2026-09-28**, as the universal practice `automation-issues`, on Morgan's approval of a session's recommendation to move it together with four others that apply to any repository rather than to maintaining practice sets (strength: assented; this rule's own recorded strength is unchanged). His framing, said about `dont-race-another-window`: *"From the name it sounds like a fundamental rule, so it should be in precedent universal. Repo-maintenance is just for things to help maintain the practices etc."* The universal copy was rewritten to be public-safe -- general terms in place of this account's private repositories and people -- so its wording differs from this one. **This copy stays active until that pull request has merged and every repository consuming this set has taken the new universal catalogue**; then `precedent_move.py --dedupe-only` marks it `deduplicated` with `in_force_at: automation-issues` ([spec/MOVING_PRACTICES.md](https://github.com/alex137/BestPractice/blob/staging/spec/MOVING_PRACTICES.md) in BestPractice). Until then THIS copy is the one in force wherever this set is declared (shared outranks universal), so an edit goes into both copies.
+
+Moved to the universal set `BestPractice` on 2026-10-01; its removal from `precedent-shared-repo-maintenance` approved by Morgan F, one of that set's approvers. This copy is deduplicated; the rule is in force there as `automation-issues`.
 
 ## Install
 No mechanical check: this repo runs no unattended scheduled job itself, so there is no run history here to check either half against. A repo that adds such automation could check both directly -- does a recurrence comment on the existing open issue rather than opening a duplicate, and does a run missing an optional credential exit clean with an issue raised rather than red or silent -- but that is a property of that automation's own run history, not of this repo's tree.
