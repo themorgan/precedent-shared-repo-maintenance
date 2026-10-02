@@ -9,11 +9,12 @@ gates:       []
 index_clause: "tell \"could not verify\" apart from \"confirmed fresh\"; verify directly"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: drift-notice
 supersedes:  []
 overrides:   null
 added:       2026-08-31
-approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session"
+approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; deduplicated into drift-notice 2026-10-01 (Morgan, in the reduction pass: \"Question 3 - all are great, approved\", strength: decided)"
 ---
 ## Rule
 A freshness check against a private source is built deliberately silent on a transient failure -- offline, a timeout -- treating it the same as "nothing has moved," because a notice that turns out to mean only "the network hiccuped" would be worse than no notice at all. That silence assumption breaks for a standing gap rather than a blip: an environment with no credentials for the private source at all, ever, where the same check fails the exact same way every session and gets read as "confirmed current" indefinitely. Tell the two failure modes apart: a fast, clean failure (bad or missing credentials, a permission error) prints a "could not verify" line, distinct from silence.
@@ -50,6 +51,14 @@ not verify" is not "confirmed fresh", so a session seeing that line reaches
 the source another way if the environment offers one, and says plainly that
 it could not verify if none exists. That is exactly how the gap was closed
 the one time it was hit.
+
+**Merged into [drift-notice](drift-notice.md), 2026-10-01**, in the
+reduction pass Morgan approved that day ("Question 3 - all are great,
+approved", strength: decided). Every part of the Rule and Detail above is
+there now: the transient-versus-standing distinction, the distinct "could
+not verify" line, and reaching the source directly or saying plainly that
+it could not be verified. This file stays, word for word above, as the
+record; the rule in force is drift-notice.
 
 ## Install
 No mechanical check: the freshness-check mechanism this rule refines doesn't exist as code in this repo (it runs in a consuming repo, against a private source), and the actual distinction it requires -- printing "could not verify" instead of staying silent on a standing credential gap -- is behavior of that mechanism's own error handling, not a property this repo's tree can be scanned for.

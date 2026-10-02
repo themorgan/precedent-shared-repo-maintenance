@@ -4,22 +4,24 @@ title:       A session-start notice asks about drift immediately, not at the end
 tier:        on-demand
 severity:    default
 applies_to:  ["**"]
-occasion:    "a session starts in a repo that vendors a set"
+occasion:    "session start reports a source BEHIND or NOT VERIFIED"
 gates:       []
-index_clause: "check source freshness at session start; raise it at once"
+index_clause: "raise it at once and file it; not verified is not current -- verify directly"
 checked_by:  null
 defines:     []
 status:      active
 supersedes:  []
 overrides:   null
 added:       2026-08-31
-approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session"
+approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; absorbed fresh-check-escalation 2026-10-01 (Morgan, in the reduction pass: \"Question 3 - all are great, approved\", strength: decided)"
 ---
 ## Rule
-Nothing updates a vendored source between sessions (upstream updates are taken by `Update Vendors`, attended); this rule makes sure a session that is here says so, since the person who could approve an update is right here from the first turn. At session start, compare each vendored source's recorded commit against its actual head (one cheap remote query, no model call), and if either has moved, say so as part of catching the person up, not saved for the end of the session.
+Nothing updates a vendored source between sessions (upstream updates are taken by `Update Vendors`, attended); this rule makes sure a session that is here says so, since the person who could approve an update is right here from the first turn. At session start, compare each vendored source's recorded commit against its actual head (one cheap remote query, no model call), and if either has moved, say so as part of catching the person up, not saved for the end of the session. **A source the check could not verify is not a current one.** A fast, clean failure (missing credentials, a permission error) means "could not verify", never "confirmed fresh": say so, reach the source directly if the environment offers any way to, and if it offers none, say plainly that you could not verify it rather than reporting it current.
 
 ## Detail
 A fired notice is also persisted, not just printed: file it as one `todo/todo-<date>-vendor-drift.md` item (`disposition: ask`) naming both commits, so it survives the turn and the open-items index keeps showing it. Taking either update stays deliberate, whenever it's raised -- never without being asked. If a merge lands in the same session while a notice is still open, re-ask right there rather than waiting for the end of the session. Fallback: if no notice fired at session start (an incomplete install, an offline start), repeat the same cheap comparison at the end of the session, right after the merge runbook's own steps.
+
+The freshness check stays silent on a transient failure (offline, a timeout), because a notice that only means "the network hiccuped" is worse than none. A standing gap is different: an environment with no credentials for the source fails the same way every session, and read as silence it would mask real drift for as long as that environment exists. So the check prints a distinct "could not verify" line for a fast, clean failure, and the session treats it as above.
 
 ## Why
 A purely printed notice competes for a session's attention against whatever concrete task the person actually opened the session to do, and can lose that fight silently -- read once, never acted on, and nothing forces it back into view.
@@ -54,6 +56,15 @@ arrived from.
 Taking an update stays deliberate, which is the one deliberate difference
 from the scheduled syncs that merge unattended: a human is already present
 to answer, so there is no reason to skip the ask.
+
+**2026-10-01: absorbed fresh-check-escalation** (Morgan, in the reduction
+pass: *"Question 3 - all are great, approved"*, strength: decided). Both
+rules are about what a session does with the session-start freshness report,
+so they now share one index line, keyed to what that report says (BEHIND or
+NOT VERIFIED) rather than to a set being vendored. fresh-check-escalation's
+Rule and Detail are carried in full above; its file stays as the record,
+`deduplicated` into this one, and its 2026-08-29 incident is in its own
+Story.
 
 ## Install
 No mechanical check: this is a rule about when a session raises drift (immediately at session start, not saved for later) -- a property of session conduct and turn ordering, not of any file this repo's own tree holds. There is no artifact left behind that distinguishes a notice raised early from one raised late.

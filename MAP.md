@@ -10,23 +10,18 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## The practice catalogue
 
-`practices/` holds 19 practice files (0 resident, 19 on-demand). One file per practice.
+`practices/` holds 14 practice files (0 resident, 14 on-demand). One file per practice.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
-| [automation-issues](practices/automation-issues.md) | on-demand | an unattended job is blocked, or can't reach an optional input |
-| [blank-blocklist](practices/blank-blocklist.md) | on-demand | installing a layer that could check in upstream |
-| [deep-check](practices/deep-check.md) | on-demand | asked for a "deep check", or after drift-inviting work |
+| [deep-check](practices/deep-check.md) | on-demand | asked for a "deep check" |
 | [default-branch](practices/default-branch.md) | on-demand | setting up or installing into a repo |
 | [derived-file-marker](practices/derived-file-marker.md) | on-demand | creating a file regeneration will overwrite |
-| [dont-race-another-window](practices/dont-race-another-window.md) | on-demand | asked for something another window may already be doing |
-| [drift-notice](practices/drift-notice.md) | on-demand | a session starts in a repo that vendors a set |
+| [drift-notice](practices/drift-notice.md) | on-demand | session start reports a source BEHIND or NOT VERIFIED |
 | [fresh-before-write](practices/fresh-before-write.md) | on-demand | setting up a project, or a session reporting its checkout is behind |
-| [fresh-check-escalation](practices/fresh-check-escalation.md) | on-demand | a session-start check can't reach a private source |
-| [install](practices/install.md) | on-demand | installing a vendored practice layer in a repo |
+| [install](practices/install.md) | on-demand | installing Precedent or a shared set into a repo |
 | [light-check](practices/light-check.md) | on-demand | about to commit |
 | [mirror-into-agents](practices/mirror-into-agents.md) | on-demand | a key file gains an operational instruction |
-| [new-rule-placement](practices/new-rule-placement.md) | on-demand | adding a rule to a rules document |
 | [no-duplication](practices/no-duplication.md) | on-demand | adding or reviewing a shared-set rule |
 | [private-repo-scrub](practices/private-repo-scrub.md) | on-demand | writing content that ships into another repo |
 | [rule-scope-ask](practices/rule-scope-ask.md) | on-demand | a new rule's scope isn't obvious |
@@ -36,24 +31,29 @@ Precedent's own repo map (PRACTICE_ENGINE_PLAN.md, Sequence row 2: "make AGENTS.
 
 ## Withdrawn practices
 
-25 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
+30 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
 
 | Practice | Status | Now in force at | Why it was withdrawn |
 |---|---|---|---|
+| [automation-issues](practices/automation-issues.md) | deduplicated | [automation-issues](practices/automation-issues.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, which recorded a reason rather than a single incident. |
 | [bestpractice-sync](practices/bestpractice-sync.md) | retired | — (nowhere) | **Retired 2026-09-11, by Morgan**, `strength: decided` -- *"I think we should eliminate bestpractice-sync -- now that it's getting more complex, I'm more hesitant about syncing it automatically."* |
+| [blank-blocklist](practices/blank-blocklist.md) | retired | — (nowhere) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text. |
 | [brainstorm-citations](practices/brainstorm-citations.md) | deduplicated | [brainstorm-citations](practices/brainstorm-citations.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [branch-links](practices/branch-links.md) | deduplicated | [branch-links](practices/branch-links.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, which recorded a gap rather than an incident. |
 | [catalogue-carries-stories](practices/catalogue-carries-stories.md) | deduplicated | [catalogue-carries-stories](practices/catalogue-carries-stories.md) | **Deduplicated a second time, 2026-09-13**, once `binds_publishers` removed the mechanism the 2026-09-07 re-activation existed to work around. |
 | [content-subdirs](practices/content-subdirs.md) | retired | — (nowhere) | **Retired 2026-09-29** (Morgan: *"Let's eliminate that one also"*, of this rule, beside the retired `content-directory`). |
 | [doc-recipe](practices/doc-recipe.md) | deduplicated | [doc-recipe](practices/doc-recipe.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it rests on a drift that repo had already caught and reversed once. |
+| [dont-race-another-window](practices/dont-race-another-window.md) | deduplicated | [dont-race-another-window](practices/dont-race-another-window.md) | 2026-09-11, same thread as `handoff-only-when-blocked`, immediately after the exchange that produced it. |
 | [draft-marker](practices/draft-marker.md) | deduplicated | [draft-marker](practices/draft-marker.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it records a real failure. |
 | [durable-list-anchors](practices/durable-list-anchors.md) | deduplicated | [durable-list-anchors](practices/durable-list-anchors.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and the incident behind it is a good one because the damage was invisible. |
 | [file-mention-links](practices/file-mention-links.md) | deduplicated | [file-mention-links](practices/file-mention-links.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and the incident is about a rule that could not survive on good intentions. |
+| [fresh-check-escalation](practices/fresh-check-escalation.md) | deduplicated | [drift-notice](practices/drift-notice.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it records a specific failure found directly rather than reasoned about. |
 | [header-caps](practices/header-caps.md) | deduplicated | `headline-capitalization` — in another source; `python3 tools/precedent_show.py headline-capitalization` | Retired on 2026-09-06 as a duplicate. |
 | [list-item-parity](practices/list-item-parity.md) | deduplicated | [list-item-parity](practices/list-item-parity.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [list-restraint](practices/list-restraint.md) | deduplicated | [list-restraint](practices/list-restraint.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [llm-neutral](practices/llm-neutral.md) | retired | — (nowhere) | **Retired 2026-09-11, by Morgan**, `strength: decided` -- his own words, *"okay I think we can retire these"*, going further than the proposal on the table, which was to move them into a subject set for engineering craft. |
 | [match-parsed-id-not-prefix](practices/match-parsed-id-not-prefix.md) | retired | — (nowhere) | **Retired 2026-09-11, by Morgan**, `strength: decided` -- his own words, *"okay I think we can retire these"*, going further than the proposal on the table, which was to move them into a subject set for engineering craft. |
+| [new-rule-placement](practices/new-rule-placement.md) | retired | — (nowhere) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and the provenance is worth keeping because it names a recurring shape. |
 | [no-stale-counts](practices/no-stale-counts.md) | deduplicated | [no-stale-counts](practices/no-stale-counts.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and this one has two concrete instances found on the same day the rule was written. |
 | [nonblocking-questions](practices/nonblocking-questions.md) | deduplicated | [nonblocking-questions](practices/nonblocking-questions.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [pack-sync](practices/pack-sync.md) | retired | — (nowhere) | **Retired 2026-09-11, by Morgan**, `strength: decided`, hours after its sibling and for the same reason -- *"let's get rid of pack-sync"*, once the question was put to him that the day's earlier decision had deliberately not answered. |

@@ -3,7 +3,8 @@ slug:        default-branch
 title:       A new repo's default branch is main, set once
 tier:        on-demand
 severity:    default
-applies_to:  ["**"]
+applies_to:  ["precedent.json"]
+applies_to_why: "The file every install writes: precedent_install.py creates precedent.json and declaring a set edits it, which is the moment this rule fires. The occasion index reaches the same moment through install's line, which carries this rule's clause since 2026-10-01; the check below refuses a wrong default branch at push either way. Before 2026-10-01 this was `**` and the index carried it. Decided: Morgan, 2026-10-01 (reduction pass)."
 occasion:    "setting up or installing into a repo"
 gates:       []
 index_clause: "check or set the default branch to main, once, at install"
@@ -13,7 +14,7 @@ status:      active
 supersedes:  []
 overrides:   null
 added:       2026-08-31
-approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session"
+approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; routed by path and carried by install's index line 2026-10-01 (Morgan, in the reduction pass: \"Question 3 - all are great, approved\", strength: decided)"
 ---
 ## Rule
 For an existing repo whose default branch isn't already `main`: check it at install time, and if it isn't `main`, set it once -- via a host API where the session's tools reach that far, otherwise as a one-click administrator item, disclosed in the repo's own onboarding document. For a brand-new, blank repo with no branches yet, there is nothing to check or set: make the very first commit directly on a branch literally named `main` and push that first, not a feature or planning branch -- the host adopts the first branch ever pushed to an empty repo as its default automatically.
@@ -48,6 +49,16 @@ commit directly on `main` satisfies the rule outright.
 
 One-time per repo either way. Once set, every later clone, pull request and
 automation run already targets `main` on its own.
+
+**2026-10-01: out of the occasion index, still in force** (Morgan, in the
+reduction pass: *"Question 3 - all are great, approved"*, strength:
+decided). The review proposed that `install` absorb this practice, since
+both fire at the same moment. `install`'s index line now names the default
+branch, and this practice routes by path instead, on `precedent.json`. It
+was kept `active` rather than deduplicated because
+[`tools/checks/check_default_branch.py`](../tools/checks/check_default_branch.py)
+is keyed to this slug, and the engine skips the check of a practice that is
+not in force. The Rule above is unchanged.
 
 ## Install
 Checked mechanically by [`tools/checks/check_default_branch.py`](../tools/checks/check_default_branch.py), scope `tree`, via the one cheap remote query this file's own Install text already names: `git ls-remote --symref origin HEAD` asks the remote which branch it actually points at, no clone required. If the remote can't be reached at all (no network, no credential), the check reports SKIPPED rather than a silent pass -- a check that can't observe the property says so, per the NotApplicable convention. Two-direction tested in [`tools/checks/tests/test_default_branch.sh`](../tools/checks/tests/test_default_branch.sh) against a local bare repo standing in for a misconfigured remote.
