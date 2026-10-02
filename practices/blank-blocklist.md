@@ -9,11 +9,12 @@ gates:       []
 index_clause: "leave the check-in blocklist blank; don't ask or remind"
 checked_by:  null
 defines:     []
-status:      active
+status:      retired
+in_force_at: none
 supersedes:  []
 overrides:   null
 added:       2026-08-31
-approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session"
+approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; retired 2026-10-01 (Morgan, in the reduction pass: \"Question 3 - all are great, approved\", strength: decided)"
 ---
 ## Rule
 Where a repo's install procedure asks for private vocabulary to seed a scrub blocklist before any check-in to a public upstream repo, and this team doesn't use that check-in path today, installing the vendored layer never asks for blocklist content and never volunteers a seeded draft on its own -- write the file with just its explanatory header and no entries, and move on. No follow-up reminder, ever, in that session or a later one.
@@ -43,6 +44,20 @@ upstream; this rule overrides that default for repos that do not use that
 path. It governs the install-time default for a new dependent repo only, and
 deliberately does not reach back to blank a blocklist a repo already
 populated and relies on.
+
+**Retired 2026-10-01** (Morgan, in the reduction pass: *"Question 3 - all
+are great, approved"*, strength: decided). The file this rule governs,
+`process/scrub_blocklist.txt`, was created only by the section 1 vendored
+install, and BestPractice's INSTALL.md retired that install path on
+2026-09-23. A section 0 install has no such file: BestPractice's
+spec/INSTALL_QUESTIONS.md says so in the row that now asks about private
+names, and that row asks on purpose, with "none declared" as its default.
+So the rule has nothing left to govern, and read loosely it would argue
+against a question the current install means to ask. The 2026-09-28 very
+deep check (BestPractice's
+todo/todo-2026-09-28-very-deep-check-pass-4-findings.md) recommended the
+same. No other practice carries it, because nothing needs to: this file
+stays as the record.
 
 ## Install
 No mechanical check: the rule governs a moment in a *target* repo's install procedure -- what an installing session does or doesn't ask for -- not a property this repo's own tree ever holds (this repo isn't itself being installed into anywhere, and has no check-in-upstream blocklist of its own to have left blank or populated).

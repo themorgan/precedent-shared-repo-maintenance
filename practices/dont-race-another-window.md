@@ -10,12 +10,12 @@ gates:       []
 index_clause: "say so and decline; send me to the window already on it"
 checked_by:  null
 defines:     []
-status:      active
+status:      deduplicated
 supersedes:  []
 overrides:   null
 added:       "2026-09-23"
 approved_by: "Morgan F, 2026-09-23, moved from the individual set precedent-individual (there: Morgan F, 2026-09-11; revised 2026-09-13, Morgan F, to cover a session another SESSION spawned, and a window not yet created)"
-in_force_at: null
+in_force_at: dont-race-another-window
 strength: decided
 ---
 ## Rule
@@ -51,6 +51,8 @@ He raised it as a general capability rather than a complaint about that turn —
 The shape is not new to this work: parallel sessions have collided before on the same file and the same fix, in Precedent's own repositories, producing duplicate edits in different places and at least one pull request closed as a competing implementation of something that had already landed. Those earlier cases are Morgan's account of them, recorded here as such — this repository's own pull request history does not hold them, so nothing in it corroborates the count.
 
 **Drafted into the universal catalogue on 2026-09-28**, as the universal practice `dont-race-another-window`, on Morgan's approval of a session's recommendation to move it together with four others that apply to any repository rather than to maintaining practice sets (strength: assented; this rule's own recorded strength is unchanged). His framing, said about `dont-race-another-window`: *"From the name it sounds like a fundamental rule, so it should be in precedent universal. Repo-maintenance is just for things to help maintain the practices etc."* The universal copy was rewritten to be public-safe -- general terms in place of this account's private repositories and people -- so its wording differs from this one. **This copy stays active until that pull request has merged and every repository consuming this set has taken the new universal catalogue**; then `precedent_move.py --dedupe-only` marks it `deduplicated` with `in_force_at: dont-race-another-window` ([spec/MOVING_PRACTICES.md](https://github.com/alex137/BestPractice/blob/staging/spec/MOVING_PRACTICES.md) in BestPractice). Until then THIS copy is the one in force wherever this set is declared (shared outranks universal), so an edit goes into both copies.
+
+Moved to the universal set `BestPractice` on 2026-10-01; its removal from `precedent-shared-repo-maintenance` approved by Morgan F, one of that set's approvers. This copy is deduplicated; the rule is in force there as `dont-race-another-window`.
 
 ## Install
 No mechanical check, and this one is further from checkable than most in this set. The subject is not a property of the tree, a commit, or a diff — it is the relationship between a turn in this conversation and a turn in a different one, which no process running in this repository can observe. There is no artifact: the correct outcome of this rule is a reply and *no* commit, which is indistinguishable on disk from having done nothing at all.
