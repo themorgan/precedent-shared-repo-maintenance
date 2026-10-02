@@ -109,8 +109,8 @@ as generic enough for universal — graceful failure, platform-neutral LLM
 integrations, not stating counts that drift, linking what you cite — and
 stayed team anyway: promoting to universal is a designed path with its own
 approval step; demoting a universal practice means undoing something
-already published to every Precedent user. Promote individually, as the
-team decides each one is ready.
+already published to every Precedent user. Move each one up on its own,
+as the team decides it is ready.
 
 One practice is marked `severity: blocking` (`private-repo-scrub`; its
 former sibling `sensitive-characterization-scrub` now lives in
