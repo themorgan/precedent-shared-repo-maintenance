@@ -11,7 +11,8 @@ index_clause: "a Session: <url> trailer on every commit"
 index_required: false
 checked_by:  tools/checks/check_session_trailer.py
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: session-trailer
 supersedes:  []
 overrides:   null
 added:       2026-08-31
@@ -49,6 +50,8 @@ push that carries a commit without the trailer, and refuses it before the
 commit leaves the machine, where an amend still fixes it. The Rule is
 unchanged; it now reaches a session through `precedent_gate.py push` and the
 check itself.
+
+Moved to the universal set `BestPractice` on 2026-10-05; its removal from `precedent-shared-repo-maintenance` approved by Morgan F, one of that set's approvers. This copy is deduplicated; the rule is in force there as `session-trailer`.
 
 ## Install
 Checked mechanically by [`tools/checks/check_session_trailer.py`](../tools/checks/check_session_trailer.py), scope `tree`, judged on what a push carries: every non-merge commit reachable from HEAD that origin does not have yet (`HEAD --not --remotes=origin`) must carry a session trailer line -- `Session:` or `Claude-Session:` (the key Claude Code Remote's own harness actually emits as of 2026-09; the check accepts either), a URL or the explicit `none available (<tool>)` form. `--range A..B` judges a named range instead, and `--all-history` walks every commit for a deliberate audit. The engine's push check runs it at every push, a direct push to the branch work lands on included, and a full sweep runs it the same way. It doesn't verify the URL actually resolves to a real session -- only that the trailer, in one of its valid shapes, is present, which is the "considered and skipped" vs. "forgotten" distinction this practice's own Why section names. Merge commits are excluded (a merge isn't new planned work of its own); merge detection reads the raw commit object rather than `git log --format=%P`, which silently loses a shallow clone's boundary commit's real parents -- see the check's own `_is_merge` docstring. Commits GitHub made with its own buttons (committer `noreply@github.com`) are excluded, and so are reverts where `revert-needs-no-trailer` resolves in force, asked through the engine's own resolver. One pre-existing, non-merge commit from before this check existed is exempted by SHA (`GRANDFATHERED_SHAS` in the script) rather than rewritten, per `no-rewrite-for-warnings`; `--all-history` still honours it. Tested in both directions, and for each exemption, in [`tools/checks/tests/test_session_trailer.sh`](../tools/checks/tests/test_session_trailer.sh).
