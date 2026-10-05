@@ -9,12 +9,12 @@ gates:       []
 index_clause: "verify and fast-forward the checkout before the first write"
 checked_by:  tools/checks/check_fresh_before_write.py
 defines:     []
-status:      active
+status:      deduplicated
 supersedes:  []
 overrides:   null
 added:       "2026-09-23"
 approved_by: "Morgan F, 2026-09-23, moved from the individual set precedent-individual; amended 2026-09-23, Morgan F (strength: assented) -- a diverged, clean branch may be merged, keeping both sides, rather than only reported (there: Morgan F, in the session that designed it; revised 2026-09-10, Morgan F, to distinguish a remote that could not be reached from a branch that has merely not been pushed yet; revised 2026-09-11, Morgan F, to reach repositories a session merely has attached; revised 2026-09-12, Morgan F, to expand a leading `~` in an attached-repo entry and to stop reporting an empty payload as a missing interpreter)"
-in_force_at: null
+in_force_at: fresh-before-write
 strength: decided
 ---
 ## Rule
@@ -58,6 +58,8 @@ Worth recording that the fix immediately earned itself back. With the branch com
 
 **Amended 2026-09-23: a diverged branch may be merged.** The rule used to allow only a fast-forward, so a diverged branch was always reported and left. BestPractice's own guard had meanwhile gone further twice: on 2026-09-15 it reset a diverged clean branch to `origin` at session start, and on 2026-09-22 it began merging one mid-session, after reporting-only left the drift in place, every prompt re-reported it, and a stale clone had to be reconciled by hand. The reset broke this rule by name and was removed on 2026-09-23. The merge did not break it in spirit, since it keeps both sides and picks neither. The wording now says so, on the session's recommendation, which I accepted.
 **Drafted into the universal catalogue on 2026-09-28**, as the universal practice `fresh-before-write`, on Morgan's approval of a session's recommendation to move it together with four others that apply to any repository rather than to maintaining practice sets (strength: assented; this rule's own recorded strength is unchanged). His framing, said about `dont-race-another-window`: *"From the name it sounds like a fundamental rule, so it should be in precedent universal. Repo-maintenance is just for things to help maintain the practices etc."* The universal copy was rewritten to be public-safe -- general terms in place of this account's private repositories and people -- so its wording differs from this one. **This copy stays active until that pull request has merged and every repository consuming this set has taken the new universal catalogue**; then `precedent_move.py --dedupe-only` marks it `deduplicated` with `in_force_at: fresh-before-write` ([spec/MOVING_PRACTICES.md](https://github.com/alex137/BestPractice/blob/staging/spec/MOVING_PRACTICES.md) in BestPractice). Until then THIS copy is the one in force wherever this set is declared (shared outranks universal), so an edit goes into both copies. **Its check did not move.** [`tools/checks/check_fresh_before_write.py`](../tools/checks/check_fresh_before_write.py) tests this set's own copy of the guard in `bootstrap/`, which has diverged from the engine's [`templates/harness/claude-code/hooks/freshness-guard.sh`](https://github.com/alex137/BestPractice/blob/staging/templates/harness/claude-code/hooks/freshness-guard.sh) that the universal copy points at. Decide at the deduplication step whether the check follows the engine's guard or is retired with this copy.
+
+Moved to the universal set `BestPractice` on 2026-10-05; its removal from `precedent-shared-repo-maintenance` approved by Morgan F, one of that set's approvers. This copy is deduplicated; the rule is in force there as `fresh-before-write`.
 
 ## Install
 The canonical script and settings snippet live in this repo, at `bootstrap/freshness-guard.sh` and `bootstrap/freshness.snippet.json`. Installing into a project: copy the script into the project as `.claude/hooks/freshness-guard.sh` (executable), merge the snippet's `hooks.SessionStart` and `hooks.PreToolUse` entries into the project's own `.claude/settings.json` (appending to those arrays rather than replacing them), replace `main` in both commands with that project's real base branch, and commit both as tracked files — for the same reason `claude-web-bootstrap`'s own hook is copied rather than referenced from `$HOME`: on a fresh container nothing under `$HOME` exists yet. This repo is the one exception to the copy step: `bootstrap/` is its own tracked directory, so `.claude/settings.json` here calls the canonical script in place rather than keeping a second copy to drift from it.

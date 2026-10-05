@@ -10,7 +10,7 @@ This repository's map of the practice catalogue in force here and the engine's o
 
 ## The practice catalogue
 
-`practices/` holds 14 practice files (0 resident, 14 on-demand). One file per practice.
+`practices/` holds 12 practice files (0 resident, 12 on-demand). One file per practice.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
@@ -18,20 +18,18 @@ This repository's map of the practice catalogue in force here and the engine's o
 | [default-branch](practices/default-branch.md) | on-demand | setting up or installing into a repo |
 | [derived-file-marker](practices/derived-file-marker.md) | on-demand | creating a file regeneration will overwrite |
 | [drift-notice](practices/drift-notice.md) | on-demand | session start reports a source BEHIND or NOT VERIFIED |
-| [fresh-before-write](practices/fresh-before-write.md) | on-demand | setting up a project, or a session reporting its checkout is behind |
 | [install](practices/install.md) | on-demand | installing Precedent or a shared set into a repo |
 | [light-check](practices/light-check.md) | on-demand | about to commit |
 | [mirror-into-agents](practices/mirror-into-agents.md) | on-demand | a key file gains an operational instruction |
 | [no-duplication](practices/no-duplication.md) | on-demand | adding or reviewing a shared-set rule |
 | [private-repo-scrub](practices/private-repo-scrub.md) | on-demand | writing content that ships into another repo |
 | [rule-scope-ask](practices/rule-scope-ask.md) | on-demand | a new rule's scope isn't obvious |
-| [session-trailer](practices/session-trailer.md) | on-demand | committing anything |
 | [todo-gate](practices/todo-gate.md) | on-demand | about to push after a thread of work |
 | [vendor-neutral-by-default](practices/vendor-neutral-by-default.md) | on-demand | writing a hook, script or rule another repo will vendor |
 
 ## Withdrawn practices
 
-30 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
+32 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
 
 | Practice | Status | Now in force at | Why it was withdrawn |
 |---|---|---|---|
@@ -47,6 +45,7 @@ This repository's map of the practice catalogue in force here and the engine's o
 | [draft-marker](practices/draft-marker.md) | deduplicated | [draft-marker](practices/draft-marker.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it records a real failure. |
 | [durable-list-anchors](practices/durable-list-anchors.md) | deduplicated | [durable-list-anchors](practices/durable-list-anchors.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and the incident behind it is a good one because the damage was invisible. |
 | [file-mention-links](practices/file-mention-links.md) | deduplicated | [file-mention-links](practices/file-mention-links.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and the incident is about a rule that could not survive on good intentions. |
+| [fresh-before-write](practices/fresh-before-write.md) | deduplicated | [fresh-before-write](practices/fresh-before-write.md) | Raised 2026-09-06, after asking whether BestPractice checked for a stale branch at session start and what it would take to have `precedent-individual` not just check but update itself before touching anything. |
 | [fresh-check-escalation](practices/fresh-check-escalation.md) | deduplicated | [drift-notice](practices/drift-notice.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it records a specific failure found directly rather than reasoned about. |
 | [header-caps](practices/header-caps.md) | deduplicated | `headline-capitalization` — in another source; `python3 tools/precedent_show.py headline-capitalization` | Retired on 2026-09-06 as a duplicate. |
 | [list-item-parity](practices/list-item-parity.md) | deduplicated | [list-item-parity](practices/list-item-parity.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
@@ -63,6 +62,7 @@ This repository's map of the practice catalogue in force here and the engine's o
 | [resolved-issue-note-updates](practices/resolved-issue-note-updates.md) | deduplicated | [resolved-issue-note-updates](practices/resolved-issue-note-updates.md) | BestPractice's spec/PHASE5_BRIEF.md named a real bug in prose: 'A known bug, found while writing this brief, not yet fixed' (precedent_candidate.py create's same-day recurrence collision). |
 | [rule-links](practices/rule-links.md) | deduplicated | [rule-links](practices/rule-links.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text. |
 | [sensitive-characterization-scrub](practices/sensitive-characterization-scrub.md) | deduplicated | [sensitive-characterization-scrub](practices/sensitive-characterization-scrub.md) | Found the hard way in a dependent repo's own brainstorm notes: a direct, off-the-cuff description of a real, named acquaintance made it into a committed document, was then shown to that person, and read back more bluntly than intended. |
+| [session-trailer](practices/session-trailer.md) | deduplicated | [session-trailer](practices/session-trailer.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [small-calls](practices/small-calls.md) | deduplicated | [small-calls](practices/small-calls.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [trim-prose](practices/trim-prose.md) | deduplicated | [trim-prose](practices/trim-prose.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 
