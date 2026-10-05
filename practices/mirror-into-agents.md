@@ -6,8 +6,8 @@ severity:    default
 applies_to:  ["**"]
 occasion:    "a key file gains an operational instruction"
 gates:       ["merge"]
-index_required: true
 index_clause: "it lands in both AGENTS.md and its human home"
+index_required: true
 checked_by:  null
 defines:     []
 status:      active
