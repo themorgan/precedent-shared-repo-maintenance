@@ -10,11 +10,11 @@ index_clause: "verify and fast-forward the checkout before the first write"
 checked_by:  tools/checks/check_fresh_before_write.py
 defines:     []
 status:      deduplicated
+in_force_at: fresh-before-write
 supersedes:  []
 overrides:   null
 added:       "2026-09-23"
 approved_by: "Morgan F, 2026-09-23, moved from the individual set precedent-individual; amended 2026-09-23, Morgan F (strength: assented) -- a diverged, clean branch may be merged, keeping both sides, rather than only reported (there: Morgan F, in the session that designed it; revised 2026-09-10, Morgan F, to distinguish a remote that could not be reached from a branch that has merely not been pushed yet; revised 2026-09-11, Morgan F, to reach repositories a session merely has attached; revised 2026-09-12, Morgan F, to expand a leading `~` in an attached-repo entry and to stop reporting an empty payload as a missing interpreter)"
-in_force_at: fresh-before-write
 strength: decided
 ---
 ## Rule

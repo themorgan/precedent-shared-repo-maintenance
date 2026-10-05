@@ -16,7 +16,7 @@ in_force_at: session-trailer
 supersedes:  []
 overrides:   null
 added:       2026-08-31
-approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; routed to the push gate 2026-10-01 (Morgan, in the reduction pass: \"do both Tier 2 items\", strength: decided)"
+approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; routed to the push gate 2026-10-01 (Morgan, in the reduction pass: \"do both Tier 2 items\", strength: assented -- one yes over a batch; corrected 2026-10-05)"
 ---
 ## Rule
 A `Session: <url>` trailer on every commit -- for Claude Code, `https://claude.ai/code/session_<ID>`. `Claude-Session: <url>` is also accepted -- the key Claude Code Remote's own harness actually emits as of 2026-09, functionally the same trailer under a different name. For unattended automation with no chat session behind it, the workflow run's own URL stands in. If a tool has no shareable link at all, the trailer says so explicitly (`Session: none available (<tool>)`) rather than being silently omitted.
@@ -44,7 +44,7 @@ stands in rather than the field going blank.
 **2026-09-29: judged on what a push carries** (Morgan, strength: decided). The check walked every commit reachable from HEAD, so a consumer's Promote was refused over one trailer-less commit already on its `main`, which nothing short of rewriting published history could clear. It now judges only commits origin does not have yet -- each at the first push that carries it, Booked into pre-staging included -- so nothing already on origin needs grandfathering. The same day it stopped flagging commits GitHub makes with its own buttons, and reverts where the working-style set says they need no trailer (Morgan: *"maybe Alex or others don't want to include that"*, which is why that part lives in a set a team can choose not to declare).
 
 **2026-10-01: out of the occasion index, onto the push gate** (Morgan, in
-the reduction pass: *"do both Tier 2 items"*, strength: decided). Every
+the reduction pass: *"do both Tier 2 items"*, strength: assented -- one yes over a batch; corrected 2026-10-05). Every
 session paid for this line on every turn, while the check already refuses a
 push that carries a commit without the trailer, and refuses it before the
 commit leaves the machine, where an amend still fixes it. The Rule is

@@ -6,8 +6,8 @@ severity:    default
 applies_to:  ["**"]
 occasion:    "about to push after a thread of work"
 gates:       ["push"]
-index_required: false
 index_clause: "add missed ideas, check off finished ones, before every push"
+index_required: false
 checked_by:  null
 defines:     []
 status:      active

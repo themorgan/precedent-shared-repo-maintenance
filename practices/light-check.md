@@ -6,8 +6,8 @@ severity:    default
 applies_to:  ["**"]
 occasion:    "about to commit"
 gates:       ["push"]
-index_required: true
 index_clause: "a cheap mechanical audit runs before every commit, not just merges"
+index_required: true
 checked_by:  tools/checks/check_light_check.py
 defines:     []
 status:      active
