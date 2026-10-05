@@ -382,6 +382,14 @@ ENGINE_FILES = [
     # about a catalogue, and only the second reason keeps a file out of a
     # set.
     'precedent_identity.py',
+    # Whether this session's person is one of the repository's code owners,
+    # so a practice marked `visible_to: code-owners` reaches only them
+    # (2026-10-05). Beside precedent_identity.py, which it reads, and in
+    # every kind of repo, since each channel that filters runs in all of them.
+    'precedent_audience.py',
+    # The remote branches a code owner can delete across the session's
+    # repositories, for the ladder set's stale-branch-cleanup (2026-10-05).
+    'precedent_stale_branches.py',
     # The resolver and the untracked-block writer, added 2026-09-13 so a
     # session rooted in a practice SET reads the universal catalogue instead
     # of that set's own practices alone. Until then a set resolved nothing:
@@ -510,6 +518,13 @@ ENGINE_FILES = [
     # other and accumulates its own open items the same way a consumer does.
     'build_todo_index.py',
     'todo_migrate.py',
+    # The "Drop it" writer (added 2026-10-05): park-it tells every session
+    # to run it, and every kind of repo keeps todo items -- the same reason
+    # build_todo_index.py is here.
+    'todo_disposition.py',
+    # A practice's standing (added 2026-10-05): every source's practices may
+    # carry one, and every channel that shows a practice reads the label.
+    'practice_standing.py',
     # title_case.py was CONSUMER-only until 2026-09-19, since headline
     # capitalization was thought of as a consumer-catalogue concern. Moved
     # here the same day build_todo_index.py was: it imports title_case at
@@ -519,6 +534,11 @@ ENGINE_FILES = [
     # real run, the same failure shape precedent_check.py's own promotion
     # (see below) was caught by.
     'title_case.py',
+    # artifact_publish_gate.py -- docs-track-models rule 4, run by
+    # hooks/artifact-publish-gate.sh. Here rather than consumer-only because
+    # the hooks/ directory reaches both kinds (shipped-hook-carries-its-script);
+    # only a consumer wires it, and in a set it stays unwired.
+    'artifact_publish_gate.py',
     # The one way a generator copies prose into a summary field: links out,
     # then the cut (added 2026-09-25). build_todo_index.py, todo_migrate.py,
     # build_views.py and build_gotcha_index.py all import it at module level,
@@ -710,6 +730,10 @@ CONSUMER_ENGINE_FILES = ENGINE_FILES[:-1] + [
     # by the duplicate guard below, which is how this was caught.
     'precedent_materialize.py',
     'precedent_sync_views.py',
+    # The commit each live source was synced at, and reading a source back
+    # at it, so the views check stops depending on the branch a set's clone
+    # has checked out (2026-10-05). Imported by the two above.
+    'precedent_source_pins.py',
     # Whether each declared source repository is still CALLED what this repo
     # calls it (added 2026-09-11). CONSUMER-only for the same reason
     # precedent_resolve.py is -- it reads a multi-source config, which a
@@ -1019,6 +1043,9 @@ HOOK_WIRING = {
         # No workflow file written straight onto GitHub, past the push gate
         # that checks its approval (2026-09-26).
         ('PreToolUse', WORKFLOW_WRITE_MATCHER, 'workflow-write-gate.sh', ''),
+        # Only a fresh render of a registered document reaches a link; a
+        # page typed by hand never meets a model check (2026-10-05).
+        ('PreToolUse', 'Artifact', 'artifact-publish-gate.sh', ''),
         ('Stop', None, 'stop-git-check.sh', ''),
         ('Stop', None, 'stop-reply-check.sh', ''),
     ),
@@ -4647,6 +4674,13 @@ _GENERATED_BEGIN = '<!-- BEGIN GENERATED'
 _GENERATED_END = '<!-- END GENERATED'
 _MD_HEADING_RE = re.compile(r'^(#{1,3})\s+\S')
 _MD_PLACEHOLDER_RE = re.compile(r'<[A-Za-z][^<>\n]{0,70}>')
+# A placeholder WITH the code span, quotes or emphasis wrapped round it, for
+# matching: a repo that filled `<your own audits>` with a plain sentence, or
+# `<upstream URL>` with a Markdown link, dropped the backticks along with the
+# placeholder, and every such section was reported as diverging -- five of a
+# consumer's seven LEFT FOR YOU items on 2026-10-04 were filled placeholders,
+# each needing a two-hash kept entry that goes stale on the next upstream edit.
+_MD_WRAPPED_PLACEHOLDER_RE = re.compile(r'[`"*_]?<[A-Za-z][^<>\n]{0,70}>[`"*_]?')
 _MD_ITEM_RE = re.compile(r'^\s*(?:[-*+]|\d+\.)\s')
 # A block whose own words, placeholders aside, are fewer than this is an
 # example row for the repo to replace ("| <key deliverable> and its
@@ -4960,7 +4994,7 @@ def _wildcard(text):
     """A regex for `text` in which each remaining template placeholder
     matches whatever a repo filled it in with -- or None when the text
     carries too few words of its own to be lacked (_MIN_LITERAL_WORDS)."""
-    pieces = _MD_PLACEHOLDER_RE.split(text)
+    pieces = _MD_WRAPPED_PLACEHOLDER_RE.split(text)
     if len(re.findall(r'[A-Za-z]{2,}', ' '.join(pieces))) < _MIN_LITERAL_WORDS:
         return None
     return re.compile('.+?'.join(re.escape(p) for p in pieces))

@@ -325,7 +325,7 @@ CHECKS = {}
 
 def check(slug, scope, what, blind_to, advisory=False, practice_backed=True,
           binds_publishers=False, binds_when=(), selects_on=(),
-          judges_received=False):
+          judges_received=False, advisory_term=None, existence_only=False):
     """Register a check. `blind_to` is what it does NOT catch, printed by
     --explain -- a check's limits belong beside it, not in a document that
     drifts from it.
@@ -417,6 +417,35 @@ def check(slug, scope, what, blind_to, advisory=False, practice_backed=True,
     comment, 2026-09-05), the same bar checkable-gets-checked sets for
     leaving a practice advisory-only in the first place.
 
+    `advisory_term` says whether that is forever, and every advisory check
+    must give one (`advisory-checks-declare-their-term` enforces it):
+
+      {'term': 'permanent', 'why': '...'}
+          the check flags something only a person can judge, so it warns
+          and never stops work, by design;
+      {'term': 'temporary', 'waiting_for': '...', 'owner': '...',
+       'revisit': 'YYYY-MM-DD'}
+          it should stop work one day, but switching that on now would
+          break something nobody can fix yet. Past `revisit` it is
+          reported until someone switches it on, moves the date with a
+          reason, or makes it permanent -- it never switches itself, the
+          same design as a practice's `expires:`.
+
+    WHY (2026-10-05): frontmatter-field-order was made advisory on
+    2026-09-26 "until the practice sets have taken the engine update", a
+    condition written only in a docstring, with no date and no owner. A
+    temporary advisory looked exactly like a permanent one, so nothing came
+    back to it, and nothing in any update ran the fixer it waited for
+    (spec/PRACTICE_STANDING_AND_RECHECK_PLAN.md, Part 1 step 3).
+
+    `existence_only=True` marks a check that confirms a practice's own
+    machinery exists and can never report that the practice went
+    unfollowed. layered-practice-packs does not count such a check as a
+    route to a session: the routing audit passed as reachable through one
+    for a month while nothing ever prompted anyone to run it
+    (gotcha-2026-10-05-a-practice-routed-only-by-its-own-files-is-never-
+    shown-to-anyone).
+
     `judges_received=True` keeps this check's findings on files the repo
     RECEIVED -- another source's materialized practice or check, the
     vendored engine, a mirrored tree (precedent_practice_refs.py's
@@ -436,7 +465,9 @@ def check(slug, scope, what, blind_to, advisory=False, practice_backed=True,
                             binds_publishers=binds_publishers,
                             binds_when=tuple(binds_when),
                             selects_on=tuple(selects_on),
-                            judges_received=judges_received)
+                            judges_received=judges_received,
+                            advisory_term=advisory_term,
+                            existence_only=existence_only)
         return fn
     return deco
 
@@ -1243,10 +1274,9 @@ _SPEC_SHAPE_RE = re.compile(r'^## The Shape\n.*?^```\n---\n(.*?)\n---\n', re.S |
        'with no field the spec does not list; where the spec is present, its '
        'own example lists exactly that order',
        'whether a field\'s VALUE is right, and a practice another source owns '
-       '(a materialized copy is fixed where it is authored). ADVISORY until the '
-       'practice sets have taken the engine update and run the fixer -- see '
-       'the function\'s own note.',
-       advisory=True, practice_backed=False, binds_publishers=True,
+       '(a materialized copy is fixed where it is authored). A hard check '
+       'since 2026-10-05 -- see the function\'s own note.',
+       practice_backed=False, binds_publishers=True,
        selects_on=('practices/*.md', 'spec/PRACTICE_FORMAT.md',
                    'tools/frontmatter_yaml.py'))
 def _frontmatter_field_order(ctx):
@@ -1262,11 +1292,17 @@ def _frontmatter_field_order(ctx):
     precedent-shared-writing. One field here, `source_rule_unlabeled`, was
     in no list at all; split_practices.py reads it, so it joined the spec.
 
-    ADVISORY, deliberately. The sets receive this check through Update
-    Vendors, and a blocking one would turn each of them red on that update
-    with nothing BestPractice can do about it. Advisory, with the fixer named
-    in every finding, lets each set clean up on its own next push. Make it
-    blocking once the sets have taken the update and run the fixer.
+    ADVISORY from 2026-09-26 to 2026-10-05, deliberately: the sets receive
+    this check through Update Vendors, and a blocking one would have turned
+    each of them red on that update with nothing BestPractice could do about
+    it. The plan was to make it blocking once the sets had run the fixer --
+    and nothing ever ran it, so it sat advisory with a condition nobody
+    owned. On 2026-10-05 the sets were tidied (14, 7, 4 and 1 files, whole
+    fields moved and nothing else) and the engine's commit hook now runs
+    the fixer on staged practice files in every practice source, so the
+    order is kept rather than checked after the fact. This is a hard check
+    from then on (practice: upstream-fix;
+    spec/PRACTICE_STANDING_AND_RECHECK_PLAN.md).
     """
     try:
         import frontmatter_yaml as fy
@@ -3198,6 +3234,20 @@ QUICK_INDEX_HEADER_RE = re.compile(
     re.I | re.M)
 
 
+def _self_only_route(fm):
+    """True when a practice's applies_to names only exact paths to tool
+    files: a route that fires only while someone maintains the practice's
+    own tooling, never during the work the practice is about. Measured
+    2026-10-05: the routing audit was the only practice routed this way,
+    and nothing had prompted a session to run it since 2026-09-04
+    (practice: layered-practice-packs)."""
+    raw = (fm.get('applies_to') or '').strip()
+    globs = re.findall(r'"([^"]+)"', raw) or re.findall(r"'([^']+)'", raw)
+    return bool(globs) and all(
+        g.startswith('tools/') and not any(c in g for c in '*?[')
+        for g in globs)
+
+
 @check('layered-practice-packs', 'tree',
        'every practice in force in this repo is reachable by at least one '
        'loading channel here -- resident, occasion index, a path trigger, a '
@@ -3206,7 +3256,11 @@ QUICK_INDEX_HEADER_RE = re.compile(
        'practice that is unreachable here SHOULD bind this repo at all. It '
        'reports the gap; closing it is either wiring the practice in or '
        'saying out loud that it does not apply, and only a person can pick.',
-       advisory=True)
+       advisory=True,
+       advisory_term={'term': 'permanent',
+                      'why': 'closing a gap is wiring the practice in or '
+                             'declaring it does not apply here, and only a '
+                             'person can pick which'})
 def _practice_is_reachable(ctx):
     """A rule nothing can load is not in force; it is filed.
 
@@ -3370,6 +3424,12 @@ def _practice_is_reachable(ctx):
             continue
         if slug in named:
             continue                       # resident block or occasion index
+        # A practice for code owners only is never in a tracked view, by
+        # design: the session file carries it to them wherever that channel
+        # is wired (precedent_session_practices.py; 2026-10-05).
+        if wired and str(fm.get('visible_to') or '').strip('" \'') == 'code-owners':
+            via_session.append(slug)
+            continue
         if s['level'] in session_channel_levels or (wired and s.get('brought')):
             # A set the person brings is never in a tracked view, public
             # repository or private (build_views.sources_for_tracked_block),
@@ -3392,11 +3452,14 @@ def _practice_is_reachable(ctx):
         #
         # A bare ["**"] is NOT a route -- it matches every file and so
         # distinguishes nothing. Same reading build_views takes.
-        if _bv_index is not None and _bv_index._routes_by_path(fm):
+        if (_bv_index is not None and _bv_index._routes_by_path(fm)
+                and not _self_only_route(fm)):
             continue                       # fires when a matching file is edited
         cb = (fm.get('checked_by') or 'null').strip('" ')
-        if cb and cb != 'null':
-            # A check only counts if something here can RUN it.
+        if cb and cb != 'null' and not CHECKS.get(slug, {}).get('existence_only'):
+            # A check only counts if something here can RUN it -- and if it
+            # can fail when the practice goes unfollowed, not merely when its
+            # tool goes missing (existence_only, see check()).
             if pathlib.Path(cb).name in reachable_names or (ROOT / cb).is_file():
                 continue
         unreachable.append((slug, s['level'], s['name']))
@@ -5321,6 +5384,67 @@ _ENGINE_REF_ABSENT_OK = {
 _DATE_RE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 
 
+ADVISORY_TERM_KEYS = {'permanent': ('why',),
+                      'temporary': ('waiting_for', 'owner', 'revisit')}
+
+
+def _advisory_term_findings(checks, today):
+    """-> Findings for CHECKS' advisory declarations as of TODAY (YYYY-MM-DD).
+
+    Pure, so the harness can hand it a planted registry and a fixed date
+    (practice: fixture-owns-its-state)."""
+    out = []
+    for slug in sorted(checks):
+        entry = checks[slug]
+        term = entry.get('advisory_term')
+        where = f'tools/precedent_check.py:{slug}'
+        if not entry.get('advisory'):
+            if term:
+                out.append(Finding(where, 'declares an advisory_term but is not '
+                                          'advisory -- a leftover from when it '
+                                          'was; drop the term'))
+            continue
+        kind = (term or {}).get('term')
+        if kind not in ADVISORY_TERM_KEYS:
+            out.append(Finding(where, 'warns only, but does not say whether '
+                                      'that is permanent or temporary -- give '
+                                      'it an advisory_term (see check()\'s own '
+                                      'docstring)'))
+            continue
+        missing = [k for k in ADVISORY_TERM_KEYS[kind]
+                   if not str(term.get(k) or '').strip()]
+        if missing:
+            out.append(Finding(where, f'its {kind} advisory_term is missing '
+                                      f'{", ".join(missing)}'))
+            continue
+        if kind == 'temporary':
+            revisit = str(term['revisit']).strip()
+            if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', revisit):
+                out.append(Finding(where, f'revisit {revisit!r} is not '
+                                          f'YYYY-MM-DD'))
+            elif revisit <= today:
+                out.append(Finding(where, (
+                    f'was to be looked at again by {revisit} and is still '
+                    f'warning-only. Waiting on: {term["waiting_for"]}. Owner: '
+                    f'{term["owner"]}. Switch it to a hard check, move the '
+                    f'date with a reason, or make it permanent -- it never '
+                    f'switches itself')))
+    return out
+
+
+@check('advisory-checks-declare-their-term', 'tree',
+       'every warning-only check says whether that is permanent or temporary, '
+       'and a temporary one is reported once its revisit date has passed',
+       'whether a declared term is RIGHT -- a check marked permanent that '
+       'should one day stop work reads exactly like a correct one; that is '
+       'the judgment of whoever adds or reviews the check',
+       practice_backed=False, selects_on=('tools/precedent_check.py',))
+def _advisory_checks_declare_their_term(ctx):
+    # practice: upstream-fix -- frontmatter-field-order sat warning-only for
+    # nine days on a condition nobody owned (see check()'s docstring).
+    return _advisory_term_findings(CHECKS, precedent_time.today(ROOT))
+
+
 @check('expires-is-honoured', 'tree',
        'no practice is past the date in its optional `expires:` field while '
        'still active -- an expiry forces a decision, it never withdraws a '
@@ -6017,7 +6141,11 @@ def _unguarded_branch_inferences(text):
        "BestPractice itself, the engine's own origin) and only for the "
        "'tree'-scope tiers this repo's own rotation/applies_to logic "
        "selects, same as every other tree-scope check here.",
-       advisory=True)
+       advisory=True,
+       advisory_term={'term': 'permanent',
+                      'why': 'it cannot tell a leftover workflow from a '
+                             'legitimate hand-authored one, on purpose, so '
+                             'it names the file and a person decides'})
 def _workflow_file_outside_vendoring(ctx):
     import precedent_vendor_engine as pve
 
@@ -6724,6 +6852,456 @@ def _shipped_template_carries_its_script(ctx):
                     f'matching list in precedent_vendor_engine.py, or stop '
                     f'shipping this template to that kind.'))
     return findings
+
+
+@check('default-branch', 'tree',
+       "the repository's default branch on its remote -- what the host's HEAD "
+       "points at -- is this repository's trunk, whatever it is called: the "
+       "`trunk` precedent.json declares, else its `base_branch`",
+       'a repository with no `origin` remote, or one this run cannot reach: '
+       'both are reported as skipped, never as a pass. It reads the remote, '
+       'so a default changed on the host shows here on the next run, not '
+       'before. Where nothing declared settles which branch is the trunk, it '
+       'reports COULD NOT VERIFY and asks the person, never a violation.',
+       selects_on=('precedent.json',))
+def _default_branch(ctx):
+    # Ported 2026-10-05 from the repo-maintenance set's
+    # check_default_branch.py, when the practice moved into universal.
+    # `git ls-remote --symref` asks the host which branch HEAD names
+    # without cloning anything: the "host API where the session's tools
+    # reach that far" the practice's own Install names.
+    #
+    # The same day it stopped insisting on the NAME `main` (S. Alexander
+    # Jacobson: "They are both the same idea. Different repos will have
+    # different names for whatever branch serves this function"). A repo
+    # whose trunk is `master` by decision failed this check, and the
+    # failure undid its whole Update Vendors run. What matters is that the
+    # host's default IS the trunk, and the trunk is the repo's to name.
+    url = _git('remote', 'get-url', 'origin', cwd=ctx.root).stdout.strip()
+    if not url:
+        raise NotApplicable("no 'origin' remote configured")
+    try:
+        r = subprocess.run(['git', 'ls-remote', '--symref', url, 'HEAD'],
+                           capture_output=True, text=True, timeout=30)
+    except subprocess.TimeoutExpired:
+        raise NotApplicable(f'could not reach {url} within 30 seconds')
+    if r.returncode != 0:
+        raise NotApplicable(f'could not reach {url}: {r.stderr.strip()[:200]}')
+    m = re.search(r'^ref:\s+refs/heads/(\S+)\s+HEAD$', r.stdout, re.M)
+    if not m:
+        raise NotApplicable(f'{url} did not say which branch HEAD names')
+    host = m.group(1)
+    trunk = _declared_trunk(ctx.root)
+    if trunk:
+        if host != trunk:
+            return [Finding('origin', f"the remote's default branch is "
+                            f"'{host}', and this repository's trunk is "
+                            f"'{trunk}' (precedent.json `trunk`) -- set the "
+                            f"host's default to '{trunk}' once, as the "
+                            f"practice's Install says; or, if '{host}' is the "
+                            f"trunk, correct `trunk`")]
+        return []
+    base = _declared_base_branch(ctx.root)
+    if base is None or host == base:
+        # Nothing says otherwise: the branch the host shows first is the
+        # trunk, whatever it is called.
+        return []
+    return [Unverified('precedent.json', f"the host shows '{host}' first and "
+                       f"this repository's work lands on '{base}' "
+                       f"(`base_branch`), and nothing declares which of them "
+                       f"is the trunk. Ask the person once, then record the "
+                       f"answer as `trunk` in precedent.json")]
+
+
+def _declared_trunk(root):
+    """precedent.json's `trunk`: the branch everything ends up on, whatever
+    the repository calls it. None when undeclared or unreadable."""
+    try:
+        v = json.loads((pathlib.Path(root) / "precedent.json").read_text(
+            encoding='utf-8')).get('trunk')
+        return v if isinstance(v, str) and v.strip() else None
+    except (OSError, ValueError, AttributeError):
+        return None
+
+
+def _declares_itself(root):
+    """Does `root`'s precedent.json name `root` itself as a source? True in
+    exactly one kind of repository, the engine's own origin (`path: "."`):
+    no practice set or consumer declares itself."""
+    try:
+        sources = json.loads((root / 'precedent.json').read_text(
+            encoding='utf-8')).get('sources') or []
+    except (OSError, ValueError, AttributeError):
+        return False
+    here = root.resolve()
+    for entry in sources:
+        if not isinstance(entry, dict) or entry.get('path') is None:
+            continue
+        p = pathlib.Path(os.path.expandvars(str(entry['path']))).expanduser()
+        if (p if p.is_absolute() else root / p).resolve() == here:
+            return True
+    return False
+
+
+@check('deep-check', 'tree',
+       "the deep check's mechanical half really is every audit script run "
+       'together: tools/checks/tests/run_all.sh exists and globs test_*.sh, '
+       'every check_*.py has a test_*.sh that invokes it by name and no test '
+       'outlives its check, and every check script resolves its own rule text '
+       'against SOURCE_ROOT and honors PRECEDENT_CHECK_ROOT',
+       "the review half -- reading the repo's rules against each other -- "
+       'which the practice names a judgment call, run only when a person asks '
+       'for a deep check by name. Whether a test is any GOOD is not checked, '
+       'only that it exists and names its script. Skipped in the engine\'s own '
+       'origin, which has no materialized check family to run together.')
+def _deep_check(ctx):
+    # Ported 2026-10-05 from the repo-maintenance set's check_deep_check.py,
+    # when the practice moved into universal. A check script added without a
+    # test is never picked up by run_all.sh's test_*.sh glob, so it silently
+    # never runs; a test left behind after its check is deleted names a file
+    # that is gone. Either way "every audit script, run together" is false.
+    checks_dir = ctx.root / 'tools' / 'checks'
+    tests_dir = checks_dir / 'tests'
+    run_all = tests_dir / 'run_all.sh'
+    if not run_all.is_file():
+        if _declares_itself(ctx.root):
+            raise NotApplicable(
+                'tools/checks/tests/run_all.sh is missing, and this repo '
+                'declares itself as a practice source: the engine\'s origin '
+                'runs its tests through its own harness')
+        return [Finding('tools/checks/tests/run_all.sh', 'is missing -- there '
+                        "is no 'every audit script, run together' entry point")]
+    out = []
+    if 'test_*.sh' not in run_all.read_text(encoding='utf-8', errors='ignore'):
+        out.append(Finding('tools/checks/tests/run_all.sh', 'no longer globs '
+                           'test_*.sh, so it may have stopped running every '
+                           'audit script together'))
+    scripts = sorted(p.stem for p in checks_dir.glob('check_*.py'))
+    for stem in scripts:
+        name = stem[len('check_'):]
+        test = tests_dir / f'test_{name}.sh'
+        if not test.is_file():
+            out.append(Finding(f'tools/checks/{stem}.py', f'has no '
+                               f'tests/test_{name}.sh, so run_all.sh never '
+                               f'exercises it -- add one that invokes {stem}.py '
+                               f'by name'))
+        elif f'{stem}.py' not in test.read_text(encoding='utf-8', errors='ignore'):
+            out.append(Finding(f'tools/checks/tests/test_{name}.sh', f'never '
+                               f'invokes {stem}.py by name, so it is not '
+                               f'testing the check it is named for'))
+    for test in sorted(tests_dir.glob('test_*.sh')):
+        name = test.stem[len('test_'):]
+        if not (checks_dir / f'check_{name}.py').is_file():
+            out.append(Finding(f'tools/checks/tests/{test.name}', f'tests '
+                               f'check_{name}.py, which no longer exists -- '
+                               f'a stale test left behind'))
+    # Every script in this family is written by copying the last one, so a
+    # property nothing checks propagates by copy: on 2026-09-06 fourteen of
+    # them resolved their own rule text against the AUDITED repo and raised
+    # from inside their violation printers. Matched as assignments at column
+    # 0, never as substrings, or this would report its own pattern.
+    for stem in scripts:
+        text = (checks_dir / f'{stem}.py').read_text(encoding='utf-8',
+                                                      errors='ignore')
+        where = f'tools/checks/{stem}.py'
+        if not re.search(r'^SOURCE_ROOT\s*=', text, re.M):
+            out.append(Finding(where, 'does not define SOURCE_ROOT, so it '
+                               'cannot tell the repo it audits from the set its '
+                               'rule text lives in'))
+            continue
+        if re.search(r'^PRACTICE_FILE\s*=\s*ROOT\b', text, re.M):
+            out.append(Finding(where, 'resolves PRACTICE_FILE against ROOT, '
+                               'the audited repo, not SOURCE_ROOT'))
+        if not re.search(r'PRECEDENT_CHECK_ROOT["\']', text):
+            out.append(Finding(where, 'ignores PRECEDENT_CHECK_ROOT, so a repo '
+                               'that declares its source without materializing '
+                               'it cannot point the check at itself'))
+    return out
+
+
+_LIGHT_CONFLICT_RE = re.compile(r'^(<{7}|={7}|>{7})(\s|$)')
+_LIGHT_SECRET_PATTERNS = (
+    ('AWS-style access key ID', re.compile(r'\bAKIA[0-9A-Z]{16}\b')),
+    ('PEM private key header',
+     re.compile(r'-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----')),
+    ('GitHub personal access token', re.compile(r'\bgh[pousr]_[A-Za-z0-9]{36}\b')),
+    ('Slack token', re.compile(r'\bxox[baprs]-[A-Za-z0-9-]{10,}\b')),
+)
+_LIGHT_FRONTMATTER_RE = re.compile(r'\A---\n(.*?)\n---\n', re.S)
+_LIGHT_MD_LINK_RE = re.compile(r'(?<!!)\[[^\]]*\]\(([^)]+)\)')
+# An inline code span or a fenced block SHOWS markdown; a link inside one is
+# example text no reader can click (2026-09-23 and 2026-09-27, in the set
+# this check came from: a materialized practice quoting `[x](GLOSSARY.md)`
+# as an example failed every consumer).
+_LIGHT_CODE_SPAN_RE = re.compile(r'(`+)(?:(?!\1).)+?\1')
+_LIGHT_FENCE_RE = re.compile(r'^ {0,3}(`{3,}|~{3,})(.*)$')
+_SHARED_BEGIN, _SHARED_END = '# --- shared:', '# --- end shared:'
+
+
+def _light_link_exempt_dirs():
+    """The directories this repo's own tools/doc_lint.py already declares
+    link-exempt (an eval fixture, a deck's asset paths, a template's links
+    into the repo it is instantiated into). Two gates disagreeing about the
+    same link is the finding the set's version hit on 2026-09-28; the one the
+    repo wrote is the authority. An unimportable doc_lint exempts nothing."""
+    try:
+        dl = _doc_lint()
+    except NotApplicable:
+        return ()
+    dirs = ()
+    for name in ('LINK_CHECK_EXEMPT_DIRS', 'ANCHOR_CHECKED_EXEMPT_DIRS'):
+        value = getattr(dl, name, ())
+        if isinstance(value, str):
+            value = (value,)
+        dirs += tuple(str(v) for v in value if v)
+    return dirs
+
+
+def _light_broken_links(root, rel, text):
+    base = (root / rel).parent
+    fence, out = None, []
+    for lineno, line in enumerate(text.splitlines(), start=1):
+        m = _LIGHT_FENCE_RE.match(line)
+        if fence is None:
+            if m and not (m.group(1)[0] == '`' and '`' in m.group(2)):
+                fence = m.group(1)
+                continue
+        else:
+            if (m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence)
+                    and not m.group(2).strip()):
+                fence = None
+            continue
+        for target in _LIGHT_MD_LINK_RE.findall(_LIGHT_CODE_SPAN_RE.sub('', line)):
+            target = target.split(' ', 1)[0].strip()
+            if (not target or target.startswith(('http://', 'https://', 'mailto:', '#'))
+                    or target.startswith('<')):      # an install placeholder
+                continue
+            path_part = target.split('#', 1)[0]
+            if path_part and not (base / path_part).resolve().exists():
+                out.append(Finding(f'{rel}:{lineno}', f'broken relative link to '
+                                   f'{target!r}', path=rel))
+    return out
+
+
+@check('light-check', 'tree',
+       'no tracked file carries an unresolved conflict marker or a '
+       'secret-shaped string; every JSON and YAML file, and every Markdown '
+       'file\'s frontmatter, parses; every relative Markdown link resolves; '
+       'and every `# --- shared:<id> ---` block in a check script is '
+       'byte-identical wherever it is copied',
+       'a secret in a shape not on its short list (an AWS key ID, a PEM '
+       'private-key header, a GitHub or Slack token), and YAML entirely when '
+       'PyYAML is not installed -- said on the run, never passed silently. '
+       'Links are skipped in trees this repo mirrors, in the directories '
+       'its own tools/doc_lint.py declares link-exempt, and in the record '
+       'files precedent.json declares in `record_paths`.',
+       practice_backed=False,
+       # Any file a change touches can bring a conflict marker or a secret,
+       # so any change summons it; the whole tree reads in about three
+       # seconds, the price of a check meant to run before every commit.
+       selects_on=('**',))
+def _light_check(ctx):
+    # Ported 2026-10-05 from the repo-maintenance set's check_light_check.py.
+    # Its rule was folded into universal's two-check-levels on 2026-09-28
+    # (Morgan, strength: assented), whose Detail carries this minimum audit
+    # list; only the script had stayed behind. two-check-levels already owns
+    # a check of its own -- that a repo names its two levels -- so this one
+    # is registered as the engine's, not a practice's: it runs in every repo
+    # that runs this engine, and no second copy of the rule is kept.
+    try:
+        import yaml as _yaml
+    except ImportError:
+        _yaml = None
+    mirrors = _mirrored(ctx.root)
+    # A declared record names files at the paths they had when it was
+    # written -- an as-filed document, a dated audit -- and may never be
+    # edited to follow a move. Every other check that reads paths already
+    # honors `record_paths`; this one did not, and on 2026-10-05 it failed a
+    # consumer's whole Update Vendors run on links inside its as-filed
+    # patent packages, which that consumer had declared as records.
+    exempt = mirrors + _light_link_exempt_dirs() + tuple(_declared_record_paths())
+    out, shared = [], {}
+    for rel in _ls_files_on_disk(root=ctx.root):
+        try:
+            text = (ctx.root / rel).read_text(encoding='utf-8')
+        except (UnicodeDecodeError, OSError):
+            continue
+        for lineno, line in enumerate(text.splitlines(), start=1):
+            if _LIGHT_CONFLICT_RE.match(line):
+                out.append(Finding(f'{rel}:{lineno}', f'unresolved conflict '
+                                   f'marker: {line.strip()!r}', path=rel))
+        for label, pattern in _LIGHT_SECRET_PATTERNS:
+            m = pattern.search(text)
+            if m:
+                out.append(Finding(rel, f'looks like a {label} '
+                                   f'({m.group(0)[:12]}...)', path=rel))
+        if rel.endswith('.md'):
+            fm = _LIGHT_FRONTMATTER_RE.match(text)
+            if fm and _yaml is not None:
+                try:
+                    _yaml.safe_load(fm.group(1))
+                except _yaml.YAMLError as e:
+                    out.append(Finding(rel, f'frontmatter is not valid YAML '
+                                       f'({str(e)[:160]})', path=rel))
+            if not rel.startswith(exempt):
+                out.extend(_light_broken_links(ctx.root, rel, text))
+        elif rel.endswith('.json'):
+            try:
+                json.loads(text)
+            except ValueError as e:
+                out.append(Finding(rel, f'not valid JSON ({e})', path=rel))
+        elif rel.endswith(('.yml', '.yaml')) and _yaml is not None:
+            try:
+                _yaml.safe_load(text)
+            except _yaml.YAMLError as e:
+                out.append(Finding(rel, f'not valid YAML ({str(e)[:160]})', path=rel))
+        # A check script runs standalone and cannot import a sibling, so a
+        # helper it needs is COPIED between scripts between marked lines;
+        # the copies must not drift, and only a consumer's tools/checks/
+        # ever holds them side by side.
+        if '/checks/' in rel and rel.endswith('.py'):
+            ident, buf = None, []
+            for line in text.splitlines():
+                if line.startswith(_SHARED_END):
+                    if ident is not None:
+                        shared.setdefault(ident, {}).setdefault(
+                            '\n'.join(buf), []).append(rel)
+                    ident, buf = None, []
+                elif line.startswith(_SHARED_BEGIN):
+                    ident = line[len(_SHARED_BEGIN):].split()[0].rstrip('-— ')
+                    buf = []
+                elif ident is not None:
+                    buf.append(line)
+            if ident is not None:
+                out.append(Finding(rel, f'a `{_SHARED_BEGIN}{ident}` block is '
+                                   f'never closed', path=rel))
+    for ident, variants in sorted(shared.items()):
+        if len(variants) > 1:
+            where = '; '.join(', '.join(sorted(f)) for f in variants.values())
+            out.append(Finding('tools/checks', f'shared block {ident!r} has '
+                               f'{len(variants)} different versions ({where}) -- '
+                               f'they are copies on purpose and must be kept '
+                               f'byte-identical'))
+    if _yaml is None:
+        print('light-check: PyYAML is not installed, so YAML syntax was not '
+              'checked here (pip install pyyaml); everything else was.',
+              file=sys.stderr)
+    return out
+
+
+def _private_source_names(root):
+    """-> sorted owner-qualified names ("owner/repo") of every source in
+    force here that declares itself private, read from its own
+    precedent-source.json and its own `origin`. A source that says nothing
+    is private when its level is individual, as source-naming defaults it."""
+    try:
+        import precedent_resolve as pr
+        sources = pr.load_config(str(root))
+    except (Exception, SystemExit):                  # practice: fail-gracefully
+        return []
+    here, names = root.resolve(), set()
+    for s in sources:
+        path = pathlib.Path(s.get('path') or '')
+        if not path.is_dir() or path.resolve() == here:
+            continue
+        try:
+            decl = json.loads((path / 'precedent-source.json').read_text(
+                encoding='utf-8'))
+        except (OSError, ValueError):
+            decl = {}
+        vis = decl.get('visibility') or ('private' if s.get('level') == 'individual'
+                                         else 'public')
+        if vis == 'public':
+            continue
+        url = _git('remote', 'get-url', 'origin', cwd=path).stdout.strip()
+        m = re.search(r'[/:]([\w.-]+)/([\w.-]+?)(?:\.git)?/?$', url)
+        if m:
+            names.add(f'{m.group(1)}/{m.group(2)}')
+    return sorted(names)
+
+
+@check('private-repo-scrub', 'tree',
+       'no practice file -- the content that ships into other repositories -- '
+       'names a private source by its owner-qualified name ("owner/repo", or '
+       'its github.com URL)',
+       'a private repository this run does not have in force, since the names '
+       'come from the sources resolved here; a bare convention name such as '
+       '`precedent-individual`, which identifies nobody and is allowed; and '
+       'identifying detail about a private repo\'s layout, which no word list '
+       'can see.')
+def _private_repo_scrub(ctx):
+    # Ported 2026-10-05 from the repo-maintenance set's
+    # check_private_repo_scrub.py, when the practice moved into universal.
+    # That script carried its owner's private repositories as a literal
+    # list; a universal check cannot, so it asks each source in force
+    # whether it is private (its own `visibility`) and where it lives (its
+    # own `origin`). The owner is what identifies: since 2026-09-06 the bare
+    # set names are a convention every adopter uses.
+    names = _private_source_names(ctx.root)
+    if not names:
+        raise NotApplicable('no source in force here declares itself private')
+    out = []
+    for f in sorted((ctx.root / 'practices').glob('*.md')):
+        rel = f'practices/{f.name}'
+        try:
+            lines = f.read_text(encoding='utf-8').splitlines()
+        except (UnicodeDecodeError, OSError):
+            continue
+        for lineno, line in enumerate(lines, start=1):
+            low = line.lower()
+            for name in names:
+                if name.lower() in low:
+                    out.append(Finding(f'{rel}:{lineno}', f'names the private '
+                                       f'repository {name!r} -- describe it in '
+                                       f'general terms ("a private set", "an '
+                                       f'earlier project")', path=rel))
+    return out
+
+
+_DERIVED_FROM_RE = re.compile(r'DERIVED from\s+(.+?)\s+@\s+(\S+)')
+_DERIVED_RECIPE_RE = re.compile(r'Recipe:\s*(\S+)')
+_DERIVED_REGEN_RE = re.compile(r'Regenerate with:\s*(.+)')
+_DERIVED_ROUTING = 'regeneration replaces this file'
+
+
+@check('derived-file-marker', 'tree',
+       'every tracked file whose first lines claim `DERIVED from <source> @ '
+       '<sha>` also carries the `Recipe:` and `Regenerate with:` lines and '
+       'the routing sentence, within its first eight lines',
+       'a regenerated file that makes no claim at all -- nothing marks a '
+       'file as derived but the file itself, by design -- and a header '
+       'written in another shape: `DERIVED from X (sha256 ...)` with no `@` '
+       'is not read as the claim. Trees this repository mirrors from '
+       'elsewhere are skipped; their source fixes them.')
+def _derived_file_marker(ctx):
+    # Ported 2026-10-05 from the repo-maintenance set's
+    # check_derived_file_marker.py, when the practice moved into universal.
+    # There is deliberately no filename convention to key off: a file comes
+    # under this check only by making the claim itself, on its opening lines.
+    mirrors = _mirrored(ctx.root)
+    out = []
+    for rel in _ls_files_on_disk(root=ctx.root):
+        if rel.startswith(mirrors):
+            continue
+        try:
+            with open(ctx.root / rel, encoding='utf-8') as fh:
+                header = ''.join(fh.readline() for _ in range(8))
+        except (UnicodeDecodeError, OSError):
+            continue
+        if not _DERIVED_FROM_RE.search(header):
+            continue
+        missing = []
+        if not _DERIVED_RECIPE_RE.search(header):
+            missing.append('a `Recipe: <path>` line')
+        if not _DERIVED_REGEN_RE.search(header):
+            missing.append('a `Regenerate with: <command>` line')
+        if _DERIVED_ROUTING not in ' '.join(header.split()):
+            missing.append('the routing sentence ("... regeneration replaces '
+                           'this file ...")')
+        if missing:
+            out.append(Finding(rel, 'claims DERIVED from but is missing '
+                               + ', '.join(missing), path=rel))
+    return out
 
 
 @check('declared-base-branch', 'tree',
@@ -7622,6 +8200,34 @@ PINNED_PERMALINK_RE = re.compile(
     r'https?://(?:github\.com/[^/\s]+/[^/\s]+/(?:blob|tree|raw)/'
     r'|raw\.githubusercontent\.com/[^/\s]+/[^/\s]+/)[0-9a-f]{40}/[^\s)\]>"\'`]*')
 
+# A URL into a GitHub repository, with the owner and name captured, so a
+# link into ANOTHER repository can be told from one into this one.
+_REPO_URL_RE = re.compile(
+    r'https?://(?:www\.)?(?:github\.com|raw\.githubusercontent\.com)/'
+    r'([^/\s]+)/([^/\s#?)\]>"\'`]+)[^\s)\]>"\'`]*')
+
+
+def _strip_other_repo_urls(line, own_slug):
+    """`line` with every URL into a repository other than `own_slug` removed.
+
+    A path this branch deleted is this repository's path. The same string
+    inside a link to a different repository names THAT repository's file,
+    which this branch did not touch: after go-update moved from the universal
+    set to the ladder set, a consumer's Update Vendors deleted
+    practices/go-update.md and was told to repoint its links -- and the
+    repointed https://github.com/<owner>/precedent-shared-ladder/blob/main/
+    practices/go-update.md was flagged again for containing the old path
+    (a consumer, 2026-10-05). With no origin to compare against, nothing
+    is removed: a URL is only "another repository" when this one is known."""
+    if not own_slug:
+        return line
+    own = own_slug.lower().removesuffix('.git')
+
+    def keep(m):
+        slug = f'{m.group(1)}/{m.group(2)}'.lower().removesuffix('.git')
+        return m.group(0) if slug == own else ''
+    return _REPO_URL_RE.sub(keep, line)
+
 
 @check('rename-updates-links', 'tree',
        'no tracked file still references a path this branch renamed away '
@@ -7636,7 +8242,9 @@ PINNED_PERMALINK_RE = re.compile(
        'each of which is overwritten by its own next sync. It also says '
        'nothing about a file the decommissioning registry exempts -- the record OF a deletion naming what went is not a reference left behind '
        'by one -- or about a path inside a permalink pinned to a 40-hex '
-       'commit, which cites the file as it was and cannot go stale. Nor '
+       'commit, which cites the file as it was and cannot go stale, or '
+       'inside a URL into another repository, which names that '
+       'repository\'s file rather than this one\'s. Nor '
        'about history, which names a path as it was: a generated view (its '
        'source is read), a closed todo item, a `## Story` section, or a '
        'record file precedent.json declares in `record_paths`.')
@@ -7684,6 +8292,7 @@ def _rename_updates_links(ctx):
 
     _retired_exempt = _decommissioning_record_exemptions()
     _records = _declared_record_paths()
+    _own_slug = _origin_slug()
 
     old_paths = []
     for line in r.stdout.splitlines():
@@ -7775,7 +8384,10 @@ def _rename_updates_links(ctx):
                 # that commit, which is the right way to cite a file that no
                 # longer exists -- it cannot go stale. A link to a branch can,
                 # and still counts.
-                if old in line and old in PINNED_PERMALINK_RE.sub('', line):
+                # And a URL into ANOTHER repository names that repository's
+                # file, not this one's (_strip_other_repo_urls).
+                if old in line and old in _strip_other_repo_urls(
+                        PINNED_PERMALINK_RE.sub('', line), _own_slug):
                     if moved and is_guarded_fallback(rel, line, old):
                         continue  # the fallback beside tools/, as templates write it
                     where = f'renamed to {new_path}' if new_path else 'deleted'
@@ -8480,7 +9092,8 @@ def _exemption_names_its_root_fix(ctx):
        '(if present) has no rotation entry for a practice that is not '
        'currently active',
        'whether the audit is actually being RUN or a slice actually READ -- '
-       'only that the tool exists and its own bookkeeping stays honest.')
+       'only that the tool exists and its own bookkeeping stays honest.',
+       existence_only=True)
 def _routing_audit(ctx):
     tool = _tool_path('tools/routing_audit.py')
     if tool is None:
@@ -9496,17 +10109,50 @@ def _item_disposition_findings(rel, text):
     fields = {}
     for mm in _DISPOSITION_FM_FIELD_RE.finditer(fm.group(1)):
         fields.setdefault(mm.group(1), mm.group(2).strip().strip('"\''))
-    if fields.get('status', '').lower() in DISPOSITION_ITEM_CLOSED:
-        return []
     value = fields.get('disposition')
-    if value is None or value in ('null', '~', '') or value in DISPOSITION_VALUES:
-        return []
     line_no = text.count('\n', 0, fm.start(1) + fm.group(1).find('disposition:')) + 1
-    return [Finding(f'{rel}:{line_no}',
+    where = f'{rel}:{line_no}'
+    body = list(DISPOSITION_RE.finditer(text, fm.end()))
+    out = []
+    # A park is a record of who said "Drop it" and when, whatever the item's
+    # status: the frontmatter says THAT it is parked, the body line says by
+    # whom. One item reached 2026-10-05 with the first and neither of the
+    # second (practice: park-it; tools/todo_disposition.py writes both).
+    if value == 'parked' and not any(
+            m.group('value') == 'parked' and m.group('stamp')
+            and DISPOSITION_STAMP_RE.match(m.group('stamp').strip())
+            for m in body):
+        out.append(Finding(where, 'parked in the frontmatter, but no '
+                                  '"**Disposition:** parked (YYYY-MM-DD, who)" '
+                                  'line records when or by whom -- write it with '
+                                  'tools/todo_disposition.py park, and "who not '
+                                  'recorded" when nobody knows'))
+    if fields.get('status', '').lower() in DISPOSITION_ITEM_CLOSED:
+        return out
+    if not (value is None or value in ('null', '~', '') or value in DISPOSITION_VALUES):
+        return out + [Finding(where,
                     f'open item has disposition {value!r}, which is not one '
                     f'of {", ".join(DISPOSITION_VALUES)} (or null, meaning '
                     f'wait) -- a session reading it cannot tell whether it '
                     f'may raise the item')]
+    # The two copies must agree, and the frontmatter is the one that counts:
+    # it is what build_todo_index.py and every reader acts on. Only checked
+    # where a body line exists -- most items carry the frontmatter alone,
+    # which is the per-item format's own convention.
+    if body:
+        said = body[-1].group('value')
+        counted = 'wait' if value in (None, 'null', '~', '') else value
+        if said in DISPOSITION_VALUES and said != counted:
+            if said == 'parked':
+                why = ('the body says parked but the frontmatter says '
+                       f'{counted!r}, so the item is still raised after it was '
+                       'dropped -- run tools/todo_disposition.py park')
+            else:
+                why = (f'the body says {said!r} but the frontmatter says '
+                       f'{counted!r}; the frontmatter is what every reader acts '
+                       'on, so make the two agree')
+            out.append(Finding(where, why))
+    return out
 
 
 @check('open-item-disposition', 'tree',
@@ -9799,6 +10445,51 @@ def _todo_migrate_available_but_unused(ctx):
         'still the old single-file format and no todo/todo-*.md item exists '
         '-- run `python3 tools/todo_migrate.py --source todo.md --apply` then `python3 '
         'tools/build_todo_index.py` (practices/vendor-update-runbook.md)')]
+
+
+# practice: practice-standing -- a standing is one of three words, says who
+# set it, and a Protocol or a Principle was set by someone the source's own
+# registry names. The words and the rule are tools/practice_standing.py's;
+# this only walks the files.
+@check('practice-standing', 'tree',
+       'every practice this repository publishes that carries `standing:` '
+       'holds protocol, principle or preference, names who set it in '
+       '`standing_by:`, and, for a Protocol or a Principle, names someone the '
+       'source\'s authority registry lists (CODEOWNERS, approvers.json, '
+       'precedent.json maintainers, or an individual set\'s identity.json)',
+       'whether the label is RIGHT, and whether the person named really said '
+       'so in a message of their own rather than through a relayed summary. '
+       'Both live in the conversation. Blind to absence on purpose: no '
+       '`standing:` means Protocol, the default.',
+       binds_publishers=True,
+       selects_on=('practices/*.md', 'tools/practice_standing.py',
+                   'approvers.json', 'precedent.json', 'identity.json',
+                   'CODEOWNERS', '.github/CODEOWNERS'))
+def _practice_standing(ctx):
+    try:
+        import practice_standing as pst
+    except ImportError:
+        raise NotApplicable('practice_standing.py is not in this engine')
+    pdir = ROOT / 'practices'
+    if not pdir.is_dir():
+        raise NotApplicable('this repository publishes no practices')
+    auth = None
+    out = []
+    for path in sorted(pdir.glob('*.md')):
+        rel = str(path.relative_to(ROOT))
+        if _foreign_practice(rel):
+            continue
+        try:
+            fm, _sections = sp._read_practice_file(path)
+        except Exception:
+            continue                    # a parse failure is another check's
+        if not pst.declared(fm) and not pst._raw(fm, 'standing_by'):
+            continue
+        if auth is None:
+            auth = pst.authority(ROOT)
+        for p in pst.problems(fm, ROOT, _authority=auth):
+            out.append(Finding(rel, p))
+    return out
 
 
 # practice: decision-strength -- the grammar of the strength mark, so that
@@ -11249,10 +11940,10 @@ def main():
     unverified = [r for r in results if r[4]]
 
     # advisory=True (see check()'s own docstring) is a per-check, incident-
-    # justified exception, not a general severity dial -- as of 2026-09-05
-    # the only member is parallel-artifact-ledger (see the dated comment
-    # above _parallel_artifact_ledger()). Its findings still print in full;
-    # they just don't fail the run.
+    # justified exception, not a general severity dial, and each one says
+    # whether it is permanent or temporary in its advisory_term
+    # (advisory-checks-declare-their-term). Its findings still print in
+    # full; they just don't fail the run.
     violated = [r for r in all_violated if not CHECKS[r[0]].get('advisory')]
     advisory = [r for r in all_violated if CHECKS[r[0]].get('advisory')]
     # Size caps warn on the way into pre-staging (SIZE_CAP_CHECKS).
