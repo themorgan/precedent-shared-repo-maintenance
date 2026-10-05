@@ -28,8 +28,6 @@ When installing Precedent or a shared set into a repo:
   install — precedent_install.py, declare the set, wire the individual set, main as default
 When session start reports a source BEHIND or NOT VERIFIED:
   drift-notice — raise it at once and file it; not verified is not current -- verify directly
-When setting up a project, or a session reporting its checkout is behind:
-  fresh-before-write — verify and fast-forward the checkout before the first write
 When writing a hook, script or rule another repo will vendor:
   vendor-neutral-by-default — default new code and rules to provider-neutral
 When writing content that ships into another repo:
