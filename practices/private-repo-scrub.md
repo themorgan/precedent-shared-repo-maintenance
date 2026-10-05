@@ -6,8 +6,8 @@ severity:    blocking
 applies_to:  ["**"]
 occasion:    "writing content that ships into another repo"
 gates:       ["merge", "push"]
-index_required: true
 index_clause: "name a private repo only in general terms"
+index_required: true
 checked_by:  tools/checks/check_private_repo_scrub.py
 defines:     []
 status:      active

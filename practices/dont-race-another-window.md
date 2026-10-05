@@ -5,17 +5,17 @@ tier:        on-demand
 severity:    default
 applies_to:  ["**"]
 occasion:    "asked for something another window may already be doing"
-index_required: true
 gates:       []
 index_clause: "say so and decline; send me to the window already on it"
+index_required: true
 checked_by:  null
 defines:     []
 status:      deduplicated
+in_force_at: dont-race-another-window
 supersedes:  []
 overrides:   null
 added:       "2026-09-23"
 approved_by: "Morgan F, 2026-09-23, moved from the individual set precedent-individual (there: Morgan F, 2026-09-11; revised 2026-09-13, Morgan F, to cover a session another SESSION spawned, and a window not yet created)"
-in_force_at: dont-race-another-window
 strength: decided
 ---
 ## Rule
