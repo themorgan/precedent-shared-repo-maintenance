@@ -2,6 +2,8 @@
 
 # precedent-shared-repo-maintenance
 
+**This set is retired as of 2026-10-06: its rules now live in universal Precedent, so stop declaring it in `precedent.json`.**
+
 A shared practice set for [Precedent](https://github.com/alex137/BestPractice/tree/staging)
 about **running a repository that vendors a practice layer**. A project
 declares it in its `precedent.json` `sources`, and it is cloned beside the

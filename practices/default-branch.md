@@ -1,29 +1,33 @@
 ---
 slug:        default-branch
-title:       A new repo's default branch is main, set once
+title:       The host's default branch is the repo's trunk, whatever it is called
 tier:        on-demand
 severity:    default
 applies_to:  ["precedent.json"]
 applies_to_why: "The file every install writes: precedent_install.py creates precedent.json and declaring a set edits it, which is the moment this rule fires. The occasion index reaches the same moment through install's line, which carries this rule's clause since 2026-10-01; the check below refuses a wrong default branch at push either way. Before 2026-10-01 this was `**` and the index carried it. Decided: Morgan, 2026-10-01 (reduction pass)."
 occasion:    "setting up or installing into a repo"
 gates:       []
-index_clause: "check or set the default branch to main, once, at install"
+index_clause: "the host's default branch is the trunk, whatever its name; ask if unclear"
 checked_by:  tools/checks/check_default_branch.py
 defines:     []
 status:      active
 supersedes:  []
 overrides:   null
 added:       2026-08-31
-approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; routed by path and carried by install's index line 2026-10-01 (Morgan, in the reduction pass: \"Question 3 - all are great, approved\", strength: decided)"
+approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; routed by path and carried by install's index line 2026-10-01 (Morgan, in the reduction pass: \"Question 3 - all are great, approved\", strength: decided); Rule brought in line with universal's trunk-agnostic copy 2026-10-06 (Morgan, approving the very deep check's fixes, strength: decided)"
 ---
 ## Rule
-For an existing repo whose default branch isn't already `main`: check it at install time, and if it isn't `main`, set it once -- via a host API where the session's tools reach that far, otherwise as a one-click administrator item, disclosed in the repo's own onboarding document. For a brand-new, blank repo with no branches yet, there is nothing to check or set: make the very first commit directly on a branch literally named `main` and push that first, not a feature or planning branch -- the host adopts the first branch ever pushed to an empty repo as its default automatically.
+Every repo has one **trunk**: the branch everything ends up on. Its name is the repo's own choice -- `main`, `master`, `trunk` or anything else -- and nothing here renames it. What matters is that **the host's default branch is the trunk**, so every clone, pull request and automation run lands on it without anyone saying so.
+
+Find the trunk, in order: the `trunk` that `precedent.json` declares; else its `base_branch`, when the host already shows that branch first; else, when nothing is declared, the branch the host shows first. When the host's default and `base_branch` differ and no `trunk` is declared, the repo has not said which branch is the trunk: **ask the person once, then record the answer as `trunk`** in `precedent.json`. When the declared trunk and the host's default disagree, set the host's default once -- via a host API where the session's tools reach that far, otherwise as a one-click administrator item, disclosed in the repo's own onboarding document -- or correct `trunk` if the host was right.
+
+For a brand-new, blank repo with no branches yet, there is nothing to check or set: make the very first commit directly on the branch that will be the trunk (`main` unless the person says otherwise) and push that first, not a feature or planning branch -- the host adopts the first branch ever pushed to an empty repo as its default automatically.
 
 ## Detail
-One-time per repo either way -- once set, every subsequent clone, PR, and CI run already targets `main` on its own, nothing to repeat.
+One-time per repo either way -- once set, every subsequent clone, PR, and CI run already targets the trunk on its own, nothing to repeat. A repo whose work lands on a lower tier and is promoted upward (`base_branch: staging`, promoted to `main`) declares `trunk` once, so nobody has to guess.
 
 ## Why
-A host only defaults a freshly-created repo to `main` on its own; plenty of repos predate that default or arrived some other way (an import, a mirror, an org policy) and still sit on `master` or something else.
+A host only defaults a freshly-created repo to its own default name; plenty of repos predate that, or arrived some other way (an import, a mirror, an org policy), and their default can point at something that is not the trunk at all -- a planning branch, a stale one. The name was never the problem: a repo whose trunk is `master` by decision is as sound as one on `main`.
 
 ## Story
 Migrated here from RepoPersonalPreferences by the phase-3 private-set
@@ -48,7 +52,17 @@ branch ever pushed to it as the default automatically. Making the first
 commit directly on `main` satisfies the rule outright.
 
 One-time per repo either way. Once set, every later clone, pull request and
-automation run already targets `main` on its own.
+automation run already targets the trunk on its own.
+
+**2026-10-06: the trunk's name is the repo's here too** (Morgan, approving
+the very deep check's fixes, strength: decided). Universal's copy stopped
+demanding the name `main` on 2026-10-05, after a consumer whose trunk is
+`master` by decision failed its check. This copy kept the old wording, and
+a shared copy beats universal's by slug, so every repository still
+declaring this set was held to `main` again. The Rule, Detail and Why now
+match universal's, and the check below asks the same question as the
+engine's. The copy stays active rather than deduplicated while consumers
+on an older universal still need a live one.
 
 **2026-10-01: out of the occasion index, still in force** (Morgan, in the
 reduction pass: *"Question 3 - all are great, approved"*, strength:
@@ -61,5 +75,5 @@ is keyed to this slug, and the engine skips the check of a practice that is
 not in force. The Rule above is unchanged.
 
 ## Install
-Checked mechanically by [`tools/checks/check_default_branch.py`](../tools/checks/check_default_branch.py), scope `tree`, via the one cheap remote query this file's own Install text already names: `git ls-remote --symref origin HEAD` asks the remote which branch it actually points at, no clone required. If the remote can't be reached at all (no network, no credential), the check reports SKIPPED rather than a silent pass -- a check that can't observe the property says so, per the NotApplicable convention. Two-direction tested in [`tools/checks/tests/test_default_branch.sh`](../tools/checks/tests/test_default_branch.sh) against a local bare repo standing in for a misconfigured remote.
+Checked mechanically by [`tools/checks/check_default_branch.py`](../tools/checks/check_default_branch.py), scope `tree`, via the one cheap remote query this file's own Install text already names: `git ls-remote --symref origin HEAD` asks the remote which branch it actually points at, no clone required. It compares that with the declared `trunk`, else `base_branch`; where those leave the trunk unsettled it reports COULD NOT VERIFY, never a violation. If the remote can't be reached at all (no network, no credential), the check reports SKIPPED rather than a silent pass -- a check that can't observe the property says so, per the NotApplicable convention. Two-direction tested in [`tools/checks/tests/test_default_branch.sh`](../tools/checks/tests/test_default_branch.sh) against a local bare repo standing in for the remote, with a planted wrong trunk, a trunk not called `main`, and an undeclared trunk.
 
