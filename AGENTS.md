@@ -16,8 +16,6 @@ When a key file gains an operational instruction:
   mirror-into-agents — it lands in both AGENTS.md and its human home
 When a new rule's scope isn't obvious:
   rule-scope-ask — ask once which layer or set it belongs in
-When about to commit:
-  light-check — a cheap mechanical audit runs before every commit, not just merges
 When adding or reviewing a shared-set rule:
   no-duplication — a rule that only restates universal gets dropped
 When asked for a "deep check":

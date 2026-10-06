@@ -4,6 +4,11 @@
   "visibility": "public",
   "subject": "running a repository that vendors a practice layer",
   "code": [],
+  "retired": {
+    "date": "2026-10-06",
+    "folded_into": ["universal"],
+    "reason": "folded into universal on 2026-10-05; its last checks moved into the engine 2026-10-06"
+  },
   "occasion_share_tokens": 750,
   "_occasion_share_comment": "This source's allowance in every consumer's occasion index (Morgan, 2026-09-29, strength: decided): build_views refuses to build this source when its own catalogue's index is over it, and a consumer's cap is the sum of the allowances of the sources it declares. Measured 2026-09-29 at about 640; set at that plus about 20%.",
   "_comment": [
