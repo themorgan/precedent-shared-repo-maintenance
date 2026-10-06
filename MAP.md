@@ -10,7 +10,7 @@ This repository's map of the practice catalogue in force here and the engine's o
 
 ## The practice catalogue
 
-`practices/` holds 12 practice files (0 resident, 12 on-demand). One file per practice.
+`practices/` holds 11 practice files (0 resident, 11 on-demand). One file per practice.
 
 | Practice | Tier | Occasion / scope |
 |---|---|---|
@@ -19,7 +19,6 @@ This repository's map of the practice catalogue in force here and the engine's o
 | [derived-file-marker](practices/derived-file-marker.md) | on-demand | creating a file regeneration will overwrite |
 | [drift-notice](practices/drift-notice.md) | on-demand | session start reports a source BEHIND or NOT VERIFIED |
 | [install](practices/install.md) | on-demand | installing Precedent or a shared set into a repo |
-| [light-check](practices/light-check.md) | on-demand | about to commit |
 | [mirror-into-agents](practices/mirror-into-agents.md) | on-demand | a key file gains an operational instruction |
 | [no-duplication](practices/no-duplication.md) | on-demand | adding or reviewing a shared-set rule |
 | [private-repo-scrub](practices/private-repo-scrub.md) | on-demand | writing content that ships into another repo |
@@ -29,7 +28,7 @@ This repository's map of the practice catalogue in force here and the engine's o
 
 ## Withdrawn practices
 
-32 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
+33 practice file(s) here are **not in force** and are left out of every table above. **The files are kept on purpose** -- a withdrawn rule and the argument against it are worth re-reading, and `retired` is not a synonym for deleted (that is `decommission-deletes-files`, and it is about mechanisms, not rules). Read one in full with `python3 tools/precedent_show.py SLUG`.
 
 | Practice | Status | Now in force at | Why it was withdrawn |
 |---|---|---|---|
@@ -48,6 +47,7 @@ This repository's map of the practice catalogue in force here and the engine's o
 | [fresh-before-write](practices/fresh-before-write.md) | deduplicated | [fresh-before-write](practices/fresh-before-write.md) | Raised 2026-09-06, after asking whether BestPractice checked for a stale branch at session start and what it would take to have `precedent-individual` not just check but update itself before touching anything. |
 | [fresh-check-escalation](practices/fresh-check-escalation.md) | deduplicated | [drift-notice](practices/drift-notice.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration; the Story is backfilled from that pack's own text, and it records a specific failure found directly rather than reasoned about. |
 | [header-caps](practices/header-caps.md) | deduplicated | `headline-capitalization` — in another source; `python3 tools/precedent_show.py headline-capitalization` | Retired on 2026-09-06 as a duplicate. |
+| [light-check](practices/light-check.md) | deduplicated | `two-check-levels` — in another source; `python3 tools/precedent_show.py two-check-levels` | Writing this practice's own checked_by turned it into the actual audit script it describes: run against this repo's own tree, it found three practice files (`deep-check`, `header-caps`, `push-back`) with a `title:` frontmatter value containing an unquoted colon -- invalid YAML that a strict parser rejects. |
 | [list-item-parity](practices/list-item-parity.md) | deduplicated | [list-item-parity](practices/list-item-parity.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [list-restraint](practices/list-restraint.md) | deduplicated | [list-restraint](practices/list-restraint.md) | Migrated here from RepoPersonalPreferences by the phase-3 private-set migration. |
 | [llm-neutral](practices/llm-neutral.md) | retired | — (nowhere) | **Retired 2026-09-11, by Morgan**, `strength: decided` -- his own words, *"okay I think we can retire these"*, going further than the proposal on the table, which was to move them into a subject set for engineering craft. |
