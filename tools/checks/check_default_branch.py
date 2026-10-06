@@ -8,7 +8,15 @@ Scope: tree, via one cheap remote query -- exactly what the practice's own
 Install section endorses ("via a host API where the session's tools reach
 that far"). `git ls-remote --symref <url> HEAD` asks the remote which
 branch HEAD points at without cloning anything; that's this repo's actual
-default branch, and the rule requires it to be `main`.
+default branch, and the rule requires it to be the repo's TRUNK, whatever
+it is called: the `trunk` precedent.json declares, else its `base_branch`.
+Until 2026-10-06 this script demanded the name `main`, after universal's
+copy of the rule had stopped doing so (2026-10-05); this copy now asks the
+same question as the engine's `default-branch` check.
+
+Where nothing declared settles which branch is the trunk (the host shows
+one branch first, `base_branch` names another, no `trunk`), it exits 2
+with COULD NOT VERIFY and the ask, never a violation.
 
 Exit codes: 0 clean, 1 violation, 2 the check could not run at all (no
 network reachability to the remote) -- reported as SKIPPED, never treated
@@ -19,6 +27,7 @@ quiet.
 Exit 0 and print nothing when clean. Exit 1 and print the practice's own
 Rule text (never a paraphrase) plus the specific finding(s) on a violation.
 """
+import json
 import os
 import pathlib
 import re
@@ -43,7 +52,14 @@ SOURCE_ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 ROOT = pathlib.Path(os.environ.get("PRECEDENT_CHECK_ROOT") or SOURCE_ROOT)
 PRACTICE_FILE = SOURCE_ROOT / "practices" / "default-branch.md"
 
-EXPECTED_BRANCH = "main"
+
+def _declared(key):
+    """precedent.json's `key` as a non-empty string, or None."""
+    try:
+        v = json.loads((ROOT / "precedent.json").read_text(encoding="utf-8")).get(key)
+        return v if isinstance(v, str) and v.strip() else None
+    except (OSError, ValueError, AttributeError):
+        return None
 
 
 class NotApplicable(Exception):
@@ -95,10 +111,25 @@ def actual_default_branch() -> str:
 
 
 def find_violations() -> list[str]:
-    branch = actual_default_branch()
-    if branch != EXPECTED_BRANCH:
-        return [f"remote HEAD points at '{branch}', expected '{EXPECTED_BRANCH}'"]
-    return []
+    host = actual_default_branch()
+    trunk = _declared("trunk")
+    if trunk:
+        if host != trunk:
+            return [f"remote HEAD points at '{host}', and this repository's "
+                    f"trunk is '{trunk}' (precedent.json `trunk`) -- set the "
+                    f"host's default to '{trunk}' once, or, if '{host}' is the "
+                    f"trunk, correct `trunk`"]
+        return []
+    base = _declared("base_branch")
+    if base is None or host == base:
+        # Nothing says otherwise: the branch the host shows first is the
+        # trunk, whatever it is called.
+        return []
+    raise NotApplicable(
+        f"COULD NOT VERIFY: the host shows '{host}' first and this "
+        f"repository's work lands on '{base}' (`base_branch`), and nothing "
+        f"declares which of them is the trunk. Ask the person once, then "
+        f"record the answer as `trunk` in precedent.json")
 
 
 if __name__ == "__main__":

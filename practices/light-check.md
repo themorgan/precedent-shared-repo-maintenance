@@ -10,12 +10,18 @@ index_clause: "a cheap mechanical audit runs before every commit, not just merge
 index_required: true
 checked_by:  tools/checks/check_light_check.py
 defines:     []
-status:      active
+status:      deduplicated
+in_force_at: two-check-levels
 supersedes:  []
 overrides:   null
 added:       2026-08-31
 approved_by: "Morgan F, migrated from RepoPersonalPreferences by the private-set migration session; revised 2026-09-05, Morgan F, to document the materialized-check-has-a-source extension and its CI-resolution gotcha"
 ---
+**Deduplicated 2026-10-06.** This rule lives in universal's
+[two-check-levels](https://github.com/alex137/BestPractice/blob/staging/practices/two-check-levels.md),
+which folded it in on 2026-09-28; this copy is history, kept so the set can
+retire without losing a rule.
+
 ## Rule
 A repo maintains one cheap, mechanical audit script that runs before every commit: conflict markers, invalid JSON/YAML syntax, secret-shaped strings (an Amazon Web Services (AWS)-style key ID, a Privacy-Enhanced Mail (PEM) private-key header, a token), and broken relative doc links, at minimum. Run it yourself before every commit, and wire it into the repo's commit or push gate (a local hook) so it binds even when a session forgets. Add a CI job only where changes arrive that no session checked, such as a consuming repo taking contributions from forks; a practice source runs none (universal [`source-sets-run-no-ci`](https://github.com/alex137/BestPractice/blob/staging/practices/source-sets-run-no-ci.md)).
 
